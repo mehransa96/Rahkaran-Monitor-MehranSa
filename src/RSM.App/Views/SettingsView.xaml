@@ -1,0 +1,37 @@
+<UserControl x:Class="RSM.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel MaxWidth="760" HorizontalAlignment="Left">
+      <TextBlock Style="{StaticResource Text.Title}" Text="{Binding [Settings_Title], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <StackPanel>
+          <TextBlock Style="{StaticResource Text.Section}" Margin="0,0,0,6" Text="{Binding [Settings_Language], Source={x:Static loc:Loc.Instance}}" />
+          <StackPanel Orientation="Horizontal">
+            <RadioButton GroupName="lang" IsChecked="{Binding IsPersian}" Content="{Binding [Language_Fa], Source={x:Static loc:Loc.Instance}}" />
+            <RadioButton GroupName="lang" IsChecked="{Binding IsEnglish}" Content="{Binding [Language_En], Source={x:Static loc:Loc.Instance}}" />
+          </StackPanel>
+          <CheckBox IsChecked="{Binding PersianDigits}" Content="{Binding [Settings_PersianDigits], Source={x:Static loc:Loc.Instance}}" />
+
+          <TextBlock Style="{StaticResource Text.Section}" Text="{Binding [Settings_Theme], Source={x:Static loc:Loc.Instance}}" />
+          <StackPanel Orientation="Horizontal">
+            <RadioButton GroupName="theme" IsChecked="{Binding IsLight}" Content="{Binding [Theme_Light], Source={x:Static loc:Loc.Instance}}" />
+            <RadioButton GroupName="theme" IsChecked="{Binding IsDark}" Content="{Binding [Theme_Dark], Source={x:Static loc:Loc.Instance}}" />
+          </StackPanel>
+
+          <TextBlock Style="{StaticResource Text.Section}" Text="{Binding [Settings_DataFolder], Source={x:Static loc:Loc.Instance}}" />
+          <TextBox Style="{StaticResource TextBox.Ltr}" IsReadOnly="True" Text="{Binding DataFolder, Mode=OneWay}" />
+          <CheckBox IsEnabled="False" IsChecked="{Binding IsPortable, Mode=OneWay}" Content="{Binding [Settings_Portable], Source={x:Static loc:Loc.Instance}}" />
+        </StackPanel>
+      </Border>
+      <Border Style="{StaticResource Card}">
+        <StackPanel>
+          <TextBlock Style="{StaticResource Text.Section}" Margin="0,0,0,6" Text="{Binding [About_Title], Source={x:Static loc:Loc.Instance}}" />
+          <TextBlock Text="{Binding AboutText}" />
+          <TextBlock Margin="0,8,0,0" Style="{StaticResource Text.Muted}" Text="{Binding [ReadOnly_Statement], Source={x:Static loc:Loc.Instance}}" />
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

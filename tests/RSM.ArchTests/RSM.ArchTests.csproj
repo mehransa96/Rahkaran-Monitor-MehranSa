@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RSM.Core\RSM.Core.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Safety\RSM.Safety.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Storage\RSM.Storage.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Hosting\RSM.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Collectors.Sql\RSM.Collectors.Sql.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Collectors.Redis\RSM.Collectors.Redis.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NetArchTest.Rules" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <!-- The analyzer is loaded in-process by AnalyzerCanaryTests; it is NOT applied to this test project. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" GeneratePathProperty="true" PrivateAssets="all" IncludeAssets="none" ExcludeAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BannedApiAnalyzersPath</_Parameter1>
+      <_Parameter2>$(PkgMicrosoft_CodeAnalysis_BannedApiAnalyzers)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+</Project>

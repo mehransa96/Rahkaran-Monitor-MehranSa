@@ -1,0 +1,15 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <!-- Every production project gets the banned-API analyzer (RS0030 => error via TreatWarningsAsErrors). -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers" />
+  </ItemGroup>
+  <PropertyGroup>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- Portable single-file tool: symbols travel inside the assemblies. -->
+    <DebugType>embedded</DebugType>
+    <!-- RS0030 must never be suppressed. NoWarn/WarningsNotAsErrors for it is checked by RSM.ArchTests. -->
+    <WarningsAsErrors>$(WarningsAsErrors);RS0030;RS0031;RS0035</WarningsAsErrors>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- SQL Server instance collectors (§7). All T-SQL lives in Queries/**/*.sql (embedded), run via SafeSqlExecutor. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>RSM.Collectors.Sql</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RSM.Core\RSM.Core.csproj" />
+    <ProjectReference Include="..\RSM.Safety\RSM.Safety.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Queries\**\*.sql" />
+  </ItemGroup>
+</Project>

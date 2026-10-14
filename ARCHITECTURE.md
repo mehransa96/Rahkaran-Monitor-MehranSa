@@ -1,6 +1,7 @@
 # ARCHITECTURE — Rahkaran Server Monitor (RSM)
 
-Status: **draft for approval** (plan mode). Nothing here is implemented yet.
+Status: **approved**; Phase 0 implemented (Core, Safety, Collectors.Sql/Redis probes, Storage, Hosting, App shell, tests).
+Sections describe the target design; notes marked *P0* describe what exists today.
 Spec: `docs/SPEC.md`. Section references like "§7.5" point into the spec.
 
 ---
@@ -20,9 +21,11 @@ run time (whitelisted clients, read-only handles) and in CI (unit, architecture 
 
 ```
 RSM.sln
-├─ Directory.Build.props          net8 settings, Nullable, TreatWarningsAsErrors, BannedApiAnalyzers,
-│                                 BannedSymbols.txt linked into every project, deterministic build
-├─ BannedSymbols.txt              single source of truth for forbidden APIs (§6.3)
+├─ Directory.Build.props          net8 settings, Nullable, TreatWarningsAsErrors, central package versions
+├─ src/Directory.Build.props      + BannedApiAnalyzers in every production project (RS0030 = error)
+├─ src/Directory.Build.targets    + BannedSymbols.txt (all) and BannedSymbols.NonSafety.txt (all but RSM.Safety)
+├─ BannedSymbols*.txt             single source of truth for forbidden APIs (§6.5)
+├─ global.json                    .NET 8 SDK (Microsoft-built SDK required for WPF; see CLAUDE.md)
 ├─ src/
 │  ├─ RSM.Core                    net8.0          models, ICollector, scheduler, fact store, rules engine,
 │  │                                              expression evaluator, slowness engine, KB loader
@@ -55,6 +58,9 @@ RSM.sln
    └─ RSM.Integration.Tests       skipped unless RSM_IT_SQL / RSM_IT_REDIS env vars are set
 ```
 
+*P0:* created `RSM.Core`, `RSM.Safety`, `RSM.Collectors.Sql`, `RSM.Collectors.Redis`, `RSM.Storage`, `RSM.Hosting`,
+`RSM.App` and the four test projects; the other projects are added in the phase that first needs them.
+
 Why the extra `RSM.Parsers` and `RSM.Hosting` projects vs. the spec proposal: parsers have no Windows
 dependency and are the most test-heavy code, so isolating them lets the bulk of tests run on Linux CI;
 `RSM.Hosting` avoids duplicating DI wiring between the GUI and the CLI.
@@ -65,10 +71,10 @@ dependency and are the most test-heavy code, so isolating them lets the bulk of 
 |---|---|---|
 | MVVM | CommunityToolkit.Mvvm 8.x | source generators |
 | Host/DI | Microsoft.Extensions.Hosting 8.x | |
-| UI kit | WPF-UI (lepoco) 3.x | **RTL spike in P0**; fallback = plain styled WPF for broken controls |
+| UI kit | plain styled WPF (*P0 decision*) | WPF-UI 3.x only after its RTL rendering is verified on Windows |
 | Charts | ScottPlot.WPF 5.x | streaming `DataLogger`/`DataStreamer`; charts keep LTR axes inside RTL layout |
 | Code view | AvalonEdit 6.3 | read-only, T-SQL/XML highlighting |
-| SQL | Microsoft.Data.SqlClient 5.x, Dapper 2.x, Microsoft.SqlServer.TransactSql.ScriptDom 161.x | `TSql160Parser` |
+| SQL | Microsoft.Data.SqlClient 6.1, Dapper 2.1, Microsoft.SqlServer.TransactSql.ScriptDom 161.9142 | `TSql160Parser` |
 | CIM | Microsoft.Management.Infrastructure 3.x | queries only (`QueryInstances`, `EnumerateInstances`, `GetInstance`) |
 | Event logs | System.Diagnostics.EventLog 8.x (`Eventing.Reader`) | `EventLogSession` for remote |
 | Services | System.ServiceProcess.ServiceController 8.x | read members only (banned mutators) |
@@ -78,10 +84,10 @@ dependency and are the most test-heavy code, so isolating them lets the bulk of 
 | Storage | Microsoft.Data.Sqlite 8.x | WAL mode |
 | Compression | System.IO.Compression (Brotli) | **instead of zstd** – zero extra dependency; see §10 |
 | Templates | Scriban 5.x | sandboxed: no `import`, no file includes outside embedded resources |
-| PDF | QuestPDF **or** WebView2 print — **open question Q1** (license) | |
+| PDF | WebView2 `PrintToPdf` (decision Q1) | fallback: open HTML and print |
 | Logging | Serilog + Serilog.Sinks.File | redaction enricher + destructuring policy |
-| Tests | xUnit, FluentAssertions, NetArchTest.Rules, Verify.Xunit | |
-| Analyzers | Microsoft.CodeAnalysis.BannedApiAnalyzers, Microsoft.CodeAnalysis.NetAnalyzers | warnings as errors |
+| Tests | xUnit 2.9, FluentAssertions 6.12 (v7+ is commercial), NetArchTest.Rules, Microsoft.CodeAnalysis.CSharp (analyzer canary), Verify.Xunit (P1) | |
+| Analyzers | Microsoft.CodeAnalysis.BannedApiAnalyzers 3.3.4, .NET SDK analyzers | warnings as errors |
 
 No general-purpose Redis, HTTP, scripting or ORM library that exposes write APIs is referenced.
 No Roslyn scripting / `DynamicExpresso` / `System.Linq.Dynamic` (rules must not be able to run code).
@@ -254,8 +260,16 @@ and built-in functions. Query packs (user `.sql` files) may additionally referen
 the target DB, but **no user-defined function calls** and no cross-database names.
 
 `SqlGuard` returns a structured verdict (`Allowed` | `Rejected{rule, line, column, fragment}`) so the
-UI can show why a query-pack file was refused. It is **fail-closed**: an unknown fragment type is
-rejected; ScriptDom upgrades that introduce new node types therefore fail tests until reviewed.
+UI can show why a query-pack file was refused. It is **fail-closed** for statements and table sources: any
+statement type or table-source type not on the allow-lists is rejected, so ScriptDom upgrades that introduce
+new node types fail tests until reviewed. Expression-level dangers (`NEXT VALUE FOR`, XML `modify()`, user
+UDFs, `OUTPUT … INTO`, `FOR UPDATE/BROWSE`, hints) are on an explicit deny-list.
+
+*P0 rule ids:* SG001 parse error · SG002 >1 batch · SG010 statement not allowed · SG020 sequence · SG021 table
+hint · SG022 query hint · SG023 OUTPUT · SG024 FOR clause · SG030 SELECT INTO · SG031 cursor · SG032 SET
+@var.method · SG033 session SET · SG040/041 INSERT target/source · SG050/051 EXEC / EXEC args · SG060 undeclared
+table variable · SG061 table source · SG062 TVF · SG063 object allow-list · SG064 four-part name · SG065 temp
+table · SG066 XML modify · SG067 UDF.
 
 Malicious corpus (`tests/RSM.Safety.Tests/Corpus/*.sql`, each with expected rejection rule): `; DROP`,
 `EXEC('…')`, `EXEC sp_executesql`, `INSERT/UPDATE/DELETE/MERGE` into real tables, `SELECT INTO`,
@@ -294,6 +308,8 @@ SELECT ...
   5. `CommandText = HardeningPrefix + file`; re-run SqlGuard on the exact text (cheap, cached by hash).
   6. `CommandTimeout` from header/settings; Dapper maps to DTO; permission errors (229/297/300/15247/
      916/4060) map to `Unavailable(capability)`; timeouts to `Partial`/back-off.
+- Only scalar parameters are accepted: Dapper expands enumerable parameters by rewriting the SQL text, which
+  would bypass SqlGuard (`SafeSqlExecutor.ValidateParameters`).
 - Per-database queries never use `USE` or `sp_MSforeachdb`; the executor opens a connection with
   `Initial Catalog=<db>` for each target database (names come from `sys.databases`, passed as connection
   property, never concatenated into SQL).
@@ -308,13 +324,20 @@ arch test that fails if any other type uses the API or if the class grows a new 
 | Class | API | Why | Constraint |
 |---|---|---|---|
 | `ProcessSnapshot` | `Process.GetProcesses()`, `GetProcessById()` (read members) | top processes, w3wp→pool mapping | no `Start`, `Kill`, `CloseMainWindow`, priority/affinity setters |
-| `RemoteRegistryReader` *(pending Q3)* | `RegistryKey.OpenRemoteBaseKey` + `OpenSubKey(writable:false)` **or** CIM `StdRegProv.Get*Value` | power-plan fallback, pending reboot, `Win32PrioritySeparation`, Defender exclusions | hard-coded key/value whitelist; `StdRegProv` only `GetStringValue`, `GetDWORDValue`, `GetMultiStringValue`, `EnumKey`, `EnumValues` |
-| `SelfElevation` *(pending Q2)* | `Process.Start(own exe path, Verb="runas")` | "restart RSM as administrator" | path must equal `Environment.ProcessPath`; no arguments other than `--resume-site <id>` |
-| `ShellOpen` *(pending Q2)* | `Process.Start(UseShellExecute)` | open an exported report / RSM data folder | path must be inside the RSM data folder and end in `.html`/`.pdf`/`.zip` or be the folder itself |
+| `RemoteRegistryReader` *(P2, decision Q3)* | CIM `StdRegProv` — `GetStringValue`, `GetDWORDValue`, `GetMultiStringValue`, `EnumKey`, `EnumValues` only | power-plan fallback, pending reboot, `Win32PrioritySeparation`, Defender exclusions | hard-coded key/value whitelist; the only file allowed to contain `#pragma warning disable RS0030` (for `InvokeMethod`) |
 
-If Q2 is answered "no", the last two classes are not created and `Process.Start` has **zero** call sites.
+Decision Q2: there is **no** `SelfElevation` or `ShellOpen` class — `Process.Start` has zero call sites. *P0:* the
+`Audited/` folder contains only a README; `RSM.ArchTests` pins the (empty) type list.
 
-### 6.5 Banned symbols (initial list; `BannedSymbols.txt`)
+### 6.5 Banned symbols (`BannedSymbols.txt` + `BannedSymbols.NonSafety.txt`)
+
+*P0:* the full lists live in the two files at the repo root. `BannedSymbols.txt` applies to **every** production
+project including `RSM.Safety` (process start/kill, PowerShell, service control, IIS mutation, CIM methods,
+registry writes, classic `EventLog`, log clearing/export, legacy SQL clients, WebClient/WebRequest/SmtpClient).
+`BannedSymbols.NonSafety.txt` applies to every project except `RSM.Safety` (the whole `Process` type,
+`SqlConnection`/`SqlCommand`/Dapper, sockets, `HttpClient`, `File`/`Directory`/`FileStream`, mutating
+`FileInfo`/`DirectoryInfo` members, `ZipFile`). The analyzer canary test also checks that every entry whose declaring
+type is available resolves to a real API (a signature typo would otherwise ban nothing). Original sketch:
 
 ```
 M:System.Diagnostics.Process.Start(System.String);Process start is forbidden (read-only tool)
@@ -351,10 +374,10 @@ M:Microsoft.Data.SqlClient.SqlCommand.set_CommandText(System.String);use SafeSql
 M:Dapper.SqlMapper.Execute(...);use SafeSqlExecutor (+ ExecuteAsync, ExecuteScalar*, Query* on raw strings)
 ```
 
-`RSM.Safety` and `RSM.Storage` get a narrowly scoped secondary file (`BannedSymbols.Safety.txt`) because
-they legitimately own sockets/HTTP/SQL commands (Safety) and local file writes in the data folder
-(Storage, Reporting via `IDataFolder`). The arch tests verify that only these assemblies are configured
-that way. **P0 acceptance:** adding `Process.Start("cmd")` to any collector fails the build.
+Only `RSM.Safety` (the single safety boundary, `RsmSafetyBoundary=true`) is exempt from the NonSafety list,
+because it owns sockets/HTTP/SQL commands and the data-folder writer; Storage and Reporting write only through
+`IDataFolder`. An arch test asserts no other project sets that property. **P0 acceptance:** adding
+`Process.Start("cmd")` to a collector fails the build (`build/analyzer-canary.sh`).
 
 ### 6.6 Architecture tests (NetArchTest)
 
@@ -364,6 +387,9 @@ that way. **P0 acceptance:** adding `Process.Start("cmd")` to any collector fail
 - Only `RSM.Safety` may reference `Microsoft.SqlServer.TransactSql.ScriptDom` and own socket/HTTP types.
 - `RSM.Core` depends on nothing but BCL + `Microsoft.Extensions.*.Abstractions`.
 - `RSM.App` may not reference collectors directly (only via `RSM.Hosting` interfaces).
+- *P0 additions:* no RS0030 suppression outside `Audited/` (source scan) or in any build file; every `src` project
+  inherits the analyzer; `.sql` files only under `Queries/`; no C# string literal shaped like a T-SQL statement;
+  no XAML command whose name suggests a server action (kill/recycle/restart/stop/start/shrink/rebuild/execute…).
 - Types in `RSM.Safety.Audited` are exactly the documented list; public surface snapshot-tested.
 - No type outside `RSM.Storage`/`RSM.Reporting` implements or consumes `IDataFolderWriter`.
 
@@ -540,9 +566,8 @@ pick a spike on any chart ⇒ events ±5 min across all nodes.
 - **HTML**: Scriban templates embedded as resources; one template set with `dir="rtl|ltr"`; inline CSS,
   inline SVG charts rendered server-side by our own small SVG chart builder (no JS needed for viewing;
   optional tiny inline JS for collapsible sections). Vazirmatn embedded as base64 `@font-face`.
-- **PDF**: see Q1. Option A: QuestPDF (native layout, needs license check). Option B: WebView2
-  `PrintToPdfAsync` of the HTML (exact same look; needs WebView2 Runtime — present on Win 11/Server 2025,
-  often absent on Server 2016/2019 → fallback "open HTML and print").
+- **PDF** (decision Q1): WebView2 `PrintToPdfAsync` of the same HTML (identical look). The WebView2 Runtime is
+  often absent on Server 2016/2019 → fallback "open the HTML and print to PDF".
 - **JSON bundle** (`RSM_<site>_<yyyyMMdd-HHmm>.zip`): `manifest.json` (RSM version, schema version, nodes,
   capability matrices, masking flag), `results/<node>/<collector>.json`, `findings.json`, `events.json`,
   optional `samples.jsonl`. Importable/mergeable.
@@ -582,7 +607,7 @@ pick a spike on any chart ⇒ events ±5 min across all nodes.
 
 ## 16. CI / build
 
-- GitHub Actions (proposed): `windows-latest` job: build all, run all tests, publish single-file exe as an
+- GitHub Actions (`.github/workflows/ci.yml`, P0): `windows-latest` job: build all, run all tests, publish single-file exe as an
   artifact. `ubuntu-latest` job (fast): `RSM.Core`, `RSM.Safety`, `RSM.Parsers`, `RSM.Storage` tests.
   Optional integration job with a SQL Server container (Linux) for the SQL collectors + read-only proof.
 - Every PR runs the safety tests; the analyzer runs in every build.
@@ -593,11 +618,11 @@ pick a spike on any chart ⇒ events ±5 min across all nodes.
 
 | Risk | Spike / mitigation |
 |---|---|
-| WPF-UI RTL rendering issues | P0 spike page with nav, data grid, dialogs, tooltips in fa; fall back per control |
-| Microsoft.Web.Administration on .NET 8 + read-only ctor | P0 spike on Windows; fallback to parsing `applicationHost.config` XML read-only + CIM `root\WebAdministration` |
+| WPF-UI RTL rendering issues | *P0:* shell built with plain styled WPF; WPF-UI only after a Windows RTL check |
+| Microsoft.Web.Administration on .NET 8 + read-only ctor | spike moved to P3 (needs Windows + IIS); fallback to parsing `applicationHost.config` XML read-only + CIM `root\WebAdministration` |
 | ARR runtime counters not exposed read-only | config-only + distribution from IIS logs (spec fallback) |
-| Remote registry reads require WMI method calls | Q3 |
+| Remote registry reads require WMI method calls | decision Q3: one audited `StdRegProv` reader (P2) |
 | `xp_readerrorlog` permission varies by version | capability probe + file fallback + documented in PERMISSIONS.md as "verify" |
 | ScriptDom fail-closed rejects legitimate DMV queries | catalog test catches it on every build |
 | Overhead on busy 64-core servers | budgets, back-off, investigation-only fast cadence, measured in P2 gate |
-| PDF licensing | Q1 |
+| PDF licensing | decision Q1: WebView2 print |

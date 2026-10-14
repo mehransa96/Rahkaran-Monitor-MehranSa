@@ -1,0 +1,242 @@
+<UserControl x:Class="RSM.App.Views.SitesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:vm="clr-namespace:RSM.App.ViewModels"
+             xmlns:caps="clr-namespace:RSM.Core.Capabilities;assembly=RSM.Core">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+    <!-- Node editor: a new visual tree per node, so password boxes never leak between nodes. -->
+    <DataTemplate DataType="{x:Type vm:NodeEditorViewModel}">
+      <StackPanel>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Node_Name], Source={x:Static loc:Loc.Instance}}" />
+            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+          </StackPanel>
+          <StackPanel Grid.Column="2">
+            <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Node_Host], Source={x:Static loc:Loc.Instance}}" />
+            <TextBox Style="{StaticResource TextBox.Ltr}" Text="{Binding Host, UpdateSourceTrigger=PropertyChanged}" />
+          </StackPanel>
+        </Grid>
+
+        <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Node_Roles], Source={x:Static loc:Loc.Instance}}" />
+        <WrapPanel>
+          <CheckBox Margin="0,2,14,2" IsChecked="{Binding RoleData}" Content="{Binding [Role_Data], Source={x:Static loc:Loc.Instance}}" />
+          <CheckBox Margin="0,2,14,2" IsChecked="{Binding RoleReport}" Content="{Binding [Role_Report], Source={x:Static loc:Loc.Instance}}" />
+          <CheckBox Margin="0,2,14,2" IsChecked="{Binding RoleApp}" Content="{Binding [Role_App], Source={x:Static loc:Loc.Instance}}" />
+          <CheckBox Margin="0,2,14,2" IsChecked="{Binding RoleArr}" Content="{Binding [Role_Arr], Source={x:Static loc:Loc.Instance}}" />
+          <CheckBox Margin="0,2,14,2" IsChecked="{Binding RoleRedis}" Content="{Binding [Role_Redis], Source={x:Static loc:Loc.Instance}}" />
+          <CheckBox Margin="0,2,14,2" IsChecked="{Binding RoleLock}" Content="{Binding [Role_Lock], Source={x:Static loc:Loc.Instance}}" />
+          <CheckBox Margin="0,2,14,2" IsChecked="{Binding RoleWorkflow}" Content="{Binding [Role_Workflow], Source={x:Static loc:Loc.Instance}}" />
+        </WrapPanel>
+
+        <!-- SQL Server -->
+        <TextBlock Style="{StaticResource Text.Section}" Text="{Binding [Sql_Section], Source={x:Static loc:Loc.Instance}}" />
+        <CheckBox IsChecked="{Binding SqlEnabled}" Content="{Binding [Sql_Enabled], Source={x:Static loc:Loc.Instance}}" />
+        <StackPanel Visibility="{Binding SqlEnabled, Converter={StaticResource BoolToVisibility}}">
+          <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sql_Server], Source={x:Static loc:Loc.Instance}}" />
+          <TextBox Style="{StaticResource TextBox.Ltr}" Text="{Binding SqlServer, UpdateSourceTrigger=PropertyChanged}" />
+          <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sql_Auth], Source={x:Static loc:Loc.Instance}}" />
+          <StackPanel Orientation="Horizontal">
+            <RadioButton IsChecked="{Binding SqlAuthIsSql}" Content="{Binding [Sql_AuthSql], Source={x:Static loc:Loc.Instance}}" />
+            <RadioButton IsChecked="{Binding SqlAuthIsWindows}" Content="{Binding [Sql_AuthWindows], Source={x:Static loc:Loc.Instance}}" />
+          </StackPanel>
+          <Grid Visibility="{Binding SqlAuthIsSql, Converter={StaticResource BoolToVisibility}}">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="16" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+              <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sql_User], Source={x:Static loc:Loc.Instance}}" />
+              <TextBox Style="{StaticResource TextBox.Ltr}" Text="{Binding SqlUser, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sql_Password], Source={x:Static loc:Loc.Instance}}" />
+              <PasswordBox PasswordChanged="OnSqlPasswordChanged" />
+              <TextBlock Style="{StaticResource Text.Muted}" FontSize="11"
+                         Visibility="{Binding HasStoredSqlPassword, Converter={StaticResource BoolToVisibility}}"
+                         Text="{Binding [Password_Stored], Source={x:Static loc:Loc.Instance}}" />
+            </StackPanel>
+          </Grid>
+          <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+            <TextBlock Style="{StaticResource Text.Muted}" VerticalAlignment="Center" Margin="0,0,8,0" Text="{Binding [Sql_Encrypt], Source={x:Static loc:Loc.Instance}}" />
+            <ComboBox MinWidth="140" FlowDirection="LeftToRight"
+                      ItemsSource="{Binding DataContext.EncryptModes, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                      SelectedItem="{Binding SqlEncrypt}" />
+          </StackPanel>
+          <CheckBox IsChecked="{Binding TrustServerCertificate}" Content="{Binding [Sql_TrustCert], Source={x:Static loc:Loc.Instance}}" />
+          <Border Background="{DynamicResource Brush.Banner}" CornerRadius="4" Padding="8,6"
+                  Visibility="{Binding TrustServerCertificate, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Foreground="{DynamicResource Brush.Warning}" Text="{Binding [Sql_TrustCertWarning], Source={x:Static loc:Loc.Instance}}" />
+          </Border>
+        </StackPanel>
+
+        <!-- Redis -->
+        <TextBlock Style="{StaticResource Text.Section}" Text="{Binding [Redis_Section], Source={x:Static loc:Loc.Instance}}" />
+        <CheckBox IsChecked="{Binding RedisEnabled}" Content="{Binding [Redis_Enabled], Source={x:Static loc:Loc.Instance}}" />
+        <StackPanel Visibility="{Binding RedisEnabled, Converter={StaticResource BoolToVisibility}}">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="16" />
+              <ColumnDefinition Width="120" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+              <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Redis_Host], Source={x:Static loc:Loc.Instance}}" />
+              <TextBox Style="{StaticResource TextBox.Ltr}" Text="{Binding RedisHost, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Redis_Port], Source={x:Static loc:Loc.Instance}}" />
+              <TextBox Style="{StaticResource TextBox.Ltr}" Text="{Binding RedisPort, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+          </Grid>
+          <CheckBox IsChecked="{Binding RedisHasPassword}" Content="{Binding [Redis_HasPassword], Source={x:Static loc:Loc.Instance}}" />
+          <StackPanel Visibility="{Binding RedisHasPassword, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Redis_Password], Source={x:Static loc:Loc.Instance}}" />
+            <PasswordBox PasswordChanged="OnRedisPasswordChanged" MaxWidth="360" HorizontalAlignment="Left" MinWidth="240" />
+            <TextBlock Style="{StaticResource Text.Muted}" FontSize="11"
+                       Visibility="{Binding HasStoredRedisPassword, Converter={StaticResource BoolToVisibility}}"
+                       Text="{Binding [Password_Stored], Source={x:Static loc:Loc.Instance}}" />
+          </StackPanel>
+        </StackPanel>
+
+        <CheckBox Margin="0,12,0,0" IsChecked="{Binding RememberPasswords}" Content="{Binding [Remember_Password], Source={x:Static loc:Loc.Instance}}"
+                  IsEnabled="{Binding DataContext.CanRememberPasswords, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+
+        <!-- Capability Matrix -->
+        <DockPanel Margin="0,16,0,6" LastChildFill="False">
+          <TextBlock DockPanel.Dock="Left" Style="{StaticResource Text.Section}" Margin="0" Text="{Binding [Matrix_Title], Source={x:Static loc:Loc.Instance}}" />
+          <TextBlock DockPanel.Dock="Left" Margin="12,0" VerticalAlignment="Center" Style="{StaticResource Text.Muted}" Text="{Binding ProbedAt}" />
+        </DockPanel>
+        <ItemsControl ItemsSource="{Binding Banners}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border Background="{DynamicResource Brush.Banner}" CornerRadius="4" Padding="8,6" Margin="0,0,0,6">
+                <TextBlock Text="{Binding}" />
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <DataGrid ItemsSource="{Binding Capabilities}" MinHeight="120" MaxHeight="520">
+          <DataGrid.RowStyle>
+            <Style TargetType="DataGridRow">
+              <Setter Property="ToolTip" Value="{Binding Enables}" />
+            </Style>
+          </DataGrid.RowStyle>
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="2*" Binding="{Binding Title}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Matrix_Capability]}" />
+            <DataGridTemplateColumn Width="150" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Matrix_State]}">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding State}" FontWeight="SemiBold" Margin="4,0">
+                    <TextBlock.Style>
+                      <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                        <Setter Property="Foreground" Value="{DynamicResource Brush.Critical}" />
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding StateKind}" Value="{x:Static caps:CapabilityState.Available}">
+                            <Setter Property="Foreground" Value="{DynamicResource Brush.Ok}" />
+                          </DataTrigger>
+                          <DataTrigger Binding="{Binding StateKind}" Value="{x:Static caps:CapabilityState.NotApplicable}">
+                            <Setter Property="Foreground" Value="{DynamicResource Brush.Info}" />
+                          </DataTrigger>
+                          <DataTrigger Binding="{Binding StateKind}" Value="{x:Static caps:CapabilityState.NotImplemented}">
+                            <Setter Property="Foreground" Value="{DynamicResource Brush.Info}" />
+                          </DataTrigger>
+                          <DataTrigger Binding="{Binding StateKind}" Value="{x:Static caps:CapabilityState.NotConfigured}">
+                            <Setter Property="Foreground" Value="{DynamicResource Brush.Warning}" />
+                          </DataTrigger>
+                          <DataTrigger Binding="{Binding StateKind}" Value="{x:Static caps:CapabilityState.NeedsElevation}">
+                            <Setter Property="Foreground" Value="{DynamicResource Brush.Warning}" />
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </TextBlock.Style>
+                  </TextBlock>
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTextColumn Width="2*" Binding="{Binding Detail}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Matrix_Detail]}" />
+            <DataGridTemplateColumn Width="3*" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Matrix_Remediation]}">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate><TextBlock Text="{Binding Remediation}" TextWrapping="Wrap" Margin="4,2" /></DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+          </DataGrid.Columns>
+        </DataGrid>
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="260" />
+      <ColumnDefinition Width="16" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <!-- Sites -->
+    <DockPanel Grid.Column="0">
+      <TextBlock DockPanel.Dock="Top" Style="{StaticResource Text.Title}" Text="{Binding [Sites_Title], Source={x:Static loc:Loc.Instance}}" />
+      <Button DockPanel.Dock="Top" Margin="0,0,0,8" HorizontalAlignment="Stretch" Command="{Binding NewSiteCommand}" Content="{Binding [Sites_New], Source={x:Static loc:Loc.Instance}}" />
+      <ListBox ItemsSource="{Binding Sites}" SelectedItem="{Binding SelectedSite}" DisplayMemberPath="Name"
+               Background="{DynamicResource Brush.Surface}" BorderBrush="{DynamicResource Brush.Border}" Foreground="{DynamicResource Brush.Text}" />
+    </DockPanel>
+
+    <!-- Selected site -->
+    <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" Visibility="{Binding HasSelectedSite, Converter={StaticResource BoolToVisibility}}">
+      <StackPanel DataContext="{Binding SelectedSite}">
+        <Border Style="{StaticResource Card}">
+          <StackPanel>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <StackPanel Grid.Column="0">
+                <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sites_Name], Source={x:Static loc:Loc.Instance}}" />
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+              </StackPanel>
+              <StackPanel Grid.Column="2">
+                <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sites_Notes], Source={x:Static loc:Loc.Instance}}" />
+                <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" />
+              </StackPanel>
+            </Grid>
+            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+              <Button Style="{StaticResource Button.Primary}" Command="{Binding DataContext.SaveSiteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                      Content="{Binding [Sites_Save], Source={x:Static loc:Loc.Instance}}" />
+              <Button Command="{Binding DataContext.DeleteSiteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                      Content="{Binding [Sites_Delete], Source={x:Static loc:Loc.Instance}}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource Card}">
+          <StackPanel>
+            <DockPanel LastChildFill="False">
+              <TextBlock DockPanel.Dock="Left" Style="{StaticResource Text.Section}" Margin="0,0,0,8" Text="{Binding [Nodes_Title], Source={x:Static loc:Loc.Instance}}" />
+            </DockPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+              <ComboBox MinWidth="240" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}" DisplayMemberPath="Name" Margin="0,0,8,0" />
+              <Button Command="{Binding DataContext.AddNodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                      Content="{Binding [Node_Add], Source={x:Static loc:Loc.Instance}}" />
+              <Button Command="{Binding DataContext.RemoveNodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                      Content="{Binding [Node_Remove], Source={x:Static loc:Loc.Instance}}" />
+              <Button Style="{StaticResource Button.Primary}" Command="{Binding DataContext.TestConnectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                      Content="{Binding [Test_Connection], Source={x:Static loc:Loc.Instance}}" />
+            </StackPanel>
+            <ContentControl Content="{Binding SelectedNode}" />
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

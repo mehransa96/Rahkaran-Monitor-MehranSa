@@ -1,0 +1,10 @@
+<UserControl x:Class="RSM.App.Views.PlaceholderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <StackPanel>
+    <TextBlock Style="{StaticResource Text.Title}" Text="{Binding Title}" />
+    <Border Style="{StaticResource Card}" HorizontalAlignment="Left">
+      <TextBlock Style="{StaticResource Text.Muted}" Text="{Binding PhaseText}" />
+    </Border>
+  </StackPanel>
+</UserControl>

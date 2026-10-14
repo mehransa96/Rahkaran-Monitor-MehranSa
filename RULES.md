@@ -1,6 +1,6 @@
 # RULES — initial health-check rules
 
-Status: **draft for approval**. Each row becomes one JSON file in `rules/` (format in `ARCHITECTURE.md`
+Status: **approved** (rules ship as JSON from Phase 1; P0 delivers the rules engine). Each row becomes one JSON file in `rules/` (format in `ARCHITECTURE.md`
 §9) with fa/en title, explanation and text-only recommendation, the evidence fact keys, and a fixture test.
 Thresholds are parameters in the JSON so the team can tune them without a rebuild.
 
@@ -8,7 +8,7 @@ Thresholds are parameters in the JSON so the team can tune them without a rebuil
 
 | Code | Source | UI label |
 |---|---|---|
-| **TV3** | ستاد فنی — "SQL Server Tuning V.3" (section names per spec §3; exact section numbers to be filled in — Q5) | "ستاد فنی baseline" |
+| **TV3** | ستاد فنی — "SQL Server Tuning V.3" (section names per spec §3; exact section numbers to be filled in — decision Q5) | "ستاد فنی baseline" |
 | **KB-LOG** | Systemgroup KB — transaction-log growth (`log_reuse_wait_desc`, CDC capture job stopped/deleted) — "Log growth KB 1403/12/28" | "Systemgroup KB" |
 | **KB-BKP** | Systemgroup KB — slow backups over network shares; maintenance plan + «ابزار پایگاه داده» conflicts / broken chain | "Systemgroup KB" |
 | **KB-GC** | Systemgroup KB — high RAM / GC wait / StackOverflow in Rahkaran process (ProcDump guidance) | "Systemgroup KB" |
@@ -72,7 +72,7 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 | SQL-MEM-001 | `max server memory` left at default (2147483647) | C | TV3 (Instance) |
 | SQL-MEM-002 | Shared-box: `max server memory` outside 65 % ± 5 % of RAM | W | TV3 (Instance) |
 | SQL-MEM-003 | Shared-box: `min server memory` outside 15 % ± 5 % of RAM | I | TV3 (Instance) |
-| SQL-MEM-004 | Dedicated DB server: `max server memory` leaves < max(4 GB, 10 % RAM) to the OS (Q4) | W | GEN |
+| SQL-MEM-004 | Dedicated DB server: `max server memory` leaves < max(4 GB, 10 % RAM) to the OS (decision Q4) | W | GEN |
 | SQL-CFG-001 | `priority boost` = 1 | W | TV3 |
 | SQL-CFG-002 | `max worker threads` ≠ 0 | W | TV3 |
 | SQL-CFG-003 | `lightweight pooling` = 1 | W | TV3 |
@@ -179,7 +179,7 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 | DB-LOG-001 | `log_reuse_wait_desc` ∉ {NOTHING, CHECKPOINT} and log used > 50 % — reason-specific fa/en text (LOG_BACKUP, ACTIVE_TRANSACTION, ACTIVE_BACKUP_OR_RESTORE, DATABASE_MIRRORING, AVAILABILITY_REPLICA, OLDEST_PAGE, XTP_CHECKPOINT) | W | KB-LOG |
 | DB-LOG-002 | `log_reuse_wait_desc` = REPLICATION on a CDC-enabled DB → "CDC capture job stopped/deleted" | C | KB-LOG |
 | DB-LOG-003 | VLF count > 1000 | W | GEN |
-| DB-LOG-004 | Log file initial size < 1024 MB (or < 10240 MB when DB is "large" — Q4) | I | TV3 (Database) |
+| DB-LOG-004 | Log file initial size < 1024 MB (or < 10240 MB when DB is "large" — decision Q4) | I | TV3 (Database) |
 | DB-FILE-001 | Any file with percent autogrowth | W | TV3 (Database) |
 | DB-FILE-002 | Data-file growth not a multiple of 1024 MB | I | TV3 (Database) |
 | DB-FILE-003 | Data/log file max size restricted | W | TV3 (Database: unrestricted) |

@@ -1,0 +1,11 @@
+{
+  "id": "TEST-DB-RM-001",
+  "layer": "Database",
+  "forEach": "db",
+  "when": "db.is_rahkaran && db.recovery_model == 'SIMPLE'",
+  "severity": "Critical",
+  "title": { "fa": "پایگاه داده {instance} در مدل SIMPLE است", "en": "Database {instance} uses SIMPLE recovery" },
+  "explanation": { "fa": "پایگاه اصلی راهکاران باید FULL باشد.", "en": "The main Rahkaran database must use FULL recovery." },
+  "recommendation": { "fa": "تغییر مدل بازیابی بدون ستاد فنی ممنوع است.", "en": "Changing the recovery model requires ستاد فنی." },
+  "source": { "kind": "StadFanni", "citation": "SQL Server Tuning V.3 — Database" }
+}

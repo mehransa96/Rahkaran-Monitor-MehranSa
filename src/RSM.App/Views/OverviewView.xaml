@@ -1,0 +1,14 @@
+<UserControl x:Class="RSM.App.Views.OverviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization">
+  <StackPanel MaxWidth="900" HorizontalAlignment="Left">
+    <TextBlock Style="{StaticResource Text.Title}" Text="{Binding [Overview_Title], Source={x:Static loc:Loc.Instance}}" />
+    <Border Style="{StaticResource Card}">
+      <StackPanel>
+        <TextBlock Text="{Binding [Overview_Intro], Source={x:Static loc:Loc.Instance}}" />
+        <TextBlock Margin="0,12,0,0" Style="{StaticResource Text.Muted}" Text="{Binding [ReadOnly_Statement], Source={x:Static loc:Loc.Instance}}" />
+      </StackPanel>
+    </Border>
+  </StackPanel>
+</UserControl>

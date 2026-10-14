@@ -56,10 +56,11 @@ explicit spec change to `docs/SPEC.md` §2, can alter them.
 - Internet access, telemetry, auto-update.
 
 ### Always
-- `BannedSymbols.txt` + `Microsoft.CodeAnalysis.BannedApiAnalyzers` in every project;
+- `Microsoft.CodeAnalysis.BannedApiAnalyzers` in every `src/` project with `BannedSymbols.txt` (all projects)
+  and `BannedSymbols.NonSafety.txt` (all except `RSM.Safety`, the single safety boundary);
   `TreatWarningsAsErrors=true`. Never add `#pragma warning disable RS0030`, `[SuppressMessage]` for
-  RS0030, or `NoWarn` for it. The only exceptions live in `src/RSM.Safety/Audited/` and are listed in
-  `ARCHITECTURE.md` §6.4 with an arch test pinning them.
+  RS0030, or `NoWarn` for it — except inside files in `src/RSM.Safety/Audited/`, which are listed in
+  `ARCHITECTURE.md` §6.4 and pinned by `RSM.ArchTests`. Never set `RsmSafetyBoundary` on another project.
 - Connections: `Application Name=RSM-ReadOnlyMonitor`, `ApplicationIntent=ReadOnly`, per-command timeout
   (default 10 s), hardening prefix on every batch, global concurrency cap (default 2 per server), and the
   tool's own sessions excluded (`program_name <> 'RSM-ReadOnlyMonitor'`) from every session/request view.
@@ -74,13 +75,18 @@ explicit spec change to `docs/SPEC.md` §2, can alter them.
 
 - Solution: `RSM.sln`. Target `net8.0-windows` for WPF/Windows-API projects, `net8.0` for pure libraries
   (`RSM.Core`, `RSM.Safety`, parsers) so their tests also run on Linux CI.
-- `dotnet build -c Release -warnaserror` · `dotnet test` · integration tests need `RSM_IT_SQL` env var.
+- `dotnet build RSM.sln -c Release` · `dotnet test RSM.sln -c Release` · `./build/analyzer-canary.sh`.
+- Integration tests run only with `RSM_IT_SQL` (least-privilege `rsm_monitor` connection string) and/or
+  `RSM_IT_REDIS` (`host:port`, optional `RSM_IT_REDIS_PASSWORD`); CI provides both.
+- WPF needs the **Microsoft-built** .NET SDK (it contains `Microsoft.NET.Sdk.WindowsDesktop`); distro
+  source-built SDKs (e.g. Ubuntu's `dotnet-sdk-8.0`) cannot compile `RSM.App`.
 - Publish: `dotnet publish src/RSM.App -c Release -r win-x64 -p:PublishSingleFile=true --self-contained`.
 - On non-Windows hosts set `-p:EnableWindowsTargeting=true` to compile WPF projects.
 
 ## Conventions
 
 - C# 12, nullable enabled, file-scoped namespaces, async all the way with `CancellationToken`.
-- UI strings only via `Strings.resx` (`Strings.fa.resx`, `Strings.en.resx`); no literals in XAML.
+- UI strings only via `src/RSM.App/Resources/Strings.resx` (English, neutral) and `Strings.fa.resx`; no literals
+  in XAML (checked by `RSM.Tests`). Domain texts (capabilities, rules, KB) are fa/en `LocalizedText` in code/JSON.
 - Timestamps stored UTC; displayed in local time as Jalali + Gregorian.
 - Commit messages: imperative, prefixed with phase, e.g. `P0: add SqlGuard AST walker`.

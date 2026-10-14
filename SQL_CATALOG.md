@@ -1,6 +1,6 @@
 # SQL_CATALOG — every T-SQL statement RSM plans to run
 
-Status: **draft for approval**. Each row becomes one embedded `.sql` file under
+Status: **approved**; §0 implemented in P0. Each row becomes one embedded `.sql` file under
 `src/RSM.Collectors.*/Queries/` whose header repeats key, purpose, min version, permission, cost, timeout
 and database (see `ARCHITECTURE.md` §6.3). The `SqlCatalogIsReadOnly` test parses every file with
 SqlGuard; this document is cross-checked against the embedded files by a test (no undocumented query can
@@ -36,11 +36,12 @@ and every session/request view filters `s.program_name <> N'RSM-ReadOnlyMonitor'
 
 | Key | Purpose | Objects | Ver | Perm | Cost | DB | Ph |
 |---|---|---|---|---|---|---|---|
-| `cap.version` | Version/edition/level for gating | `SERVERPROPERTY(ProductVersion, ProductMajorVersion, ProductLevel, ProductUpdateLevel, Edition, EngineEdition)`, `@@VERSION` | 13 | public | C | master | 0 |
-| `cap.server_perms` | Effective server permissions | `fn_my_permissions(NULL,'SERVER')`, `HAS_PERMS_BY_NAME` for VSS/VAD/CONNECT ANY DATABASE | 13 | public | C | master | 0 |
-| `cap.role_membership` | sysadmin / securityadmin flags (banner) | `IS_SRVROLEMEMBER` | 13 | public | C | master | 0 |
+| `cap.version` | Version/edition/level for gating, server name, clustering/HADR flags | `SERVERPROPERTY(ProductVersion, ProductLevel, ProductUpdateLevel, Edition, EngineEdition, ServerName, IsClustered, IsHadrEnabled)`, `@@VERSION` | 13 | public | C | master | 0 |
+| `cap.server_perms` | Effective server permissions + sysadmin / securityadmin flags (banner) | `HAS_PERMS_BY_NAME(NULL,NULL,…)` for VSS / VAD / CONNECT ANY DATABASE / CONTROL SERVER, `IS_SRVROLEMEMBER`, `SUSER_SNAME()`; **v16 variant** adds VIEW SERVER PERFORMANCE / SECURITY STATE | 13 / 16 | public | C | master | 0 |
 | `cap.db_access` | Which DBs are reachable | `sys.databases`, `HAS_DBACCESS(name)` | 13 | public | C | master | 0 |
-| `cap.object_perms` | msdb / ReportServer / xp_readerrorlog access | `HAS_PERMS_BY_NAME(@obj,'OBJECT',@perm)` (parameterized object list) | 13 | public | C | master | 0 |
+| `cap.object_perms` | SELECT on msdb history tables, EXECUTE on xp_readerrorlog, ERRORLOG path (fixed object list) | `HAS_PERMS_BY_NAME(N'msdb.dbo.…','OBJECT','SELECT')`, `SERVERPROPERTY('ErrorLogFileName')` | 13 | public | C | master | 0 |
+| `cap.agent_role` | SQLAgentReaderRole membership, job-table access | `IS_ROLEMEMBER(N'SQLAgentReaderRole')`, `HAS_PERMS_BY_NAME(N'dbo.sysjobs',…)` | 13 | user in msdb | C | msdb | 0 |
+| `cap.ssrs_access` | ReportServer DB exposes `ExecutionLog3` and the login can read it | `OBJECT_ID(N'dbo.ExecutionLog3')`, `HAS_PERMS_BY_NAME` | 13 | user in ReportServer | C | rs | 0 |
 | `cap.self_overhead` | RSM's own CPU/reads on the server | `sys.dm_exec_sessions` **where** `program_name = N'RSM-ReadOnlyMonitor'` | 13 | VSS | C | master | 2 |
 | `cap.rtt` | Round-trip latency probe | `SELECT 1` | 13 | public | C | master | 2 |
 

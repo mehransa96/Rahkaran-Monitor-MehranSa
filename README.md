@@ -6,7 +6,7 @@ SQL Server, databases, Windows, IIS/ARR, Redis, SSRS, services and event logs, w
 
 ابزاری **فقط‌خواندنی** برای پایش و عیب‌یابی سرورهای راهکاران؛ هیچ تغییری روی سرور ایجاد نمی‌کند.
 
-**Status: planning (Phase 0 not started).**
+**Status: Phase 0 (foundation & safety) delivered.** → [`README.en.md`](README.en.md) · [`README.fa.md`](README.fa.md)
 
 | Document | Content |
 |---|---|
@@ -15,4 +15,6 @@ SQL Server, databases, Windows, IIS/ARR, Redis, SSRS, services and event logs, w
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Solution layout, data flow, collectors, safety layer |
 | [`SQL_CATALOG.md`](SQL_CATALOG.md) | Every T-SQL query with DMV, min version, permission, cost |
 | [`RULES.md`](RULES.md) | Initial health-check rules with source references |
-| [`PLAN.md`](PLAN.md) | Phases, acceptance criteria, open questions |
+| [`PLAN.md`](PLAN.md) | Phases, acceptance criteria, decisions |
+| [`PERMISSIONS.md`](PERMISSIONS.md) | Least-privilege SQL/Windows accounts (run by the DBA) |
+| [`docs/phase-notes/`](docs/phase-notes/) | Demo notes per phase |

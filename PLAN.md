@@ -1,6 +1,6 @@
 # PLAN — phased delivery
 
-Status: **draft for approval**. Spec: `docs/SPEC.md` §18. Each phase ends with: green build
+Status: **approved** (all open questions answered with the recommendations, see *Decisions*). Phase 0 delivered — see `docs/phase-notes/P0.md`. Spec: `docs/SPEC.md` §18. Each phase ends with: green build
 (`-warnaserror`), all tests green, demo notes in `docs/phase-notes/P<n>.md`, one commit/PR. **The next phase
 starts only after explicit approval.**
 
@@ -34,22 +34,23 @@ starts only after explicit approval.**
    `NotImplemented` reasons.
 7. WPF shell: nav, language switch (fa/en, RTL/LTR, Vazirmatn), theme switch, site editor, *Test
    connection* → Capability Matrix page. **RTL spike** for WPF-UI controls (decision recorded).
-8. Spike: Microsoft.Web.Administration on .NET 8 with read-only `ServerManager` (decision recorded).
+8. Spike: Microsoft.Web.Administration on .NET 8 with read-only `ServerManager` — **moved to P3** (needs Windows + IIS).
 9. Tests: `RSM.Safety.Tests` (malicious corpus ≥ 60 cases, catalog read-only, RESP whitelist, redaction),
    `RSM.ArchTests` (rules in `ARCHITECTURE.md` §6.6), analyzer canary.
 10. `PERMISSIONS.md` (DBA script + Windows groups), `README.en.md`, `README.fa.md` (short).
-11. CI workflow (Linux fast job + Windows full job) — pending Q9.
+11. CI workflow (Linux job, SQL Server/Redis integration job, Windows build + publish job).
 
-**Acceptance**
-- [ ] Every malicious corpus sample rejected with the expected rule id; every catalog file accepted.
-- [ ] **Analyzer canary**: a test project / CI step that adds `Process.Start("cmd")` to a collector fails
-      the build with RS0030 (verified in CI, file not committed to `src/`).
-- [ ] Arch tests green; audited-exception list matches `ARCHITECTURE.md` §6.4.
-- [ ] Redis client refuses `SET`, `FLUSHALL`, `CONFIG SET`, `EVAL`, pipelined injection (`\r\n` in args).
-- [ ] Logging a connection string with a password never puts the password in the log file.
-- [ ] *Test connection* against a SQL Server with the `rsm_monitor` login shows a correct Capability
-      Matrix (and a sysadmin banner when using sysadmin).
-- [ ] App starts in fa (RTL) and en (LTR) and switches at runtime.
+**Acceptance** (status after P0 — evidence in `docs/phase-notes/P0.md`)
+- [x] Every malicious corpus sample (90 cases) rejected with the expected rule id; every catalog file accepted.
+- [x] **Analyzer canary**: `build/analyzer-canary.sh` adds `Process.Start` to a collector and the build fails with RS0030;
+      `RSM.ArchTests.AnalyzerCanaryTests` runs the real analyzer in-process on 21 banned snippets.
+- [x] Arch tests green; audited-exception list matches `ARCHITECTURE.md` §6.4 (empty in P0).
+- [x] Redis client refuses `SET`, `FLUSHALL`, `CONFIG SET`, `EVAL`, CRLF injection … (28 cases) — and a live Redis
+      confirmed via `INFO commandstats` that the probe sent only whitelisted commands.
+- [x] Logging a connection string / password / AUTH never puts the secret in the log file.
+- [ ] *Test connection* against SQL Server with the `rsm_monitor` login → runs in the CI `integration` job
+      (SQL Server could not be installed in the build sandbox).
+- [ ] App starts in fa (RTL) / en (LTR) and switches at runtime → compiles and publishes here; **needs a run on Windows**.
 
 ## Phase 1 — SQL & DB health + report v1
 
@@ -128,63 +129,21 @@ with screenshots); single-file publish.
 
 ---
 
-## Defaults I will use unless you say otherwise
+## Decisions (approved)
 
-| Topic | Default |
-|---|---|
-| Snapshot compression | Brotli (BCL) instead of zstd — no native dependency in the single-file exe |
-| Rules expression language | small in-house evaluator (no scripting engines that can run code) |
-| Extra projects | `RSM.Parsers` (Linux-testable) and `RSM.Hosting` (shared DI for App + CLI) |
-| Working hours (2 h log-backup check) | Sat–Wed 08:00–17:00, Thu 08:00–13:00 local time (setting) |
-| "Large" DB (log 10 GB guideline, diff + weekly full allowed) | ≥ 200 GB data (setting) |
-| Rahkaran DB detection | largest online user DB with the most user sessions; user can override |
-| Persian digits | off by default; Jalali + Gregorian dates both shown |
+| # | Topic | Decision |
+|---|---|---|
+| Q1 | PDF engine | **WebView2 `PrintToPdf`** of the same HTML report (P5); where the WebView2 Runtime is missing (often Server 2016/2019) RSM offers "open HTML and print". No QuestPDF (licence). |
+| Q2 | `Process.Start` | **Zero call sites.** No "relaunch elevated" and no "open report" shell call; the UI tells the user to start RSM with *Run as administrator* and shows a copyable report path. |
+| Q3 | Remote registry | **One audited class** `RemoteRegistryReader` (P2) using WMI `StdRegProv` *Get\*/Enum\** read methods only, with a hard-coded key whitelist. Local reads use `RegistryKey.OpenSubKey(name)` (read-only). |
+| Q4 | Thresholds not in the docs | Dedicated DB server: leave max(4 GB, 10 % RAM) to the OS (GEN). "Large" DB ≥ 200 GB data. Working hours Sat–Wed 08:00–17:00, Thu 08:00–13:00. All are site settings. |
+| Q5 | Citations | Cite by document name + section title until the documents/section numbers are provided. |
+| Q6 | Product-specific names | Empty, *unverified* settings; dependent rules (⚠U) don't fire until filled. |
+| Q7 | msdb permissions | `SQLAgentReaderRole` + `GRANT SELECT` on the listed msdb tables only — **no** `db_datareader` (see `PERMISSIONS.md`). |
+| Q8 | EventPipe on w3wp | Kept for v1: off by default, local only, explicit warning before attaching (P4). |
+| Q9 | CI | GitHub Actions: Linux (build + all tests + analyzer canary), SQL Server 2022 + Redis integration (read-only proof with the least-privilege login), Windows (build, test, single-file publish artifact). |
+| Q10 | Doc language | Planning docs in English; `README.fa.md`, UI and reports bilingual. |
 
-## Open questions (need your decision)
-
-**Q1 — PDF engine.** QuestPDF's free Community license applies only to organisations under USD 1M annual
-revenue; a company of Systemgroup's/your employer's size likely needs a paid license. Options:
-(a) QuestPDF with a license you confirm; (b) WebView2 `PrintToPdf` of the same HTML (identical look, but
-the WebView2 Runtime is often missing on Server 2016/2019 → fallback to "open HTML and print");
-(c) HTML only in v1. *My recommendation: (b) with fallback.*
-
-**Q2 — `Process.Start` exceptions.** The spec bans `Process.Start` but also asks for "relaunch RSM
-elevated" (needs `Process.Start(self, runas)`) and an "open exported report" button implies a shell open.
-Allow two tiny audited classes (`SelfElevation`, `ShellOpen`, restricted to RSM's own exe and files in its
-data folder), or keep **zero** `Process.Start` and just show "right-click → Run as administrator" + a
-copyable report path? *My recommendation: zero — simplest proof story.*
-
-**Q3 — Remote registry reads.** Some checks (power-plan fallback, pending reboot, processor scheduling,
-Defender exclusions) read the registry. Remotely that needs either WMI `StdRegProv.GetStringValue/…`
-(technically a WMI **method call**, which §2.1 bans) or the Remote Registry service (`OpenRemoteBaseKey`,
-often disabled). Options: (a) allow only `StdRegProv` *Get/Enum* methods in one audited class with a
-hard-coded key whitelist; (b) Remote Registry service only; (c) registry checks local-only, remote shows
-"run RSM locally for this check". *My recommendation: (a), or (c) if you want the ban absolute.*
-
-**Q4 — Thresholds not covered by the docs.** (i) Max server memory on a **dedicated** DB server (TV3 gives
-65 % only for shared App+SQL boxes) — use GEN "leave max(4 GB, 10 %) to OS"? (ii) What size makes a
-customer "large" (log 10 240 MB, daily diff + weekly full)? (iii) Working days/hours for the 2-hour
-log-backup check. Defaults are in the table above.
-
-**Q5 — Citations.** Can you share the ستاد فنی documents (SQL Server Tuning V.3, log-growth KB, ARR KB,
-GC/StackOverflow KB, backup KBs, HPE prep) or at least their section numbers/IDs? Without them I cite by
-document name + section title only.
-
-**Q6 — Product-specific names.** Job-name patterns of the «ابزار پایگاه داده» (ستاد فنی DB tool), the
-attendance service name, SGProactiveMonitor, and where the Rahkaran build/version can be read. Until you
-confirm, these stay as empty, *unverified* settings and the dependent rules (marked ⚠U) don't fire.
-
-**Q7 — Narrower msdb permissions.** `db_datareader` on msdb (spec §2.4) also exposes everything in msdb
-(e.g. job-step commands that may contain credentials, SSIS packages, mail profiles). I propose
-`GRANT SELECT` on the specific msdb tables listed in `SQL_CATALOG.md` instead, keeping
-`SQLAgentReaderRole`. OK?
-
-**Q8 — EventPipe on the Rahkaran process.** Attaching a diagnostics session to a production `w3wp`
-enables event providers inside that process (small overhead, no state change, but it is an action on the
-process). Keep it in v1 (off by default, local only, explicit warning) or postpone?
-
-**Q9 — CI.** OK to add GitHub Actions workflows (Linux fast tests + `windows-latest` build/test/publish,
-optional SQL Server container for integration tests)?
-
-**Q10 — Repository language for docs.** Planning docs are in English with Persian terms; `README.fa.md`
-and all UI/report texts will be Persian + English. Fine?
+Other defaults: Brotli (BCL) instead of zstd; in-house rule expression language; extra projects `RSM.Parsers` (P1) and
+`RSM.Hosting`; plain styled WPF instead of WPF-UI until its RTL rendering is verified on Windows; FluentAssertions pinned to
+6.12 (v7+ is commercial).

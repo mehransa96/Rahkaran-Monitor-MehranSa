@@ -1,0 +1,130 @@
+// RSM banned APIs — applies to EVERY production project (src/**), including RSM.Safety.
+// Format: DocumentationCommentId;message. RS0030 is an error (TreatWarningsAsErrors + WarningsAsErrors).
+// Entries for assemblies a project does not reference are ignored by the analyzer, so the list is complete
+// up-front even for packages that arrive in later phases (IIS, CIM, ServiceController, EventPipe).
+// NEVER suppress RS0030 outside src/RSM.Safety/Audited/ (enforced by RSM.ArchTests).
+
+// ---- Processes: RSM never starts, kills or re-prioritises a process ----
+M:System.Diagnostics.Process.Start;RSM is read-only: starting processes is forbidden
+M:System.Diagnostics.Process.Start(System.String);RSM is read-only: starting processes is forbidden
+M:System.Diagnostics.Process.Start(System.String,System.String);RSM is read-only: starting processes is forbidden
+M:System.Diagnostics.Process.Start(System.String,System.Collections.Generic.IEnumerable{System.String});RSM is read-only: starting processes is forbidden
+M:System.Diagnostics.Process.Start(System.Diagnostics.ProcessStartInfo);RSM is read-only: starting processes is forbidden
+M:System.Diagnostics.Process.Start(System.String,System.String,System.Security.SecureString,System.String);RSM is read-only: starting processes is forbidden
+M:System.Diagnostics.Process.Start(System.String,System.String,System.String,System.Security.SecureString,System.String);RSM is read-only: starting processes is forbidden
+M:System.Diagnostics.Process.Kill;RSM is read-only: killing processes is forbidden
+M:System.Diagnostics.Process.Kill(System.Boolean);RSM is read-only: killing processes is forbidden
+M:System.Diagnostics.Process.CloseMainWindow;RSM is read-only
+M:System.Diagnostics.Process.set_PriorityClass(System.Diagnostics.ProcessPriorityClass);RSM is read-only
+M:System.Diagnostics.Process.set_ProcessorAffinity(System.IntPtr);RSM is read-only
+M:System.Diagnostics.Process.set_PriorityBoostEnabled(System.Boolean);RSM is read-only
+M:System.Diagnostics.Process.set_MaxWorkingSet(System.IntPtr);RSM is read-only
+M:System.Diagnostics.Process.set_MinWorkingSet(System.IntPtr);RSM is read-only
+T:System.Diagnostics.ProcessStartInfo;RSM is read-only: starting processes is forbidden
+T:System.Management.Automation.PowerShell;RSM is read-only: PowerShell is forbidden
+T:System.Management.Automation.Runspaces.RunspaceFactory;RSM is read-only: PowerShell runspaces are forbidden
+T:System.Management.Automation.Runspaces.Runspace;RSM is read-only: PowerShell runspaces are forbidden
+
+// ---- Windows services: read members only ----
+M:System.ServiceProcess.ServiceController.Start;RSM is read-only: service control is forbidden
+M:System.ServiceProcess.ServiceController.Start(System.String[]);RSM is read-only: service control is forbidden
+M:System.ServiceProcess.ServiceController.Stop;RSM is read-only: service control is forbidden
+M:System.ServiceProcess.ServiceController.Stop(System.Boolean);RSM is read-only: service control is forbidden
+M:System.ServiceProcess.ServiceController.Pause;RSM is read-only: service control is forbidden
+M:System.ServiceProcess.ServiceController.Continue;RSM is read-only: service control is forbidden
+M:System.ServiceProcess.ServiceController.ExecuteCommand(System.Int32);RSM is read-only: service control is forbidden
+T:System.ServiceProcess.ServiceInstaller;RSM is read-only
+T:System.Configuration.Install.ManagedInstallerClass;RSM is read-only
+
+// ---- IIS (Microsoft.Web.Administration): configuration is opened read-only and never committed ----
+M:Microsoft.Web.Administration.ServerManager.#ctor;open ServerManager read-only: new ServerManager(true, applicationHostConfigPath)
+M:Microsoft.Web.Administration.ServerManager.CommitChanges;RSM is read-only: IIS configuration must never be committed
+M:Microsoft.Web.Administration.ApplicationPool.Start;RSM is read-only: app pool control is forbidden
+M:Microsoft.Web.Administration.ApplicationPool.Stop;RSM is read-only: app pool control is forbidden
+M:Microsoft.Web.Administration.ApplicationPool.Recycle;RSM is read-only: app pool control is forbidden
+M:Microsoft.Web.Administration.Site.Start;RSM is read-only: site control is forbidden
+M:Microsoft.Web.Administration.Site.Stop;RSM is read-only: site control is forbidden
+M:Microsoft.Web.Administration.ConfigurationMethodInstance.Execute;RSM is read-only: IIS runtime methods are forbidden
+M:Microsoft.Web.Administration.ConfigurationElement.SetAttributeValue(System.String,System.Object);RSM is read-only
+M:Microsoft.Web.Administration.ConfigurationElement.Delete;RSM is read-only
+M:Microsoft.Web.Administration.ConfigurationAttribute.Delete;RSM is read-only
+M:Microsoft.Web.Administration.ConfigurationAttribute.set_Value(System.Object);RSM is read-only
+
+// ---- WMI / CIM: queries only, never methods or instance changes ----
+M:Microsoft.Management.Infrastructure.CimSession.InvokeMethod(Microsoft.Management.Infrastructure.CimInstance,System.String,Microsoft.Management.Infrastructure.CimMethodParametersCollection);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.InvokeMethod(System.String,Microsoft.Management.Infrastructure.CimInstance,System.String,Microsoft.Management.Infrastructure.CimMethodParametersCollection);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.InvokeMethod(System.String,Microsoft.Management.Infrastructure.CimInstance,System.String,Microsoft.Management.Infrastructure.CimMethodParametersCollection,Microsoft.Management.Infrastructure.Options.CimOperationOptions);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.InvokeMethod(System.String,System.String,System.String,Microsoft.Management.Infrastructure.CimMethodParametersCollection);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.InvokeMethod(System.String,System.String,System.String,Microsoft.Management.Infrastructure.CimMethodParametersCollection,Microsoft.Management.Infrastructure.Options.CimOperationOptions);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.InvokeMethodAsync(System.String,Microsoft.Management.Infrastructure.CimInstance,System.String,Microsoft.Management.Infrastructure.CimMethodParametersCollection);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.InvokeMethodAsync(System.String,Microsoft.Management.Infrastructure.CimInstance,System.String,Microsoft.Management.Infrastructure.CimMethodParametersCollection,Microsoft.Management.Infrastructure.Options.CimOperationOptions);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.InvokeMethodAsync(System.String,System.String,System.String,Microsoft.Management.Infrastructure.CimMethodParametersCollection);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.InvokeMethodAsync(System.String,System.String,System.String,Microsoft.Management.Infrastructure.CimMethodParametersCollection,Microsoft.Management.Infrastructure.Options.CimOperationOptions);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.CreateInstance(System.String,Microsoft.Management.Infrastructure.CimInstance);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.CreateInstance(System.String,Microsoft.Management.Infrastructure.CimInstance,Microsoft.Management.Infrastructure.Options.CimOperationOptions);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.CreateInstanceAsync(System.String,Microsoft.Management.Infrastructure.CimInstance);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.CreateInstanceAsync(System.String,Microsoft.Management.Infrastructure.CimInstance,Microsoft.Management.Infrastructure.Options.CimOperationOptions);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.ModifyInstance(Microsoft.Management.Infrastructure.CimInstance);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.ModifyInstance(System.String,Microsoft.Management.Infrastructure.CimInstance);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.ModifyInstance(System.String,Microsoft.Management.Infrastructure.CimInstance,Microsoft.Management.Infrastructure.Options.CimOperationOptions);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.ModifyInstanceAsync(Microsoft.Management.Infrastructure.CimInstance);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.ModifyInstanceAsync(System.String,Microsoft.Management.Infrastructure.CimInstance);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.ModifyInstanceAsync(System.String,Microsoft.Management.Infrastructure.CimInstance,Microsoft.Management.Infrastructure.Options.CimOperationOptions);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.DeleteInstance(Microsoft.Management.Infrastructure.CimInstance);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.DeleteInstance(System.String,Microsoft.Management.Infrastructure.CimInstance);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.DeleteInstance(System.String,Microsoft.Management.Infrastructure.CimInstance,Microsoft.Management.Infrastructure.Options.CimOperationOptions);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.DeleteInstanceAsync(Microsoft.Management.Infrastructure.CimInstance);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.DeleteInstanceAsync(System.String,Microsoft.Management.Infrastructure.CimInstance);CIM is queries only
+M:Microsoft.Management.Infrastructure.CimSession.DeleteInstanceAsync(System.String,Microsoft.Management.Infrastructure.CimInstance,Microsoft.Management.Infrastructure.Options.CimOperationOptions);CIM is queries only
+T:Microsoft.Management.Infrastructure.CimMethodParametersCollection;CIM is queries only: method parameters are never built
+T:System.Management.ManagementObject;use Microsoft.Management.Infrastructure (queries only)
+T:System.Management.ManagementClass;use Microsoft.Management.Infrastructure (queries only)
+T:System.Management.ManagementBaseObject;use Microsoft.Management.Infrastructure (queries only)
+T:System.Management.ManagementObjectSearcher;use Microsoft.Management.Infrastructure (queries only)
+
+// ---- Registry: read-only keys only ----
+M:Microsoft.Win32.Registry.SetValue(System.String,System.String,System.Object);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.Registry.SetValue(System.String,System.String,System.Object,Microsoft.Win32.RegistryValueKind);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.SetValue(System.String,System.Object);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.SetValue(System.String,System.Object,Microsoft.Win32.RegistryValueKind);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.DeleteValue(System.String);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.DeleteValue(System.String,System.Boolean);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.CreateSubKey(System.String);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.CreateSubKey(System.String,System.Boolean);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.CreateSubKey(System.String,System.Boolean,Microsoft.Win32.RegistryOptions);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.CreateSubKey(System.String,Microsoft.Win32.RegistryKeyPermissionCheck);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.CreateSubKey(System.String,Microsoft.Win32.RegistryKeyPermissionCheck,Microsoft.Win32.RegistryOptions);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.CreateSubKey(System.String,Microsoft.Win32.RegistryKeyPermissionCheck,System.Security.AccessControl.RegistrySecurity);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.CreateSubKey(System.String,Microsoft.Win32.RegistryKeyPermissionCheck,Microsoft.Win32.RegistryOptions,System.Security.AccessControl.RegistrySecurity);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.DeleteSubKey(System.String);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.DeleteSubKey(System.String,System.Boolean);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.DeleteSubKeyTree(System.String);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.DeleteSubKeyTree(System.String,System.Boolean);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.SetAccessControl(System.Security.AccessControl.RegistrySecurity);RSM is read-only: registry writes are forbidden
+M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,System.Boolean);use OpenSubKey(name): keys must be opened read-only
+M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,Microsoft.Win32.RegistryKeyPermissionCheck);use OpenSubKey(name): keys must be opened read-only
+M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,Microsoft.Win32.RegistryKeyPermissionCheck,System.Security.AccessControl.RegistryRights);use OpenSubKey(name): keys must be opened read-only
+M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,System.Security.AccessControl.RegistryRights);use OpenSubKey(name): keys must be opened read-only
+
+// ---- Event logs: read through System.Diagnostics.Eventing.Reader only ----
+T:System.Diagnostics.EventLog;use System.Diagnostics.Eventing.Reader.EventLogReader (the classic EventLog type can create sources and write entries)
+M:System.Diagnostics.Eventing.Reader.EventLogSession.ClearLog(System.String);RSM is read-only: clearing logs is forbidden
+M:System.Diagnostics.Eventing.Reader.EventLogSession.ClearLog(System.String,System.String);RSM is read-only: clearing logs is forbidden
+M:System.Diagnostics.Eventing.Reader.EventLogSession.ExportLog(System.String,System.Diagnostics.Eventing.Reader.PathType,System.String,System.String);RSM is read-only: exporting writes files on the server
+M:System.Diagnostics.Eventing.Reader.EventLogSession.ExportLog(System.String,System.Diagnostics.Eventing.Reader.PathType,System.String,System.String,System.Boolean);RSM is read-only: exporting writes files on the server
+M:System.Diagnostics.Eventing.Reader.EventLogSession.ExportLogAndMessages(System.String,System.Diagnostics.Eventing.Reader.PathType,System.String,System.String);RSM is read-only: exporting writes files on the server
+M:System.Diagnostics.Eventing.Reader.EventLogSession.ExportLogAndMessages(System.String,System.Diagnostics.Eventing.Reader.PathType,System.String,System.String,System.Boolean,System.Globalization.CultureInfo);RSM is read-only: exporting writes files on the server
+M:System.Diagnostics.Eventing.Reader.EventLogConfiguration.SaveChanges;RSM is read-only: log configuration must not change
+
+// ---- Legacy SQL client (only Microsoft.Data.SqlClient through SafeSqlExecutor) ----
+T:System.Data.SqlClient.SqlConnection;use RSM.Safety.Sql.SafeSqlExecutor
+T:System.Data.SqlClient.SqlCommand;use RSM.Safety.Sql.SafeSqlExecutor
+T:System.Data.Odbc.OdbcConnection;use RSM.Safety.Sql.SafeSqlExecutor
+T:System.Data.OleDb.OleDbConnection;use RSM.Safety.Sql.SafeSqlExecutor
+
+// ---- Web / internet ----
+T:System.Net.WebClient;forbidden: no internet access; RabbitMQ goes through RSM.Safety.Http.RabbitGetClient
+T:System.Net.WebRequest;forbidden: no internet access
+T:System.Net.HttpWebRequest;forbidden: no internet access
+T:System.Net.FtpWebRequest;forbidden: no internet access
+T:System.Net.Mail.SmtpClient;forbidden: no outbound mail / telemetry

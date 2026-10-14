@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- English (neutral culture). Generated from one table in the repo history; keep keys identical in both files (checked by RSM.Tests). -->
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="App_Title" xml:space="preserve"><value>Rahkaran Server Monitor</value></data>
+  <data name="ReadOnly_Badge" xml:space="preserve"><value>Read-only</value></data>
+  <data name="ReadOnly_Statement" xml:space="preserve"><value>RSM only reads. It cannot change, restart or execute anything on any server.</value></data>
+  <data name="Nav_Overview" xml:space="preserve"><value>Overview</value></data>
+  <data name="Nav_Sql" xml:space="preserve"><value>SQL Server</value></data>
+  <data name="Nav_Databases" xml:space="preserve"><value>Databases</value></data>
+  <data name="Nav_Queries" xml:space="preserve"><value>Queries &amp; Blocking</value></data>
+  <data name="Nav_Windows" xml:space="preserve"><value>Windows (CPU/RAM/Disk/Network)</value></data>
+  <data name="Nav_Iis" xml:space="preserve"><value>IIS &amp; Web Server</value></data>
+  <data name="Nav_Arr" xml:space="preserve"><value>ARR</value></data>
+  <data name="Nav_Redis" xml:space="preserve"><value>Redis</value></data>
+  <data name="Nav_Ssrs" xml:space="preserve"><value>SSRS</value></data>
+  <data name="Nav_Services" xml:space="preserve"><value>Services</value></data>
+  <data name="Nav_Events" xml:space="preserve"><value>Events &amp; Errors</value></data>
+  <data name="Nav_Slowness" xml:space="preserve"><value>Slowness Investigation</value></data>
+  <data name="Nav_Reports" xml:space="preserve"><value>Reports</value></data>
+  <data name="Nav_History" xml:space="preserve"><value>History &amp; Baseline</value></data>
+  <data name="Nav_Sites" xml:space="preserve"><value>Sites &amp; Connections</value></data>
+  <data name="Nav_Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Placeholder_Phase" xml:space="preserve"><value>This section arrives in phase {0}.</value></data>
+  <data name="Overview_Title" xml:space="preserve"><value>Overview</value></data>
+  <data name="Overview_Intro" xml:space="preserve"><value>Phase 0: define a site and its servers under "Sites &amp; Connections", then use "Test connection" to see the Capability Matrix — what RSM can read with the current credentials and why something is unavailable.</value></data>
+  <data name="Sites_Title" xml:space="preserve"><value>Sites &amp; Connections</value></data>
+  <data name="Sites_List" xml:space="preserve"><value>Sites</value></data>
+  <data name="Sites_New" xml:space="preserve"><value>New site</value></data>
+  <data name="Sites_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Sites_Delete" xml:space="preserve"><value>Delete site</value></data>
+  <data name="Sites_Name" xml:space="preserve"><value>Site name</value></data>
+  <data name="Sites_Notes" xml:space="preserve"><value>Notes</value></data>
+  <data name="Sites_DefaultName" xml:space="preserve"><value>New site</value></data>
+  <data name="Nodes_Title" xml:space="preserve"><value>Servers</value></data>
+  <data name="Node_Add" xml:space="preserve"><value>Add server</value></data>
+  <data name="Node_Remove" xml:space="preserve"><value>Remove server</value></data>
+  <data name="Node_Name" xml:space="preserve"><value>Display name</value></data>
+  <data name="Node_Host" xml:space="preserve"><value>Host name / IP</value></data>
+  <data name="Node_Roles" xml:space="preserve"><value>Roles</value></data>
+  <data name="Node_DefaultName" xml:space="preserve"><value>Server</value></data>
+  <data name="Role_Data" xml:space="preserve"><value>Data</value></data>
+  <data name="Role_Report" xml:space="preserve"><value>Report</value></data>
+  <data name="Role_App" xml:space="preserve"><value>App</value></data>
+  <data name="Role_Arr" xml:space="preserve"><value>ARR</value></data>
+  <data name="Role_Redis" xml:space="preserve"><value>Redis</value></data>
+  <data name="Role_Lock" xml:space="preserve"><value>Lock (CodeMeter)</value></data>
+  <data name="Role_Workflow" xml:space="preserve"><value>Workflow (RabbitMQ)</value></data>
+  <data name="Sql_Section" xml:space="preserve"><value>SQL Server</value></data>
+  <data name="Sql_Enabled" xml:space="preserve"><value>This server has a SQL Server instance to monitor</value></data>
+  <data name="Sql_Server" xml:space="preserve"><value>Server[\instance][,port]</value></data>
+  <data name="Sql_Auth" xml:space="preserve"><value>Authentication</value></data>
+  <data name="Sql_AuthSql" xml:space="preserve"><value>SQL login</value></data>
+  <data name="Sql_AuthWindows" xml:space="preserve"><value>Windows (current user)</value></data>
+  <data name="Sql_User" xml:space="preserve"><value>Login</value></data>
+  <data name="Sql_Password" xml:space="preserve"><value>Password</value></data>
+  <data name="Sql_Encrypt" xml:space="preserve"><value>Encryption</value></data>
+  <data name="Sql_TrustCert" xml:space="preserve"><value>Trust server certificate</value></data>
+  <data name="Sql_TrustCertWarning" xml:space="preserve"><value>Accepting any certificate allows man-in-the-middle attacks. Use only for servers with self-signed certificates on a trusted network.</value></data>
+  <data name="Remember_Password" xml:space="preserve"><value>Remember password (encrypted with Windows DPAPI for this user)</value></data>
+  <data name="Remember_NotAvailable" xml:space="preserve"><value>Passwords can only be remembered on Windows; this session keeps them in memory.</value></data>
+  <data name="Password_Stored" xml:space="preserve"><value>(stored — leave empty to keep)</value></data>
+  <data name="Redis_Section" xml:space="preserve"><value>Redis</value></data>
+  <data name="Redis_Enabled" xml:space="preserve"><value>This server runs Redis</value></data>
+  <data name="Redis_Host" xml:space="preserve"><value>Redis host</value></data>
+  <data name="Redis_Port" xml:space="preserve"><value>Port</value></data>
+  <data name="Redis_HasPassword" xml:space="preserve"><value>Redis requires a password</value></data>
+  <data name="Redis_Password" xml:space="preserve"><value>Redis password</value></data>
+  <data name="Test_Connection" xml:space="preserve"><value>Test connection</value></data>
+  <data name="Testing" xml:space="preserve"><value>Testing…</value></data>
+  <data name="Matrix_Title" xml:space="preserve"><value>Capability Matrix</value></data>
+  <data name="Matrix_Capability" xml:space="preserve"><value>Capability</value></data>
+  <data name="Matrix_Layer" xml:space="preserve"><value>Layer</value></data>
+  <data name="Matrix_State" xml:space="preserve"><value>State</value></data>
+  <data name="Matrix_Detail" xml:space="preserve"><value>Detail</value></data>
+  <data name="Matrix_Enables" xml:space="preserve"><value>Enables</value></data>
+  <data name="Matrix_Remediation" xml:space="preserve"><value>How to enable</value></data>
+  <data name="Matrix_Empty" xml:space="preserve"><value>Select a server and press "Test connection".</value></data>
+  <data name="Matrix_ProbedAt" xml:space="preserve"><value>Probed at {0}</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>Settings</value></data>
+  <data name="Settings_Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Settings_Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>Light</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Dark</value></data>
+  <data name="Settings_DataFolder" xml:space="preserve"><value>Data folder</value></data>
+  <data name="Settings_Portable" xml:space="preserve"><value>Portable mode (data folder next to the exe)</value></data>
+  <data name="Settings_PersianDigits" xml:space="preserve"><value>Show Persian digits</value></data>
+  <data name="About_Title" xml:space="preserve"><value>About RSM</value></data>
+  <data name="About_Text" xml:space="preserve"><value>Version {0}. Offline tool: no internet access, no telemetry, no auto-update.</value></data>
+  <data name="Language_Fa" xml:space="preserve"><value>فارسی</value></data>
+  <data name="Language_En" xml:space="preserve"><value>English</value></data>
+  <data name="Status_Ready" xml:space="preserve"><value>Ready</value></data>
+  <data name="Status_Saved" xml:space="preserve"><value>Saved</value></data>
+  <data name="Status_TestDone" xml:space="preserve"><value>Test finished: {0} of {1} capabilities available</value></data>
+  <data name="Status_Error" xml:space="preserve"><value>Error: {0}</value></data>
+  <data name="Unverified_Label" xml:space="preserve"><value>unverified</value></data>
+  <data name="General_Guidance_Label" xml:space="preserve"><value>general guidance — confirm with ستاد فنی</value></data>
+  <data name="Confirm_DeleteSite" xml:space="preserve"><value>Delete site "{0}" and its stored passwords?</value></data>
+</root>

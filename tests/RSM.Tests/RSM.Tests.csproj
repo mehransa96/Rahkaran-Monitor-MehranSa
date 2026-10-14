@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RSM.Core\RSM.Core.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Safety\RSM.Safety.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Storage\RSM.Storage.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Hosting\RSM.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Collectors.Sql\RSM.Collectors.Sql.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Fixtures\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

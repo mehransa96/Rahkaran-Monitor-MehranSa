@@ -1,0 +1,104 @@
+using RSM.Collectors.Sql.Capabilities;
+using RSM.Core.Model;
+using RSM.Safety.Sql;
+
+namespace RSM.Safety.Tests;
+
+/// <summary>Every embedded catalog file must have a valid header and pass SqlGuard (fails the build otherwise).</summary>
+public class SqlCatalogTests
+{
+    private static readonly System.Reflection.Assembly[] CatalogAssemblies = [typeof(SqlCapabilityProbe).Assembly];
+
+    public static TheoryData<string> CatalogResources()
+    {
+        var data = new TheoryData<string>();
+        foreach (var assembly in CatalogAssemblies)
+        {
+            foreach (var resource in QueryCatalog.EmbeddedQueryResources(assembly))
+            {
+                data.Add(resource);
+            }
+        }
+
+        return data;
+    }
+
+    [Theory]
+    [MemberData(nameof(CatalogResources))]
+    public void SqlCatalogIsReadOnly(string resource)
+    {
+        var assembly = CatalogAssemblies.Single(a => a.GetManifestResourceNames().Contains(resource));
+        var text = QueryCatalog.ReadResource(assembly, resource);
+
+        var verdict = SqlGuard.Check(HardenedBatch.Prefix + text, SqlGuardProfile.Catalog);
+
+        verdict.IsAllowed.Should().BeTrue($"{resource}: {verdict}");
+    }
+
+    [Fact]
+    public void Whole_catalog_loads_and_keys_are_unique_per_version()
+    {
+        var catalog = QueryCatalog.Load(CatalogAssemblies);
+
+        catalog.Keys.Should().Contain(["cap.version", "cap.server_perms", "cap.db_access", "cap.object_perms", "cap.agent_role", "cap.ssrs_access"]);
+    }
+
+    [Fact]
+    public void Catalog_has_at_least_one_query() => CatalogResources().Count.Should().BeGreaterThan(0);
+
+    [Fact]
+    public void Version_variants_resolve_to_the_highest_satisfied_minimum()
+    {
+        var catalog = QueryCatalog.Load(CatalogAssemblies);
+
+        catalog.Resolve("cap.server_perms", SqlServerVersion.Sql2019)!.Header.MinVersion.Should().Be(SqlServerVersion.Sql2016);
+        catalog.Resolve("cap.server_perms", SqlServerVersion.Sql2022)!.Header.MinVersion.Should().Be(SqlServerVersion.Sql2022);
+        catalog.Resolve("cap.server_perms", new SqlServerVersion(12))!.Should().BeNull();
+    }
+
+    [Fact]
+    public void Unknown_key_is_an_error()
+    {
+        var catalog = QueryCatalog.Load(CatalogAssemblies);
+
+        var act = () => catalog.Resolve("does.not.exist", SqlServerVersion.Sql2022);
+
+        act.Should().Throw<QueryCatalogException>();
+    }
+
+    [Fact]
+    public void Header_is_parsed()
+    {
+        const string text = """
+            -- key:         test.example
+            -- purpose:     Example
+            -- min_version: 13.0.5026   -- 2016 SP2
+            -- permission:  VIEW SERVER STATE
+            -- cost:        medium
+            -- timeout_s:   30
+            -- database:    each
+            SELECT 1 AS x;
+            """;
+
+        var header = QueryCatalog.ParseHeader(text, "inline");
+
+        header.Key.Value.Should().Be("test.example");
+        header.MinVersion.Should().Be(SqlServerVersion.Sql2016Sp2);
+        header.Cost.Should().Be(CollectorCost.Medium);
+        header.TimeoutSeconds.Should().Be(30);
+        header.Database.Should().Be(QueryDatabase.Each);
+    }
+
+    [Theory]
+    [InlineData("-- key: a.b\nSELECT 1", "missing")]
+    [InlineData("-- key: a.b\n-- purpose: p\n-- min_version: x\n-- permission: p\n-- cost: cheap\n-- timeout_s: 10\n-- database: master\nSELECT 1", "min_version")]
+    [InlineData("-- key: a.b\n-- purpose: p\n-- min_version: 13\n-- permission: p\n-- cost: free\n-- timeout_s: 10\n-- database: master\nSELECT 1", "cost")]
+    [InlineData("-- key: a.b\n-- purpose: p\n-- min_version: 13\n-- permission: p\n-- cost: cheap\n-- timeout_s: 0\n-- database: master\nSELECT 1", "timeout_s")]
+    [InlineData("-- key: a.b\n-- purpose: p\n-- min_version: 13\n-- permission: p\n-- cost: cheap\n-- timeout_s: 10\n-- database: master\nDELETE FROM dbo.t", "SqlGuard")]
+    public void Invalid_files_are_refused(string text, string reason)
+    {
+        var act = () => QueryCatalog.Parse(text, "inline");
+
+        act.Should().Throw<QueryCatalogException>().WithMessage($"*{reason}*");
+    }
+}

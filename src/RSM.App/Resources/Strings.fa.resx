@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- Persian. Generated from one table in the repo history; keep keys identical in both files (checked by RSM.Tests). -->
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="App_Title" xml:space="preserve"><value>پایشگر سرور راهکاران</value></data>
+  <data name="ReadOnly_Badge" xml:space="preserve"><value>فقط‌خواندنی</value></data>
+  <data name="ReadOnly_Statement" xml:space="preserve"><value>RSM فقط می‌خواند؛ هیچ تغییری روی سرورها ایجاد نمی‌کند، چیزی را راه‌اندازی مجدد نمی‌کند و دستوری اجرا نمی‌کند.</value></data>
+  <data name="Nav_Overview" xml:space="preserve"><value>نمای کلی</value></data>
+  <data name="Nav_Sql" xml:space="preserve"><value>SQL Server</value></data>
+  <data name="Nav_Databases" xml:space="preserve"><value>دیتابیس‌ها</value></data>
+  <data name="Nav_Queries" xml:space="preserve"><value>کوئری‌ها و Blocking</value></data>
+  <data name="Nav_Windows" xml:space="preserve"><value>ویندوز (CPU/RAM/دیسک/شبکه)</value></data>
+  <data name="Nav_Iis" xml:space="preserve"><value>IIS و وب‌سرور</value></data>
+  <data name="Nav_Arr" xml:space="preserve"><value>ARR</value></data>
+  <data name="Nav_Redis" xml:space="preserve"><value>Redis</value></data>
+  <data name="Nav_Ssrs" xml:space="preserve"><value>SSRS</value></data>
+  <data name="Nav_Services" xml:space="preserve"><value>سرویس‌ها</value></data>
+  <data name="Nav_Events" xml:space="preserve"><value>رخدادها و خطاها</value></data>
+  <data name="Nav_Slowness" xml:space="preserve"><value>بررسی کندی</value></data>
+  <data name="Nav_Reports" xml:space="preserve"><value>گزارش‌ها</value></data>
+  <data name="Nav_History" xml:space="preserve"><value>تاریخچه و Baseline</value></data>
+  <data name="Nav_Sites" xml:space="preserve"><value>سایت‌ها و اتصال‌ها</value></data>
+  <data name="Nav_Settings" xml:space="preserve"><value>تنظیمات</value></data>
+  <data name="Placeholder_Phase" xml:space="preserve"><value>این بخش در فاز {0} اضافه می‌شود.</value></data>
+  <data name="Overview_Title" xml:space="preserve"><value>نمای کلی</value></data>
+  <data name="Overview_Intro" xml:space="preserve"><value>فاز ۰: در بخش «سایت‌ها و اتصال‌ها» یک سایت و سرورهای آن را تعریف کنید و با «آزمون اتصال» ماتریس قابلیت‌ها را ببینید؛ یعنی RSM با دسترسی فعلی چه چیزهایی را می‌تواند بخواند و چرا برخی موارد در دسترس نیست.</value></data>
+  <data name="Sites_Title" xml:space="preserve"><value>سایت‌ها و اتصال‌ها</value></data>
+  <data name="Sites_List" xml:space="preserve"><value>سایت‌ها</value></data>
+  <data name="Sites_New" xml:space="preserve"><value>سایت جدید</value></data>
+  <data name="Sites_Save" xml:space="preserve"><value>ذخیره</value></data>
+  <data name="Sites_Delete" xml:space="preserve"><value>حذف سایت</value></data>
+  <data name="Sites_Name" xml:space="preserve"><value>نام سایت</value></data>
+  <data name="Sites_Notes" xml:space="preserve"><value>یادداشت</value></data>
+  <data name="Sites_DefaultName" xml:space="preserve"><value>سایت جدید</value></data>
+  <data name="Nodes_Title" xml:space="preserve"><value>سرورها</value></data>
+  <data name="Node_Add" xml:space="preserve"><value>افزودن سرور</value></data>
+  <data name="Node_Remove" xml:space="preserve"><value>حذف سرور</value></data>
+  <data name="Node_Name" xml:space="preserve"><value>نام نمایشی</value></data>
+  <data name="Node_Host" xml:space="preserve"><value>نام میزبان / IP</value></data>
+  <data name="Node_Roles" xml:space="preserve"><value>نقش‌ها</value></data>
+  <data name="Node_DefaultName" xml:space="preserve"><value>سرور</value></data>
+  <data name="Role_Data" xml:space="preserve"><value>داده</value></data>
+  <data name="Role_Report" xml:space="preserve"><value>گزارش</value></data>
+  <data name="Role_App" xml:space="preserve"><value>برنامه</value></data>
+  <data name="Role_Arr" xml:space="preserve"><value>ARR</value></data>
+  <data name="Role_Redis" xml:space="preserve"><value>Redis</value></data>
+  <data name="Role_Lock" xml:space="preserve"><value>قفل (CodeMeter)</value></data>
+  <data name="Role_Workflow" xml:space="preserve"><value>گردش کار (RabbitMQ)</value></data>
+  <data name="Sql_Section" xml:space="preserve"><value>SQL Server</value></data>
+  <data name="Sql_Enabled" xml:space="preserve"><value>این سرور یک SQL Server برای پایش دارد</value></data>
+  <data name="Sql_Server" xml:space="preserve"><value>سرور[\instance][,port]</value></data>
+  <data name="Sql_Auth" xml:space="preserve"><value>احراز هویت</value></data>
+  <data name="Sql_AuthSql" xml:space="preserve"><value>Login اس‌کیو‌ال</value></data>
+  <data name="Sql_AuthWindows" xml:space="preserve"><value>ویندوز (کاربر فعلی)</value></data>
+  <data name="Sql_User" xml:space="preserve"><value>نام کاربری</value></data>
+  <data name="Sql_Password" xml:space="preserve"><value>رمز عبور</value></data>
+  <data name="Sql_Encrypt" xml:space="preserve"><value>رمزنگاری</value></data>
+  <data name="Sql_TrustCert" xml:space="preserve"><value>اعتماد به گواهی سرور</value></data>
+  <data name="Sql_TrustCertWarning" xml:space="preserve"><value>پذیرش هر گواهی امکان حمله مرد میانی را فراهم می‌کند؛ فقط برای سرورهای دارای گواهی خودامضا در شبکه مطمئن استفاده کنید.</value></data>
+  <data name="Remember_Password" xml:space="preserve"><value>به خاطر سپردن رمز (رمزنگاری‌شده با DPAPI ویندوز برای همین کاربر)</value></data>
+  <data name="Remember_NotAvailable" xml:space="preserve"><value>به خاطر سپردن رمز فقط در ویندوز ممکن است؛ در این اجرا رمز فقط در حافظه نگه داشته می‌شود.</value></data>
+  <data name="Password_Stored" xml:space="preserve"><value>(ذخیره شده — برای حفظ، خالی بگذارید)</value></data>
+  <data name="Redis_Section" xml:space="preserve"><value>Redis</value></data>
+  <data name="Redis_Enabled" xml:space="preserve"><value>این سرور Redis دارد</value></data>
+  <data name="Redis_Host" xml:space="preserve"><value>میزبان Redis</value></data>
+  <data name="Redis_Port" xml:space="preserve"><value>پورت</value></data>
+  <data name="Redis_HasPassword" xml:space="preserve"><value>Redis رمز عبور دارد</value></data>
+  <data name="Redis_Password" xml:space="preserve"><value>رمز Redis</value></data>
+  <data name="Test_Connection" xml:space="preserve"><value>آزمون اتصال</value></data>
+  <data name="Testing" xml:space="preserve"><value>در حال آزمون…</value></data>
+  <data name="Matrix_Title" xml:space="preserve"><value>ماتریس قابلیت‌ها</value></data>
+  <data name="Matrix_Capability" xml:space="preserve"><value>قابلیت</value></data>
+  <data name="Matrix_Layer" xml:space="preserve"><value>لایه</value></data>
+  <data name="Matrix_State" xml:space="preserve"><value>وضعیت</value></data>
+  <data name="Matrix_Detail" xml:space="preserve"><value>جزئیات</value></data>
+  <data name="Matrix_Enables" xml:space="preserve"><value>امکان‌پذیر می‌کند</value></data>
+  <data name="Matrix_Remediation" xml:space="preserve"><value>نحوه فعال‌سازی</value></data>
+  <data name="Matrix_Empty" xml:space="preserve"><value>یک سرور را انتخاب و «آزمون اتصال» را بزنید.</value></data>
+  <data name="Matrix_ProbedAt" xml:space="preserve"><value>زمان آزمون: {0}</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>تنظیمات</value></data>
+  <data name="Settings_Language" xml:space="preserve"><value>زبان</value></data>
+  <data name="Settings_Theme" xml:space="preserve"><value>پوسته</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>روشن</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>تیره</value></data>
+  <data name="Settings_DataFolder" xml:space="preserve"><value>پوشه داده</value></data>
+  <data name="Settings_Portable" xml:space="preserve"><value>حالت قابل‌حمل (پوشه داده کنار فایل اجرایی)</value></data>
+  <data name="Settings_PersianDigits" xml:space="preserve"><value>نمایش ارقام فارسی</value></data>
+  <data name="About_Title" xml:space="preserve"><value>درباره RSM</value></data>
+  <data name="About_Text" xml:space="preserve"><value>نسخه {0}. ابزار آفلاین: بدون دسترسی به اینترنت، بدون ارسال داده و بدون به‌روزرسانی خودکار.</value></data>
+  <data name="Language_Fa" xml:space="preserve"><value>فارسی</value></data>
+  <data name="Language_En" xml:space="preserve"><value>English</value></data>
+  <data name="Status_Ready" xml:space="preserve"><value>آماده</value></data>
+  <data name="Status_Saved" xml:space="preserve"><value>ذخیره شد</value></data>
+  <data name="Status_TestDone" xml:space="preserve"><value>آزمون پایان یافت: {0} از {1} قابلیت در دسترس است</value></data>
+  <data name="Status_Error" xml:space="preserve"><value>خطا: {0}</value></data>
+  <data name="Unverified_Label" xml:space="preserve"><value>تأییدنشده</value></data>
+  <data name="General_Guidance_Label" xml:space="preserve"><value>توصیه عمومی — با ستاد فنی هماهنگ شود</value></data>
+  <data name="Confirm_DeleteSite" xml:space="preserve"><value>سایت «{0}» و رمزهای ذخیره‌شده آن حذف شود؟</value></data>
+</root>

@@ -1,0 +1,12 @@
+<Project>
+  <!--
+    Banned-symbol files (evaluated after each project's own properties):
+      BannedSymbols.txt           -> every production project, including RSM.Safety
+      BannedSymbols.NonSafety.txt -> every project EXCEPT the safety boundary (RSM.Safety), which is the only
+                                     assembly allowed to own sockets, HTTP, SqlCommand and data-folder file writes.
+  -->
+  <ItemGroup>
+    <AdditionalFiles Include="$(RepoRoot)BannedSymbols.txt" />
+    <AdditionalFiles Include="$(RepoRoot)BannedSymbols.NonSafety.txt" Condition="'$(RsmSafetyBoundary)' != 'true'" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+{
+  // Test fixture modelled on RULES.md SQL-CFG-005 (real rules ship in P1).
+  "id": "TEST-SQL-CFG-005",
+  "layer": "Sql",
+  "appliesTo": ["Data", "Report"],
+  "when": "sql.config.maxdop != params.expected",
+  "severity": "Warning",
+  "escalate": [ { "when": "sql.config.maxdop == 0 && sql.cpu.logical > 8", "severity": "Critical" } ],
+  "title": { "fa": "MAXDOP برابر {sql.config.maxdop} است", "en": "MAXDOP is {sql.config.maxdop}" },
+  "explanation": { "fa": "مقدار مورد انتظار {params.expected} است.", "en": "Expected value is {params.expected}." },
+  "recommendation": { "fa": "با ستاد فنی هماهنگ کنید.", "en": "Coordinate with ستاد فنی." },
+  "evidence": ["sql.config.maxdop", "sql.cpu.logical"],
+  "source": { "kind": "StadFanni", "citation": "SQL Server Tuning V.3 — Instance settings" },
+  "verified": true,
+  "confidence": 0.9,
+  "params": { "expected": 4 }
+}

@@ -1,0 +1,51 @@
+<Window x:Class="RSM.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:RSM.App.Localization"
+        xmlns:vm="clr-namespace:RSM.App.ViewModels"
+        xmlns:views="clr-namespace:RSM.App.Views"
+        Title="{Binding [App_Title], Source={x:Static loc:Loc.Instance}}"
+        FlowDirection="{Binding FlowDirection, Source={x:Static loc:Loc.Instance}}"
+        FontFamily="{StaticResource Font.Ui}" FontSize="13"
+        Background="{DynamicResource Brush.Window}"
+        Width="1280" Height="820" MinWidth="960" MinHeight="600"
+        WindowStartupLocation="CenterScreen">
+  <Window.Resources>
+    <DataTemplate DataType="{x:Type vm:OverviewViewModel}"><views:OverviewView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:PlaceholderViewModel}"><views:PlaceholderView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:SitesViewModel}"><views:SitesView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><views:SettingsView /></DataTemplate>
+  </Window.Resources>
+  <DockPanel>
+    <!-- Status bar -->
+    <Border DockPanel.Dock="Bottom" Background="{DynamicResource Brush.SurfaceAlt}" BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,1,0,0" Padding="12,4">
+      <DockPanel>
+        <Border DockPanel.Dock="Right" Background="{DynamicResource Brush.Ok}" CornerRadius="3" Padding="8,1">
+          <TextBlock Foreground="White" FontWeight="SemiBold" Text="{Binding [ReadOnly_Badge], Source={x:Static loc:Loc.Instance}}" />
+        </Border>
+        <TextBlock Text="{Binding Status.Message}" Style="{StaticResource Text.Muted}" />
+      </DockPanel>
+    </Border>
+
+    <!-- Navigation -->
+    <Border DockPanel.Dock="Left" Width="250" Background="{DynamicResource Brush.Nav}">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="16,18,16,14">
+          <TextBlock Text="RSM" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource Brush.NavText}" />
+          <TextBlock Text="{Binding [App_Title], Source={x:Static loc:Loc.Instance}}" Foreground="{DynamicResource Brush.NavText}" Opacity="0.8" />
+        </StackPanel>
+        <TextBlock DockPanel.Dock="Bottom" Margin="16,8,16,14" FontSize="11" Opacity="0.75"
+                   Foreground="{DynamicResource Brush.NavText}" Text="{Binding [ReadOnly_Statement], Source={x:Static loc:Loc.Instance}}" />
+        <ListBox ItemsSource="{Binding NavItems}" SelectedItem="{Binding SelectedNav}" Background="Transparent" BorderThickness="0"
+                 ItemContainerStyle="{StaticResource Nav.Item}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+          <ListBox.ItemTemplate>
+            <DataTemplate><TextBlock Text="{Binding Title}" Foreground="{DynamicResource Brush.NavText}" /></DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </Border>
+
+    <!-- Page -->
+    <ContentControl Content="{Binding SelectedNav.Page}" Margin="20" />
+  </DockPanel>
+</Window>
