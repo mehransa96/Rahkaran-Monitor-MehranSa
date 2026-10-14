@@ -123,6 +123,7 @@ public sealed class SafeSqlExecutor(QueryCatalog catalog)
                 $"requires {Catalog.MinimumVersion(key).ProductName} or later");
         }
 
+        var targetDatabase = ResolveDatabase(query.Header, database);
         var batch = query.BatchText;
         if (!_guardCache.GetOrAdd(batch, static text => SqlGuard.Check(text, SqlGuardProfile.Catalog).IsAllowed))
         {
@@ -133,7 +134,7 @@ public sealed class SafeSqlExecutor(QueryCatalog catalog)
         await session.Gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            await using var connection = new SqlConnection(session.BuildConnectionString(database));
+            await using var connection = new SqlConnection(session.BuildConnectionString(targetDatabase));
             await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
             var command = new CommandDefinition(batch, parameters, commandTimeout: query.Header.TimeoutSeconds,
                 commandType: CommandType.Text, cancellationToken: cancellationToken);
@@ -152,6 +153,35 @@ public sealed class SafeSqlExecutor(QueryCatalog catalog)
         {
             session.Gate.Release();
         }
+    }
+
+    /// <summary>
+    /// The header's <c>database</c> decides where a query runs. Fixed databases (master/msdb/tempdb) ignore nothing:
+    /// passing a different database is a programming error. Per-database queries (each/rk/rs) require one.
+    /// </summary>
+    internal static string ResolveDatabase(QueryHeader header, string? requested)
+    {
+        var fixedDatabase = header.Database switch
+        {
+            QueryDatabase.Master => "master",
+            QueryDatabase.Msdb => "msdb",
+            QueryDatabase.Tempdb => "tempdb",
+            _ => null,
+        };
+
+        if (fixedDatabase is not null)
+        {
+            if (requested is not null && !string.Equals(requested, fixedDatabase, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException($"Query '{header.Key}' runs in {fixedDatabase}, not in '{requested}'.", nameof(requested));
+            }
+
+            return fixedDatabase;
+        }
+
+        return string.IsNullOrWhiteSpace(requested)
+            ? throw new ArgumentException($"Query '{header.Key}' runs per database ({header.Database}); a database name is required.", nameof(requested))
+            : requested;
     }
 
     /// <summary>Maps SQL Server error numbers to outcomes that degrade gracefully (Capability Matrix).</summary>

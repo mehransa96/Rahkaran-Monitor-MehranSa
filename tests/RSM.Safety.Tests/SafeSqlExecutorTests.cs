@@ -54,6 +54,27 @@ public class SafeSqlExecutorTests
         cs.InitialCatalog.Should().Be("master");
     }
 
+    private static QueryHeader Header(QueryDatabase db) =>
+        new(new QueryKey("t.k"), "p", SqlServerVersion.Sql2016, "public", RSM.Core.Model.CollectorCost.Cheap, 10, db);
+
+    [Theory]
+    [InlineData(QueryDatabase.Master, null, "master")]
+    [InlineData(QueryDatabase.Msdb, null, "msdb")]
+    [InlineData(QueryDatabase.Msdb, "MSDB", "msdb")]
+    [InlineData(QueryDatabase.Tempdb, null, "tempdb")]
+    [InlineData(QueryDatabase.Each, "Rahkaran", "Rahkaran")]
+    [InlineData(QueryDatabase.ReportServer, "ReportServer$SQL2022", "ReportServer$SQL2022")]
+    public void Header_database_decides_where_a_query_runs(QueryDatabase db, string? requested, string expected) =>
+        SafeSqlExecutor.ResolveDatabase(Header(db), requested).Should().Be(expected);
+
+    [Theory]
+    [InlineData(QueryDatabase.Msdb, "master")]
+    [InlineData(QueryDatabase.Master, "Rahkaran")]
+    [InlineData(QueryDatabase.Each, null)]
+    [InlineData(QueryDatabase.Rahkaran, " ")]
+    public void Wrong_or_missing_database_is_a_programming_error(QueryDatabase db, string? requested) =>
+        FluentActions.Invoking(() => SafeSqlExecutor.ResolveDatabase(Header(db), requested)).Should().Throw<ArgumentException>();
+
     [Theory]
     [InlineData("16.0.4135.4", 16, 0, 4135)]
     [InlineData("13.0.5026", 13, 0, 5026)]
