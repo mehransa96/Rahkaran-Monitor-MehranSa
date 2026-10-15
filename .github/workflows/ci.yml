@@ -84,7 +84,11 @@ jobs:
           $exe = Get-Item publish/RSM.exe
           if ($exe.Length -lt 50MB) { throw "RSM.exe unexpectedly small: $($exe.Length)" }
           Write-Host "RSM.exe $([math]::Round($exe.Length / 1MB)) MB"
+      # Convenience download only: publish + smoke test above are the real check. The account's artifact storage
+      # quota can be exhausted by earlier 150 MB uploads, which must not turn the build red.
       - uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: RSM-win-x64
           path: publish/
+          retention-days: 3
