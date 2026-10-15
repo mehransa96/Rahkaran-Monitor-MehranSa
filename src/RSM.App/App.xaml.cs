@@ -41,6 +41,7 @@ public partial class App : Application
             services.AddSingleton<StatusBarViewModel>();
             services.AddSingleton<SitesViewModel>();
             services.AddSingleton<SettingsViewModel>();
+            services.AddSingleton<DiagnosisViewModel>();
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<MainWindow>();
         });

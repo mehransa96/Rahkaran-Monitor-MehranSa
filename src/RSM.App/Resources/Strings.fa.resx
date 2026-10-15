@@ -99,4 +99,61 @@
   <data name="Unverified_Label" xml:space="preserve"><value>تأییدنشده</value></data>
   <data name="General_Guidance_Label" xml:space="preserve"><value>توصیه عمومی — با ستاد فنی هماهنگ شود</value></data>
   <data name="Confirm_DeleteSite" xml:space="preserve"><value>سایت «{0}» و رمزهای ذخیره‌شده آن حذف شود؟</value></data>
+  <data name="Sites_RahkaranDbs" xml:space="preserve"><value>پایگاه‌های داده راهکاران</value></data>
+  <data name="Sites_RahkaranDbsHint" xml:space="preserve"><value>با ویرگول جدا کنید. خالی = RSM پرکارترین پایگاه کاربر را انتخاب می‌کند (در گزارش «auto»).</value></data>
+  <data name="Sites_JobPatterns" xml:space="preserve"><value>الگوی نام Jobهای ابزار ستاد فنی (تأییدنشده)</value></data>
+  <data name="Sites_JobPatternsHint" xml:space="preserve"><value>هر خط یک عبارت باقاعده. نام‌های خاص محصول در RSM ثبت نشده‌اند؛ نام Jobها را از ستاد فنی بپرسید.</value></data>
+  <data name="Diag_Title" xml:space="preserve"><value>عیب‌یابی کامل</value></data>
+  <data name="Diag_Explain" xml:space="preserve"><value>از همهٔ سرورهای سایت با پرس‌وجوهای فقط‌خواندنی یک تصویر وضعیت می‌گیرد، قواعد سلامت را ارزیابی می‌کند و نتیجه را در پوشهٔ داده نگه می‌دارد. هیچ چیزی روی سرورها تغییر نمی‌کند.</value></data>
+  <data name="Diag_Site" xml:space="preserve"><value>سایت</value></data>
+  <data name="Diag_Heavy" xml:space="preserve"><value>شامل بررسی‌های سنگین (Fragmentation ایندکس)</value></data>
+  <data name="Diag_HeavyWarning" xml:space="preserve"><value>بررسی‌های سنگین صفحات ایندکس پایگاه راهکاران را (حالت LIMITED) پیمایش می‌کنند و در پایگاه‌های بزرگ چند دقیقه طول می‌کشند — ترجیحاً خارج از ساعت کاری.</value></data>
+  <data name="Diag_Diagnose" xml:space="preserve"><value>عیب‌یابی</value></data>
+  <data name="Diag_Cancel" xml:space="preserve"><value>انصراف</value></data>
+  <data name="Diag_Progress" xml:space="preserve"><value>در حال جمع‌آوری: {0}</value></data>
+  <data name="Diag_Cancelled" xml:space="preserve"><value>عیب‌یابی لغو شد.</value></data>
+  <data name="Diag_NoSite" xml:space="preserve"><value>ابتدا یک سایت بسازید و ذخیره کنید (سایت‌ها و اتصال‌ها).</value></data>
+  <data name="Diag_NoSnapshot" xml:space="preserve"><value>هنوز عیب‌یابی انجام نشده است.</value></data>
+  <data name="Diag_Summary" xml:space="preserve"><value>عیب‌یابی {0}: {1} بحرانی، {2} هشدار، {3} اطلاع، {4} قاعدهٔ نامعلوم (دادهٔ ناموجود).</value></data>
+  <data name="Diag_Export" xml:space="preserve"><value>گزارش</value></data>
+  <data name="Diag_ReportFa" xml:space="preserve"><value>گزارش فارسی</value></data>
+  <data name="Diag_ReportEn" xml:space="preserve"><value>گزارش انگلیسی</value></data>
+  <data name="Diag_Mask" xml:space="preserve"><value>پوشاندن نام‌ها و نشانی‌ها (برای ارسال)</value></data>
+  <data name="Diag_ExportHtml" xml:space="preserve"><value>ذخیرهٔ گزارش HTML</value></data>
+  <data name="Diag_ExportBundle" xml:space="preserve"><value>ذخیرهٔ بستهٔ JSON</value></data>
+  <data name="Diag_ExportPath" xml:space="preserve"><value>فایل ذخیره‌شده (مسیر را برای باز کردن یا ارسال کپی کنید)</value></data>
+  <data name="Diag_Exported" xml:space="preserve"><value>ذخیره شد: {0}</value></data>
+  <data name="Finding_Severity" xml:space="preserve"><value>شدت</value></data>
+  <data name="Finding_Rule" xml:space="preserve"><value>قاعده</value></data>
+  <data name="Finding_Node" xml:space="preserve"><value>سرور</value></data>
+  <data name="Finding_Instance" xml:space="preserve"><value>پایگاه داده / مورد</value></data>
+  <data name="Finding_Title" xml:space="preserve"><value>یافته</value></data>
+  <data name="Finding_Source" xml:space="preserve"><value>منبع</value></data>
+  <data name="Finding_Guidance" xml:space="preserve"><value>یادداشت</value></data>
+  <data name="Severity_Ok" xml:space="preserve"><value>سالم</value></data>
+  <data name="Severity_Info" xml:space="preserve"><value>اطلاع</value></data>
+  <data name="Severity_Warning" xml:space="preserve"><value>هشدار</value></data>
+  <data name="Severity_Critical" xml:space="preserve"><value>بحرانی</value></data>
+  <data name="Layer_NoSnapshot" xml:space="preserve"><value>برای پر شدن این صفحه، در صفحهٔ گزارش‌ها «عیب‌یابی» را بزنید.</value></data>
+  <data name="Layer_FromSnapshot" xml:space="preserve"><value>از عیب‌یابی {0}. برای دیدن توصیه، نشانگر را روی یافته نگه دارید.</value></data>
+  <data name="Fact_Name" xml:space="preserve"><value>مورد</value></data>
+  <data name="Fact_Value" xml:space="preserve"><value>مقدار</value></data>
+  <data name="Fact_Version" xml:space="preserve"><value>محصول</value></data>
+  <data name="Fact_Build" xml:space="preserve"><value>نسخه</value></data>
+  <data name="Fact_Edition" xml:space="preserve"><value>ویرایش</value></data>
+  <data name="Fact_LatestCu" xml:space="preserve"><value>آخرین CU شناخته‌شده</value></data>
+  <data name="Fact_SupportDays" xml:space="preserve"><value>پایان پشتیبانی (روز)</value></data>
+  <data name="Fact_Cpus" xml:space="preserve"><value>هستهٔ منطقی</value></data>
+  <data name="Fact_MemoryMb" xml:space="preserve"><value>حافظهٔ فیزیکی (MB)</value></data>
+  <data name="Fact_MaxMemoryMb" xml:space="preserve"><value>max server memory (MB)</value></data>
+  <data name="Fact_Maxdop" xml:space="preserve"><value>MAXDOP</value></data>
+  <data name="Fact_CostThreshold" xml:space="preserve"><value>cost threshold for parallelism</value></data>
+  <data name="Fact_TempdbFiles" xml:space="preserve"><value>فایل‌های داده TempDB</value></data>
+  <data name="Fact_Agent" xml:space="preserve"><value>SQL Agent</value></data>
+  <data name="Fact_RahkaranDbs" xml:space="preserve"><value>پایگاه‌های راهکاران</value></data>
+  <data name="Fact_DetectedBy" xml:space="preserve"><value>روش تشخیص</value></data>
+  <data name="Fact_DbLine" xml:space="preserve"><value>{0} · {1} · {2} MB · Full {3} ساعت پیش · Log {4} ساعت پیش · CHECKDB {5} روز پیش</value></data>
+  <data name="Fact_Never" xml:space="preserve"><value>هرگز</value></data>
+  <data name="Fact_Yes" xml:space="preserve"><value>بله</value></data>
+  <data name="Fact_No" xml:space="preserve"><value>خیر</value></data>
 </root>

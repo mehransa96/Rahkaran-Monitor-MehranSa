@@ -1,0 +1,42 @@
+{
+  "id": "SQL-SEC-009",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "rsm.login_is_sysadmin",
+  "severity": "Info",
+  "title": {
+    "fa": "RSM با حساب sysadmin متصل شده است",
+    "en": "RSM connected with a sysadmin login"
+  },
+  "explanation": {
+    "fa": "حساب با دسترسی بالا استفاده شده است؛ RSM همچنان فقط‌خواندنی است.",
+    "en": "A high-privilege account was used; RSM stays read-only."
+  },
+  "recommendation": {
+    "fa": "برای پایش از حساب کم‌دسترسی rsm_monitor (PERMISSIONS.md) استفاده کنید.",
+    "en": "Use the least-privilege rsm_monitor login (PERMISSIONS.md)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "rsm.login_is_sysadmin": true
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "rsm.login_is_sysadmin": false
+      },
+      "expect": null
+    }
+  ]
+}

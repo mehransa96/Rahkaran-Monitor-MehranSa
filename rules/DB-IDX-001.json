@@ -1,0 +1,43 @@
+{
+  "id": "DB-IDX-001",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.fragmented_indexes > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "ایندکس‌های پراکنده در {instance} ({db.fragmented_indexes})",
+    "en": "Fragmented indexes in {instance} ({db.fragmented_indexes})"
+  },
+  "explanation": {
+    "fa": "ایندکس‌هایی با بیش از ۳۰٪ Fragmentation (بیش از ۱۰۰۰ صفحه) پیدا شد. یادآوری: ساختار پایگاه راهکاران متعلق به سازنده است؛ بدون ستاد فنی ایندکسی ایجاد یا حذف نکنید.",
+    "en": "Indexes over 30 % fragmented (more than 1000 pages) were found. Reminder: the Rahkaran schema is vendor-owned; do not create or drop indexes without ستاد فنی."
+  },
+  "recommendation": {
+    "fa": "اجرای Job نگهداری ایندکس شبانه را بررسی کنید.",
+    "en": "Check that the nightly index maintenance job runs."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].fragmented_indexes": 12
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "db[Rk].fragmented_indexes": 0
+      },
+      "expect": null
+    }
+  ]
+}

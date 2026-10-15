@@ -1,0 +1,51 @@
+{
+  "id": "SQL-AGT-004",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "agent.maint_plan_mentions_backup && agent.stadfanni_tool_jobs > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "هم Jobهای ابزار ستاد فنی و هم Maintenance Plan پشتیبان می‌گیرند",
+    "en": "Both ستاد فنی tool jobs and a maintenance plan take backups"
+  },
+  "explanation": {
+    "fa": "اجرای هم‌زمان Jobهای «ابزار پایگاه داده» و Maintenance Plan دستی باعث تداخل و شکستن زنجیره پشتیبان می‌شود. (تشخیص Jobهای ابزار بر اساس الگوی نام در تنظیمات سایت؛ تأییدنشده)",
+    "en": "Running the «ابزار پایگاه داده» jobs alongside a manual maintenance plan causes conflicts and breaks the backup chain. (Tool jobs are matched by name patterns from site settings — unverified.)"
+  },
+  "recommendation": {
+    "fa": "یکی از دو روش را با هماهنگی ستاد فنی حفظ کنید.",
+    "en": "Keep only one of the two, coordinated with ستاد فنی."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — backups over network shares; maintenance plan and «ابزار پایگاه داده» conflicts"
+  },
+  "verified": false,
+  "confidence": 0.6,
+  "examples": [
+    {
+      "facts": {
+        "agent.stadfanni_tool_jobs": 3,
+        "agent.maint_plan_mentions_backup": true
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "agent.stadfanni_tool_jobs": 3,
+        "agent.maint_plan_mentions_backup": false
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "agent.maint_plan_mentions_backup": false
+      },
+      "expect": null,
+      "note": "no maintenance plan backup: quiet even when no tool-job patterns are configured"
+    }
+  ]
+}

@@ -116,3 +116,17 @@ public class SchedulingTests
             CollectorResult.FromStatus(Id, node.Node.Id, await run(), TimeSpan.Zero);
     }
 }
+
+public class DateTextTests
+{
+    [Fact]
+    public void Formats_jalali_and_gregorian_in_both_languages()
+    {
+        var utc = new DateTimeOffset(2026, 10, 14, 19, 40, 0, TimeSpan.Zero);
+        var tehran = TimeZoneInfo.CreateCustomTimeZone("IRST", TimeSpan.FromHours(3.5), "IRST", "IRST");
+
+        RSM.Core.Localization.DateText.Format(utc, RSM.Core.Model.UiLanguage.Fa, zone: tehran).Should().Be("1405/07/22 23:10 — 2026-10-14 23:10");
+        RSM.Core.Localization.DateText.Format(utc, RSM.Core.Model.UiLanguage.En, zone: tehran).Should().Be("2026-10-14 23:10 (1405/07/22 23:10)");
+        RSM.Core.Localization.DateText.Format(utc, RSM.Core.Model.UiLanguage.Fa, persianDigits: true, zone: tehran).Should().StartWith("۱۴۰۵/۰۷/۲۲");
+    }
+}

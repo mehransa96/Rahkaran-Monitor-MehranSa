@@ -1,0 +1,43 @@
+{
+  "id": "SQL-VER-004",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.build.security_update_missing",
+  "severity": "Info",
+  "title": {
+    "fa": "آخرین به‌روزرسانی امنیتی (GDR) روی CU فعلی نصب نیست",
+    "en": "The latest security update (GDR) on top of the current CU is missing"
+  },
+  "explanation": {
+    "fa": "آخرین CU نصب است اما به‌روزرسانی امنیتی بعدی ({sql.build.latest}) نصب نشده است.",
+    "en": "The latest CU is installed but the newer security update ({sql.build.latest}) is not."
+  },
+  "recommendation": {
+    "fa": "نصب به‌روزرسانی امنیتی را برنامه‌ریزی کنید.",
+    "en": "Schedule the security update."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.build.security_update_missing": true,
+        "sql.build.latest": "16.0.4305.5"
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.build.security_update_missing": false
+      },
+      "expect": null
+    }
+  ]
+}

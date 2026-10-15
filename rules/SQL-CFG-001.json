@@ -1,0 +1,56 @@
+{
+  "id": "SQL-CFG-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.priority_boost != 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "priority boost روشن است",
+    "en": "priority boost is on"
+  },
+  "explanation": {
+    "fa": "ستاد فنی priority boost را خاموش تعیین کرده است؛ روشن بودن آن ممکن است سیستم‌عامل و سایر سرویس‌ها را دچار مشکل کند.",
+    "en": "ستاد فنی requires priority boost off; it can starve the OS and other services."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "evidence": [
+    "sql.config.priority_boost"
+  ],
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Instance settings"
+  },
+  "verified": true,
+  "confidence": 0.9,
+  "baseline": {
+    "item": {
+      "fa": "priority boost",
+      "en": "priority boost"
+    },
+    "expected": {
+      "fa": "0 (خاموش)",
+      "en": "0 (off)"
+    },
+    "actual": "sql.config.priority_boost"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.priority_boost": 1
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.config.priority_boost": 0
+      },
+      "expect": null
+    }
+  ]
+}

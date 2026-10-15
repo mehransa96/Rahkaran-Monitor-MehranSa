@@ -1,0 +1,42 @@
+{
+  "id": "SQL-ERR-009",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.errorlog.ecacheflush > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "Plan Cache پاک شده است",
+    "en": "The plan cache was flushed"
+  },
+  "explanation": {
+    "fa": "پاک شدن Plan Cache (مثلاً با DBCC FREEPROCCACHE) باعث کامپایل مجدد همه کوئری‌ها و کندی موقت می‌شود.",
+    "en": "Flushing the plan cache (e.g. DBCC FREEPROCCACHE) forces recompilation of every query and temporary slowness."
+  },
+  "recommendation": {
+    "fa": "مشخص کنید چه کسی یا کدام Job این کار را انجام داده است.",
+    "en": "Find out who or which job did it."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.errorlog.ecacheflush": 1
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.errorlog.ecacheflush": 0
+      },
+      "expect": null
+    }
+  ]
+}

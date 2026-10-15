@@ -1,0 +1,50 @@
+{
+  "id": "DB-CDC-001",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_cdc_enabled && (db.cdc_errors > 0 || db.cdc_latency_s > params.max_latency_s)",
+  "severity": "Warning",
+  "title": {
+    "fa": "CDC در {instance} خطا یا تأخیر دارد",
+    "en": "CDC in {instance} has errors or latency"
+  },
+  "explanation": {
+    "fa": "آخرین جلسه پویش لاگ CDC: خطا {db.cdc_errors}، تأخیر {db.cdc_latency_s} ثانیه.",
+    "en": "Last CDC log-scan session: {db.cdc_errors} errors, {db.cdc_latency_s} s latency."
+  },
+  "recommendation": {
+    "fa": "وضعیت Job خواندن CDC را با ستاد فنی بررسی کنید.",
+    "en": "Review the CDC capture job with ستاد فنی."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — transaction log growth (1403/12/28)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max_latency_s": 300
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_cdc_enabled": true,
+        "db[Rk].cdc_errors": 0,
+        "db[Rk].cdc_latency_s": 900
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].is_cdc_enabled": true,
+        "db[Rk].cdc_errors": 0,
+        "db[Rk].cdc_latency_s": 5
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "id": "SQL-MEM-002",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "node.shared_box && !sql.config.max_server_memory_default && abs(sql.config.max_server_memory_pct - params.target) > params.tolerance",
+  "severity": "Warning",
+  "title": {
+    "fa": "max server memory روی سرور مشترک {sql.config.max_server_memory_pct}٪ RAM است (انتظار: ۶۵٪)",
+    "en": "max server memory is {sql.config.max_server_memory_pct}% of RAM on a shared server (expected 65%)"
+  },
+  "explanation": {
+    "fa": "روی سروری که هم SQL Server و هم برنامه راهکاران (IIS) اجرا می‌شود، ستاد فنی حداکثر حافظه SQL را ۶۵٪ RAM تعیین کرده است.",
+    "en": "On a server running both SQL Server and Rahkaran (IIS), ستاد فنی sets SQL's max memory to 65 % of RAM."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Instance settings"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "target": 65,
+    "tolerance": 5
+  },
+  "baseline": {
+    "item": {
+      "fa": "max server memory (سرور مشترک با IIS)",
+      "en": "max server memory (server shared with IIS)"
+    },
+    "expected": {
+      "fa": "حدود ۶۵٪ RAM",
+      "en": "About 65% of RAM"
+    },
+    "actual": "sql.config.max_server_memory_pct"
+  },
+  "examples": [
+    {
+      "facts": {
+        "node.shared_box": true,
+        "sql.config.max_server_memory_default": false,
+        "sql.config.max_server_memory_pct": 85
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "node.shared_box": true,
+        "sql.config.max_server_memory_default": false,
+        "sql.config.max_server_memory_pct": 64
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "node.shared_box": false,
+        "sql.config.max_server_memory_default": false,
+        "sql.config.max_server_memory_pct": 85
+      },
+      "expect": null
+    }
+  ]
+}

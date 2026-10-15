@@ -1,0 +1,47 @@
+{
+  "id": "STO-005",
+  "layer": "Storage",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_rahkaran && db.data_volume_free_mb < db.data_size_mb * 2",
+  "severity": "Warning",
+  "title": {
+    "fa": "فضای آزاد دیسک داده کمتر از دو برابر حجم پایگاه {instance} است",
+    "en": "Free space on the data disk is below twice the size of {instance}"
+  },
+  "explanation": {
+    "fa": "ستاد فنی حداقل فضای آزاد دیسک داده را دو برابر حجم پایگاه داده تعیین کرده است (برای رشد، بازسازی ایندکس و بازیابی). حجم داده: {db.data_size_mb} مگابایت، فضای آزاد: {db.data_volume_free_mb} مگابایت.",
+    "en": "ستاد فنی requires free space on the data disk of at least twice the database size (growth, index rebuilds, restores). Data: {db.data_size_mb} MB, free: {db.data_volume_free_mb} MB."
+  },
+  "recommendation": {
+    "fa": "افزایش فضای دیسک داده را برنامه‌ریزی کنید.",
+    "en": "Plan additional space on the data disk."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Database"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].data_volume_free_mb": 50000,
+        "db[Rk].data_size_mb": 40000
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].data_volume_free_mb": 90000,
+        "db[Rk].data_size_mb": 40000
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "id": "SQL-SEC-006",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_user && db.guest_connect",
+  "severity": "Warning",
+  "title": {
+    "fa": "کاربر guest در پایگاه {instance} مجوز CONNECT دارد",
+    "en": "guest has CONNECT in {instance}"
+  },
+  "explanation": {
+    "fa": "هر Login بدون کاربر مشخص می‌تواند به این پایگاه متصل شود.",
+    "en": "Any login without a mapped user can connect to this database."
+  },
+  "recommendation": {
+    "fa": "مجوز CONNECT کاربر guest را در پایگاه‌های کاربری لغو کنید (توسط DBA).",
+    "en": "Have the DBA revoke CONNECT from guest in user databases."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].guest_connect": true
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].guest_connect": false
+      },
+      "expect": null
+    }
+  ]
+}

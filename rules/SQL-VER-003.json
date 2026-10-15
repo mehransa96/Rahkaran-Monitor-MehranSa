@@ -1,0 +1,58 @@
+{
+  "id": "SQL-VER-003",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.support.days_left < 365",
+  "severity": "Info",
+  "escalate": [
+    {
+      "when": "sql.support.days_left < 0",
+      "severity": "Warning"
+    }
+  ],
+  "title": {
+    "fa": "پشتیبانی Microsoft از این نسخه SQL Server رو به پایان است یا تمام شده",
+    "en": "Microsoft support for this SQL Server version is ending or has ended"
+  },
+  "explanation": {
+    "fa": "پشتیبانی تمدیدشده {sql.product_name} در تاریخ {sql.support.extended_end} پایان می‌یابد ({sql.support.days_left} روز). پس از آن به‌روزرسانی امنیتی منتشر نمی‌شود.",
+    "en": "Extended support for {sql.product_name} ends on {sql.support.extended_end} ({sql.support.days_left} days). No security updates are released after that."
+  },
+  "recommendation": {
+    "fa": "ارتقا به نسخه پشتیبانی‌شده را با ستاد فنی برنامه‌ریزی کنید.",
+    "en": "Plan an upgrade to a supported version with ستاد فنی."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.support.days_left": -90,
+        "sql.product_name": "SQL Server 2016",
+        "sql.support.extended_end": "2026-07-14"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.support.days_left": 200,
+        "sql.product_name": "SQL Server 2017",
+        "sql.support.extended_end": "2027-10-12"
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.support.days_left": 2000
+      },
+      "expect": null
+    }
+  ]
+}

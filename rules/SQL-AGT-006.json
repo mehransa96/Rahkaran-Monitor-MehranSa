@@ -1,0 +1,65 @@
+{
+  "id": "SQL-AGT-006",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_cdc_enabled && (!contains(agent.cdc_capture_db_ids, db.database_id) || (sql.service.agent.status == 'Running' && !contains(agent.cdc_capture_running_db_ids, db.database_id)))",
+  "severity": "Critical",
+  "title": {
+    "fa": "CDC در {instance} فعال است ولی Job خواندن (capture) وجود ندارد یا اجرا نمی‌شود",
+    "en": "CDC is enabled on {instance} but its capture job is missing or not running"
+  },
+  "explanation": {
+    "fa": "طبق راهنمای رشد لاگ راهکاران، توقف یا حذف Job خواندن CDC باعث می‌شود لاگ تراکنش هرگز آزاد نشود (log_reuse_wait = REPLICATION).",
+    "en": "Per the Rahkaran log-growth KB, a stopped or deleted CDC capture job keeps the transaction log from ever being reused (log_reuse_wait = REPLICATION)."
+  },
+  "recommendation": {
+    "fa": "وضعیت Job خواندن CDC را با ستاد فنی بررسی و بازگردانی کنید.",
+    "en": "Restore the CDC capture job with ستاد فنی."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — transaction log growth (1403/12/28)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_cdc_enabled": true,
+        "db[Rk].database_id": 5,
+        "agent.cdc_capture_db_ids": [],
+        "agent.cdc_capture_running_db_ids": [],
+        "sql.service.agent.status": "Running"
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "db[Rk].is_cdc_enabled": true,
+        "db[Rk].database_id": 5,
+        "agent.cdc_capture_db_ids": [
+          5
+        ],
+        "agent.cdc_capture_running_db_ids": [
+          5
+        ],
+        "sql.service.agent.status": "Running"
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "db[Rk].is_cdc_enabled": false,
+        "db[Rk].database_id": 5,
+        "agent.cdc_capture_db_ids": [],
+        "agent.cdc_capture_running_db_ids": [],
+        "sql.service.agent.status": "Running"
+      },
+      "expect": null
+    }
+  ]
+}

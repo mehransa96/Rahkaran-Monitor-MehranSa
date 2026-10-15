@@ -1,0 +1,43 @@
+{
+  "id": "DB-BKP-003",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.log_chain_broken",
+  "severity": "Critical",
+  "title": {
+    "fa": "زنجیره پشتیبان لاگ {instance} شکسته است",
+    "en": "The log backup chain of {instance} is broken"
+  },
+  "explanation": {
+    "fa": "از آخرین پشتیبان کامل، بین پشتیبان‌های لاگ فاصله LSN وجود دارد؛ بازیابی تا لحظه دلخواه ممکن نیست. علت رایج: پشتیبان کامل غیر COPY_ONLY یا تغییر مدل بازیابی توسط ابزار/Job دیگر.",
+    "en": "Since the last full backup there is an LSN gap between log backups; point-in-time restore is impossible. Common causes: a non-COPY_ONLY backup or recovery-model switch by another tool/job."
+  },
+  "recommendation": {
+    "fa": "فوراً یک پشتیبان کامل بگیرید (توسط DBA) و منبع پشتیبان‌های اضافی را پیدا کنید.",
+    "en": "Have the DBA take a full backup now and find the source of the extra backups."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — backups over network shares; maintenance plan and «ابزار پایگاه داده» conflicts"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].log_chain_broken": true
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "db[Rk].log_chain_broken": false
+      },
+      "expect": null
+    }
+  ]
+}

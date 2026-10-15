@@ -1,0 +1,43 @@
+{
+  "id": "DB-BKP-005",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.backups_without_checksum_30d > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "پشتیبان‌های بدون CHECKSUM از {instance}",
+    "en": "Backups of {instance} without CHECKSUM"
+  },
+  "explanation": {
+    "fa": "{db.backups_without_checksum_30d} پشتیبان در ۳۰ روز اخیر بدون CHECKSUM گرفته شده است.",
+    "en": "{db.backups_without_checksum_30d} backups in 30 days were taken without CHECKSUM."
+  },
+  "recommendation": {
+    "fa": "گزینه CHECKSUM را در Jobهای پشتیبان فعال کنید.",
+    "en": "Enable CHECKSUM in the backup jobs."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].backups_without_checksum_30d": 4
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "db[Rk].backups_without_checksum_30d": 0
+      },
+      "expect": null
+    }
+  ]
+}

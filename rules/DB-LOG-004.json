@@ -1,0 +1,70 @@
+{
+  "id": "DB-LOG-004",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_rahkaran && db.log_file_size_mb < (db.is_large ? params.large_mb : params.normal_mb)",
+  "severity": "Info",
+  "title": {
+    "fa": "حجم فایل لاگ {instance} کمتر از مقدار توصیه‌شده است ({db.log_file_size_mb} مگابایت)",
+    "en": "The log file of {instance} is smaller than recommended ({db.log_file_size_mb} MB)"
+  },
+  "explanation": {
+    "fa": "ستاد فنی اندازه اولیه لاگ را ۱۰۲۴ مگابایت (مشتریان بزرگ ۱۰۲۴۰ مگابایت) تعیین کرده است. (اندازه فعلی بررسی می‌شود.)",
+    "en": "ستاد فنی sets the initial log size to 1024 MB (large customers 10240 MB). (The current size is checked.)"
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Database"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "normal_mb": 1024,
+    "large_mb": 10240
+  },
+  "baseline": {
+    "item": {
+      "fa": "اندازهٔ فایل Log (راهکاران)",
+      "en": "Log file size (Rahkaran)"
+    },
+    "expected": {
+      "fa": "≥ 1 GB (پایگاه بزرگ: ≥ 10 GB)",
+      "en": "≥ 1 GB (large database: ≥ 10 GB)"
+    },
+    "actual": "db.log_file_size_mb"
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].log_file_size_mb": 256,
+        "db[Rk].is_large": false
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].log_file_size_mb": 4096,
+        "db[Rk].is_large": true
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].log_file_size_mb": 2048,
+        "db[Rk].is_large": false
+      },
+      "expect": null
+    }
+  ]
+}

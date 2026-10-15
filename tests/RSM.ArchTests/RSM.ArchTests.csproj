@@ -6,6 +6,9 @@
     <ProjectReference Include="..\..\src\RSM.Hosting\RSM.Hosting.csproj" />
     <ProjectReference Include="..\..\src\RSM.Collectors.Sql\RSM.Collectors.Sql.csproj" />
     <ProjectReference Include="..\..\src\RSM.Collectors.Redis\RSM.Collectors.Redis.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Collectors.Database\RSM.Collectors.Database.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Parsers\RSM.Parsers.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Reporting\RSM.Reporting.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NetArchTest.Rules" />

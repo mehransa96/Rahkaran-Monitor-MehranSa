@@ -1,0 +1,44 @@
+{
+  "id": "SQL-ERR-008",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "coalesce(sql.errorlog.estackdump, 0) + coalesce(sql.dumps.count_30d, 0) > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "SQL Server فایل Dump ایجاد کرده است",
+    "en": "SQL Server produced memory/stack dumps"
+  },
+  "explanation": {
+    "fa": "Dump نشانه خطای داخلی جدی در SQL Server است (تعداد در ۳۰ روز: {sql.dumps.count_30d}).",
+    "en": "Dumps indicate a serious internal error in SQL Server ({sql.dumps.count_30d} in 30 days)."
+  },
+  "recommendation": {
+    "fa": "فایل‌های Dump را نگه دارید، آخرین CU را نصب کنید و در صورت تکرار با پشتیبانی پیگیری کنید.",
+    "en": "Keep the dump files, install the latest CU and escalate if it repeats."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.errorlog.estackdump": 0,
+        "sql.dumps.count_30d": 1
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "sql.errorlog.estackdump": 0,
+        "sql.dumps.count_30d": 0
+      },
+      "expect": null
+    }
+  ]
+}

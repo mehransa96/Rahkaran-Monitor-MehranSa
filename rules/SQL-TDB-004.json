@@ -1,0 +1,44 @@
+{
+  "id": "SQL-TDB-004",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "tempdb.version_store_pct > 20",
+  "severity": "Warning",
+  "title": {
+    "fa": "Version Store بیش از ۲۰٪ TempDB را گرفته است",
+    "en": "The version store uses more than 20% of TempDB"
+  },
+  "explanation": {
+    "fa": "حجم Version Store برابر {tempdb.version_store_mb} مگابایت است؛ معمولاً نشانه تراکنش طولانی باز است.",
+    "en": "The version store is {tempdb.version_store_mb} MB, usually because of a long-running open transaction."
+  },
+  "recommendation": {
+    "fa": "تراکنش‌های باز طولانی را پیدا کنید (در فاز ۲ به‌صورت زنده نمایش داده می‌شود).",
+    "en": "Find long-running open transactions (shown live from Phase 2)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "tempdb.version_store_pct": 35,
+        "tempdb.version_store_mb": 12000
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "tempdb.version_store_pct": 2,
+        "tempdb.version_store_mb": 100
+      },
+      "expect": null
+    }
+  ]
+}

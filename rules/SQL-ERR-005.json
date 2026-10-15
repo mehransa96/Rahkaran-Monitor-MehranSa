@@ -1,0 +1,42 @@
+{
+  "id": "SQL-ERR-005",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.errorlog.e9002 > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "لاگ تراکنش پر شده است (9002)",
+    "en": "Transaction log full (9002)"
+  },
+  "explanation": {
+    "fa": "خطای 9002 ثبت شده است؛ در این حالت عملیات نوشتن در پایگاه داده متوقف می‌شود. علت را در ستون log_reuse_wait ببینید.",
+    "en": "Error 9002 was logged; writes to the database stop. See log_reuse_wait for the cause."
+  },
+  "recommendation": {
+    "fa": "طبق راهنمای رشد لاگ: پشتیبان لاگ، تراکنش باز یا وضعیت CDC را بررسی کنید.",
+    "en": "Per the log-growth KB: check log backups, open transactions or the CDC capture job."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — transaction log growth (1403/12/28)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.errorlog.e9002": 1
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "sql.errorlog.e9002": 0
+      },
+      "expect": null
+    }
+  ]
+}

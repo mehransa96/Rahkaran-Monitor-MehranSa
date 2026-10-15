@@ -1,0 +1,51 @@
+{
+  "id": "SQL-MEM-005",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.memory.physical_low || contains(sql.os_memory.state, 'low')",
+  "severity": "Warning",
+  "title": {
+    "fa": "SQL Server یا ویندوز کمبود حافظه گزارش می‌کند",
+    "en": "SQL Server or Windows reports low memory"
+  },
+  "explanation": {
+    "fa": "وضعیت حافظه سیستم: {sql.os_memory.state}. کمبود حافظه باعث کاهش Page Life Expectancy، انتظار برای Memory Grant و کندی راهکاران می‌شود.",
+    "en": "System memory state: {sql.os_memory.state}. Memory pressure lowers PLE, causes memory-grant waits and slows Rahkaran."
+  },
+  "recommendation": {
+    "fa": "مصرف حافظه سایر فرایندها (w3wp و …) و تنظیم max server memory را بررسی کنید.",
+    "en": "Check memory used by other processes (w3wp, …) and the max server memory setting."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.memory.physical_low": true,
+        "sql.os_memory.state": "Available physical memory is high"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.memory.physical_low": false,
+        "sql.os_memory.state": "Available physical memory is low"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.memory.physical_low": false,
+        "sql.os_memory.state": "Available physical memory is high"
+      },
+      "expect": null
+    }
+  ]
+}

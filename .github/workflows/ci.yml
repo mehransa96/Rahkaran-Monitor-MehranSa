@@ -60,11 +60,25 @@ jobs:
           docker cp tests/integration/setup-rsm-monitor.sql ${{ job.services.mssql.id }}:/tmp/setup.sql
           docker exec -e RSM_IT_PASSWORD="$RSM_IT_PASSWORD" ${{ job.services.mssql.id }} \
             /opt/mssql-tools18/bin/sqlcmd -C -b -S localhost -U sa -P "$SA_PASSWORD" -i /tmp/setup.sql
-      - name: Integration tests
+      - name: Seed known deviations (plays a misconfigured customer server)
+        run: |
+          docker cp tests/integration/seed-deviations.sql ${{ job.services.mssql.id }}:/tmp/seed.sql
+          docker exec ${{ job.services.mssql.id }} /opt/mssql-tools18/bin/sqlcmd -C -b -S localhost -U sa -P "$SA_PASSWORD" -i /tmp/seed.sql
+      - name: Fingerprint the server before RSM connects
+        run: |
+          docker cp tests/integration/fingerprint.sql ${{ job.services.mssql.id }}:/tmp/fingerprint.sql
+          docker exec ${{ job.services.mssql.id }} /opt/mssql-tools18/bin/sqlcmd -C -b -S localhost -U sa -P "$SA_PASSWORD" -h -1 -W -i /tmp/fingerprint.sql > fingerprint-before.txt
+          wc -l fingerprint-before.txt
+      - name: Integration tests (least-privilege login)
         env:
           RSM_IT_SQL: Server=localhost,1433;User ID=rsm_monitor;Password=${{ env.RSM_IT_PASSWORD }};TrustServerCertificate=True;Encrypt=Optional
           RSM_IT_REDIS: 127.0.0.1:6379
-        run: dotnet test tests/RSM.Integration.Tests -c Release --logger "console;verbosity=normal"
+          RSM_IT_SEEDED: "1"
+        run: dotnet test tests/RSM.Integration.Tests -c Release --logger "console;verbosity=detailed"
+      - name: Read-only proof — server fingerprint unchanged
+        run: |
+          docker exec ${{ job.services.mssql.id }} /opt/mssql-tools18/bin/sqlcmd -C -b -S localhost -U sa -P "$SA_PASSWORD" -h -1 -W -i /tmp/fingerprint.sql > fingerprint-after.txt
+          diff -u fingerprint-before.txt fingerprint-after.txt && echo "read-only proof: no server state changed"
 
   windows:
     name: Build, test, publish single-file exe (Windows)

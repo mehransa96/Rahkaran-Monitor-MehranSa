@@ -1,0 +1,56 @@
+{
+  "id": "DB-OPT-002",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_user && db.auto_close",
+  "severity": "Warning",
+  "title": {
+    "fa": "AUTO_CLOSE پایگاه {instance} روشن است",
+    "en": "AUTO_CLOSE is on for {instance}"
+  },
+  "explanation": {
+    "fa": "با AUTO_CLOSE پایگاه پس از قطع آخرین اتصال بسته و دوباره باز می‌شود؛ باعث کندی و پاک شدن Cache می‌شود.",
+    "en": "AUTO_CLOSE closes the database after the last connection and reopens it, causing delays and cache flushes."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "AUTO_CLOSE",
+      "en": "AUTO_CLOSE"
+    },
+    "expected": {
+      "fa": "خاموش",
+      "en": "Off"
+    },
+    "actual": "db.auto_close"
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].auto_close": true
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].auto_close": false
+      },
+      "expect": null
+    }
+  ]
+}

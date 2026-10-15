@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Local persistence in the RSM data folder: site profiles, secrets (DPAPI), later SQLite history (P1+). -->
+  <!-- Local persistence in the RSM data folder: site profiles, secrets (DPAPI), diagnosis snapshots (Brotli JSON). -->
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>RSM.Storage</RootNamespace>

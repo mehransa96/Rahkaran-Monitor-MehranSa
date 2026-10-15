@@ -204,11 +204,26 @@ public sealed partial class SiteItemViewModel(string id) : ObservableObject
     [ObservableProperty]
     private NodeEditorViewModel? _selectedNode;
 
+    /// <summary>Rahkaran database names, comma separated (empty = auto-detect the busiest user database).</summary>
+    [ObservableProperty]
+    private string _rahkaranDatabases = string.Empty;
+
+    /// <summary>Name patterns (regex) of ستاد فنی maintenance-tool jobs, one per line — product specific, unverified.</summary>
+    [ObservableProperty]
+    private string _stadFanniJobPatterns = string.Empty;
+
     private SiteSettings _settings = new();
 
     public static SiteItemViewModel From(SiteProfile profile)
     {
-        var site = new SiteItemViewModel(profile.Id) { Name = profile.Name, Notes = profile.Notes, _settings = profile.Settings };
+        var site = new SiteItemViewModel(profile.Id)
+        {
+            Name = profile.Name,
+            Notes = profile.Notes,
+            _settings = profile.Settings,
+            RahkaranDatabases = string.Join(", ", profile.Settings.RahkaranDatabases),
+            StadFanniJobPatterns = string.Join(Environment.NewLine, profile.Settings.StadFanniToolJobPatterns),
+        };
         foreach (var node in profile.Nodes)
         {
             site.Nodes.Add(NodeEditorViewModel.From(node));
@@ -230,9 +245,29 @@ public sealed partial class SiteItemViewModel(string id) : ObservableObject
         Id = Id,
         Name = string.IsNullOrWhiteSpace(Name) ? Id : Name.Trim(),
         Notes = Notes,
-        Settings = _settings,
+        Settings = _settings with
+        {
+            RahkaranDatabases = Split(RahkaranDatabases, ','),
+            StadFanniToolJobPatterns = Split(StadFanniJobPatterns, '\n').Where(IsValidPattern).ToList(),
+        },
         Nodes = Nodes.Select(n => n.ToProfile()).ToList(),
     };
+
+    private static List<string> Split(string? text, char separator) =>
+        (text ?? string.Empty).Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+
+    private static bool IsValidPattern(string pattern)
+    {
+        try
+        {
+            _ = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.None, TimeSpan.FromMilliseconds(100));
+            return true;
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
+    }
 
     public override string ToString() => Name;
 }

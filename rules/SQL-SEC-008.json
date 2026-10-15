@@ -1,0 +1,42 @@
+{
+  "id": "SQL-SEC-008",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sec.linked_servers > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "Linked Server تعریف شده است ({sec.linked_servers})",
+    "en": "Linked servers are defined ({sec.linked_servers})"
+  },
+  "explanation": {
+    "fa": "Linked Serverها مسیر دسترسی بین سرورها هستند و باید با کمترین مجوز تعریف شوند.",
+    "en": "Linked servers open access paths between servers and should use least privilege."
+  },
+  "recommendation": {
+    "fa": "ضرورت و تنظیمات امنیتی آن‌ها را بررسی کنید.",
+    "en": "Review whether they are needed and how they authenticate."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sec.linked_servers": 1
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sec.linked_servers": 0
+      },
+      "expect": null
+    }
+  ]
+}

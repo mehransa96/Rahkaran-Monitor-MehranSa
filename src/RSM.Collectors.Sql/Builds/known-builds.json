@@ -1,0 +1,44 @@
+{
+  // Offline SQL Server build catalogue (RSM never goes online). Editable: a copy next to RSM.exe overrides this one.
+  // Source: https://learn.microsoft.com/troubleshoot/sql/releases/download-and-install-latest-updates (page dated 2026-10-13).
+  "asOf": "2026-10-13",
+  "source": "Microsoft Learn — Latest updates and version history for SQL Server",
+  "majors": [
+    {
+      "major": 17, "name": "SQL Server 2025", "extendedSupportEnd": null,
+      "branches": [
+        { "name": "CU", "minBuild": "17.0.2000", "latestBuild": "17.0.5015.4", "label": "CU9 + GDR (October 2026)", "latestCuBuild": "17.0.5005.3" },
+        { "name": "GDR", "minBuild": "17.0.1000", "latestBuild": "17.0.1145.4", "label": "GDR (October 2026)" }
+      ]
+    },
+    {
+      "major": 16, "name": "SQL Server 2022", "extendedSupportEnd": "2033-01-11",
+      "branches": [
+        { "name": "CU", "minBuild": "16.0.4003", "latestBuild": "16.0.4305.5", "label": "CU27 + GDR (October 2026)", "latestCuBuild": "16.0.4295.3" },
+        { "name": "GDR", "minBuild": "16.0.1000", "latestBuild": "16.0.1210.3", "label": "GDR (October 2026)" }
+      ]
+    },
+    {
+      "major": 15, "name": "SQL Server 2019", "extendedSupportEnd": "2030-01-08",
+      "branches": [
+        { "name": "CU", "minBuild": "15.0.4003", "latestBuild": "15.0.4500.2", "label": "CU32 + GDR (October 2026)", "latestCuBuild": "15.0.4430.1" },
+        { "name": "GDR", "minBuild": "15.0.2000", "latestBuild": "15.0.2200.2", "label": "GDR (October 2026)" }
+      ]
+    },
+    {
+      "major": 14, "name": "SQL Server 2017", "extendedSupportEnd": "2027-10-12",
+      "branches": [
+        { "name": "CU", "minBuild": "14.0.3006", "latestBuild": "14.0.3560.2", "label": "CU31 + GDR (October 2026)", "latestCuBuild": "14.0.3456.2" },
+        { "name": "GDR", "minBuild": "14.0.1000", "latestBuild": "14.0.2140.2", "label": "GDR (October 2026)" }
+      ]
+    },
+    {
+      "major": 13, "name": "SQL Server 2016", "extendedSupportEnd": "2026-07-14",
+      "baselineBuild": "13.0.6300.2", "baselineLabel": "SP3",
+      "branches": [
+        { "name": "SP3 Azure Connect", "minBuild": "13.0.7000", "latestBuild": "13.0.7095.1", "label": "GDR for Azure Connect feature pack (July 2026)" },
+        { "name": "SP3", "minBuild": "13.0.6300", "latestBuild": "13.0.6500.1", "label": "GDR for SP3 (July 2026)" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "DB-FILE-003",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_user && db.restricted_max_size_files > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "حداکثر اندازه فایل در {instance} محدود شده است",
+    "en": "File max size is restricted in {instance}"
+  },
+  "explanation": {
+    "fa": "ستاد فنی رشد نامحدود فایل‌ها را تعیین کرده است؛ رسیدن به سقف باعث توقف نوشتن می‌شود.",
+    "en": "ستاد فنی requires unrestricted growth; reaching the cap stops writes."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Database"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "حداکثر اندازهٔ فایل‌ها",
+      "en": "File max size"
+    },
+    "expected": {
+      "fa": "نامحدود",
+      "en": "Unlimited"
+    },
+    "actual": "db.restricted_max_size_files"
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].restricted_max_size_files": 1
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].restricted_max_size_files": 0
+      },
+      "expect": null
+    }
+  ]
+}

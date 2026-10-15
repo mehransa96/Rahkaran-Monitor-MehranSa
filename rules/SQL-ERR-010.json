@@ -1,0 +1,43 @@
+{
+  "id": "SQL-ERR-010",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "!sql.errorlog.available",
+  "severity": "Info",
+  "title": {
+    "fa": "ErrorLog سرور SQL خوانده نشد",
+    "en": "The SQL Server error log could not be read"
+  },
+  "explanation": {
+    "fa": "{sql.errorlog.unavailable_reason}",
+    "en": "{sql.errorlog.unavailable_reason}"
+  },
+  "recommendation": {
+    "fa": "مجوز xp_readerrorlog یا دسترسی خواندن به پوشه Log را طبق PERMISSIONS.md §3 بدهید.",
+    "en": "Grant xp_readerrorlog or read access to the Log folder (PERMISSIONS.md §3)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.errorlog.available": false,
+        "sql.errorlog.unavailable_reason": "no permission"
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.errorlog.available": true
+      },
+      "expect": null
+    }
+  ]
+}

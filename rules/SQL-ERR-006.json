@@ -1,0 +1,49 @@
+{
+  "id": "SQL-ERR-006",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.errorlog.failed_logins_max_per_hour > params.per_hour",
+  "severity": "Warning",
+  "title": {
+    "fa": "تعداد زیاد ورود ناموفق ({sql.errorlog.failed_logins_max_per_hour} در ساعت)",
+    "en": "Many failed logins ({sql.errorlog.failed_logins_max_per_hour} per hour)"
+  },
+  "explanation": {
+    "fa": "بیشترین تعداد ورود ناموفق در یک ساعت از حد مجاز گذشته است. گروه‌ها: {sql.errorlog.failed_login_groups}.",
+    "en": "Failed logins in one hour exceeded the threshold. Groups: {sql.errorlog.failed_login_groups}."
+  },
+  "recommendation": {
+    "fa": "رمزهای منقضی/تغییرکرده در برنامه‌ها و تلاش‌های مشکوک را بررسی کنید (State خطا علت را مشخص می‌کند).",
+    "en": "Look for applications with changed passwords and for suspicious attempts (the error state tells the reason)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.errorlog.failed_logins_max_per_hour": 45,
+        "sql.errorlog.failed_login_groups": [
+          "sa (state 8) from 10.0.0.25 ×45"
+        ]
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.errorlog.failed_logins_max_per_hour": 2,
+        "sql.errorlog.failed_login_groups": []
+      },
+      "expect": null
+    }
+  ],
+  "params": {
+    "per_hour": 20
+  }
+}

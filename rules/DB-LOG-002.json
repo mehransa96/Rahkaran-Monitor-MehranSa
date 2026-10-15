@@ -1,0 +1,49 @@
+{
+  "id": "DB-LOG-002",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.log_reuse_wait == 'REPLICATION'",
+  "severity": "Critical",
+  "title": {
+    "fa": "لاگ {instance} به دلیل REPLICATION (CDC) آزاد نمی‌شود",
+    "en": "The log of {instance} is held by REPLICATION (CDC)"
+  },
+  "explanation": {
+    "fa": "در راهکاران این حالت تقریباً همیشه به معنای متوقف یا حذف شدن Job خواندن CDC است (CDC فعال: {db.is_cdc_enabled}). لاگ تا رفع مشکل رشد می‌کند.",
+    "en": "In Rahkaran this almost always means the CDC capture job stopped or was deleted (CDC enabled: {db.is_cdc_enabled}). The log grows until it is fixed."
+  },
+  "recommendation": {
+    "fa": "وضعیت Job خواندن CDC را طبق راهنمای رشد لاگ با ستاد فنی بررسی کنید.",
+    "en": "Check the CDC capture job with ستاد فنی per the log-growth KB."
+  },
+  "evidence": [
+    "db.log_reuse_wait",
+    "db.is_cdc_enabled"
+  ],
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — transaction log growth (1403/12/28)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].log_reuse_wait": "REPLICATION",
+        "db[Rk].is_cdc_enabled": true
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "db[Rk].log_reuse_wait": "NOTHING",
+        "db[Rk].is_cdc_enabled": true
+      },
+      "expect": null
+    }
+  ]
+}

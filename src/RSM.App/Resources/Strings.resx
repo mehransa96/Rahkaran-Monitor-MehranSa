@@ -99,4 +99,61 @@
   <data name="Unverified_Label" xml:space="preserve"><value>unverified</value></data>
   <data name="General_Guidance_Label" xml:space="preserve"><value>general guidance — confirm with ستاد فنی</value></data>
   <data name="Confirm_DeleteSite" xml:space="preserve"><value>Delete site "{0}" and its stored passwords?</value></data>
+  <data name="Sites_RahkaranDbs" xml:space="preserve"><value>Rahkaran databases</value></data>
+  <data name="Sites_RahkaranDbsHint" xml:space="preserve"><value>Comma separated. Empty = RSM picks the busiest user database (shown as "auto" in reports).</value></data>
+  <data name="Sites_JobPatterns" xml:space="preserve"><value>ستاد فنی tool job name patterns (unverified)</value></data>
+  <data name="Sites_JobPatternsHint" xml:space="preserve"><value>One regular expression per line. Product-specific names are not built in; ask ستاد فنی for the job names your tool creates.</value></data>
+  <data name="Diag_Title" xml:space="preserve"><value>Full diagnosis</value></data>
+  <data name="Diag_Explain" xml:space="preserve"><value>Collects one snapshot of every node of the site with read-only queries, evaluates the health rules and keeps the result in the data folder. Nothing on the servers is changed.</value></data>
+  <data name="Diag_Site" xml:space="preserve"><value>Site</value></data>
+  <data name="Diag_Heavy" xml:space="preserve"><value>Include heavy checks (index fragmentation)</value></data>
+  <data name="Diag_HeavyWarning" xml:space="preserve"><value>Heavy checks scan index pages of the Rahkaran database (LIMITED mode) and can take minutes on large databases — prefer off-hours.</value></data>
+  <data name="Diag_Diagnose" xml:space="preserve"><value>Diagnose now</value></data>
+  <data name="Diag_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Diag_Progress" xml:space="preserve"><value>Collecting: {0}</value></data>
+  <data name="Diag_Cancelled" xml:space="preserve"><value>Diagnosis cancelled.</value></data>
+  <data name="Diag_NoSite" xml:space="preserve"><value>Create and save a site first (Sites &amp; Connections).</value></data>
+  <data name="Diag_NoSnapshot" xml:space="preserve"><value>No diagnosis yet.</value></data>
+  <data name="Diag_Summary" xml:space="preserve"><value>Diagnosis of {0}: {1} critical, {2} warnings, {3} info, {4} rules undecided (missing data).</value></data>
+  <data name="Diag_Export" xml:space="preserve"><value>Report</value></data>
+  <data name="Diag_ReportFa" xml:space="preserve"><value>Persian report</value></data>
+  <data name="Diag_ReportEn" xml:space="preserve"><value>English report</value></data>
+  <data name="Diag_Mask" xml:space="preserve"><value>Mask names and addresses (for sharing)</value></data>
+  <data name="Diag_ExportHtml" xml:space="preserve"><value>Save HTML report</value></data>
+  <data name="Diag_ExportBundle" xml:space="preserve"><value>Save JSON bundle</value></data>
+  <data name="Diag_ExportPath" xml:space="preserve"><value>Saved file (copy the path to open or send it)</value></data>
+  <data name="Diag_Exported" xml:space="preserve"><value>Saved: {0}</value></data>
+  <data name="Finding_Severity" xml:space="preserve"><value>Severity</value></data>
+  <data name="Finding_Rule" xml:space="preserve"><value>Rule</value></data>
+  <data name="Finding_Node" xml:space="preserve"><value>Server</value></data>
+  <data name="Finding_Instance" xml:space="preserve"><value>Database / item</value></data>
+  <data name="Finding_Title" xml:space="preserve"><value>Finding</value></data>
+  <data name="Finding_Source" xml:space="preserve"><value>Source</value></data>
+  <data name="Finding_Guidance" xml:space="preserve"><value>Note</value></data>
+  <data name="Severity_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="Severity_Info" xml:space="preserve"><value>Info</value></data>
+  <data name="Severity_Warning" xml:space="preserve"><value>Warning</value></data>
+  <data name="Severity_Critical" xml:space="preserve"><value>Critical</value></data>
+  <data name="Layer_NoSnapshot" xml:space="preserve"><value>Run "Diagnose now" on the Reports page to fill this page.</value></data>
+  <data name="Layer_FromSnapshot" xml:space="preserve"><value>From the diagnosis of {0}. Hover a finding for its recommendation.</value></data>
+  <data name="Fact_Name" xml:space="preserve"><value>Item</value></data>
+  <data name="Fact_Value" xml:space="preserve"><value>Value</value></data>
+  <data name="Fact_Version" xml:space="preserve"><value>Product</value></data>
+  <data name="Fact_Build" xml:space="preserve"><value>Version</value></data>
+  <data name="Fact_Edition" xml:space="preserve"><value>Edition</value></data>
+  <data name="Fact_LatestCu" xml:space="preserve"><value>Latest known CU</value></data>
+  <data name="Fact_SupportDays" xml:space="preserve"><value>Support ends in (days)</value></data>
+  <data name="Fact_Cpus" xml:space="preserve"><value>Logical CPUs</value></data>
+  <data name="Fact_MemoryMb" xml:space="preserve"><value>Physical memory (MB)</value></data>
+  <data name="Fact_MaxMemoryMb" xml:space="preserve"><value>max server memory (MB)</value></data>
+  <data name="Fact_Maxdop" xml:space="preserve"><value>MAXDOP</value></data>
+  <data name="Fact_CostThreshold" xml:space="preserve"><value>Cost threshold for parallelism</value></data>
+  <data name="Fact_TempdbFiles" xml:space="preserve"><value>TempDB data files</value></data>
+  <data name="Fact_Agent" xml:space="preserve"><value>SQL Agent</value></data>
+  <data name="Fact_RahkaranDbs" xml:space="preserve"><value>Rahkaran databases</value></data>
+  <data name="Fact_DetectedBy" xml:space="preserve"><value>Detected by</value></data>
+  <data name="Fact_DbLine" xml:space="preserve"><value>{0} · {1} · {2} MB · full {3} h ago · log {4} h ago · CHECKDB {5} days ago</value></data>
+  <data name="Fact_Never" xml:space="preserve"><value>never</value></data>
+  <data name="Fact_Yes" xml:space="preserve"><value>yes</value></data>
+  <data name="Fact_No" xml:space="preserve"><value>no</value></data>
 </root>

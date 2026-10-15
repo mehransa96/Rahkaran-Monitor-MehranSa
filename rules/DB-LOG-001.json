@@ -1,0 +1,50 @@
+{
+  "id": "DB-LOG-001",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.state == 'ONLINE' && !(db.log_reuse_wait in ['NOTHING', 'CHECKPOINT']) && db.log_used_pct > params.used_pct",
+  "severity": "Warning",
+  "title": {
+    "fa": "لاگ تراکنش {instance} آزاد نمی‌شود ({db.log_reuse_wait})",
+    "en": "The transaction log of {instance} is not being reused ({db.log_reuse_wait})"
+  },
+  "explanation": {
+    "fa": "{db.log_used_pct}٪ لاگ استفاده شده و علت نگه‌داشتن آن {db.log_reuse_wait} است. طبق راهنمای رشد لاگ: LOG_BACKUP = پشتیبان لاگ گرفته نمی‌شود؛ ACTIVE_TRANSACTION = تراکنش طولانی باز؛ ACTIVE_BACKUP_OR_RESTORE = پشتیبان/بازیابی در حال اجرا؛ REPLICATION = در راهکاران تقریباً همیشه CDC؛ AVAILABILITY_REPLICA/DATABASE_MIRRORING = عقب‌ماندگی نسخه ثانویه.",
+    "en": "{db.log_used_pct}% of the log is used and it is held by {db.log_reuse_wait}. Per the log-growth KB: LOG_BACKUP = no log backups; ACTIVE_TRANSACTION = a long open transaction; ACTIVE_BACKUP_OR_RESTORE = backup/restore running; REPLICATION = in Rahkaran almost always CDC; AVAILABILITY_REPLICA/DATABASE_MIRRORING = secondary lagging."
+  },
+  "recommendation": {
+    "fa": "علت متناظر را رفع کنید؛ Shrink لاگ راه‌حل نیست.",
+    "en": "Fix the matching cause; shrinking the log is not a fix."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — transaction log growth (1403/12/28)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "used_pct": 50
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].state": "ONLINE",
+        "db[Rk].log_reuse_wait": "LOG_BACKUP",
+        "db[Rk].log_used_pct": 80
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].state": "ONLINE",
+        "db[Rk].log_reuse_wait": "NOTHING",
+        "db[Rk].log_used_pct": 80
+      },
+      "expect": null
+    }
+  ]
+}

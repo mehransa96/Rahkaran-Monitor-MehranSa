@@ -1,0 +1,42 @@
+{
+  "id": "SQL-ERR-002",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.errorlog.e833 > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "درخواست‌های I/O بیش از ۱۵ ثانیه (833)",
+    "en": "I/O requests taking longer than 15 seconds (833)"
+  },
+  "explanation": {
+    "fa": "{sql.errorlog.e833} رخداد 833 ثبت شده است؛ دیسک یا مسیر ذخیره‌سازی بسیار کند پاسخ می‌دهد.",
+    "en": "{sql.errorlog.e833} occurrences of 833: storage is responding very slowly."
+  },
+  "recommendation": {
+    "fa": "تأخیر دیسک، درایور، مسیرهای SAN و آنتی‌ویروس را بررسی کنید.",
+    "en": "Check disk latency, drivers, SAN paths and antivirus."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.errorlog.e833": 3
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.errorlog.e833": 0
+      },
+      "expect": null
+    }
+  ]
+}

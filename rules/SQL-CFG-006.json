@@ -1,0 +1,65 @@
+{
+  "id": "SQL-CFG-006",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.cost_threshold_for_parallelism > 100 || sql.config.cost_threshold_for_parallelism == 5",
+  "severity": "Info",
+  "escalate": [
+    {
+      "when": "sql.config.cost_threshold_for_parallelism > 100",
+      "severity": "Warning"
+    }
+  ],
+  "title": {
+    "fa": "cost threshold for parallelism برابر {sql.config.cost_threshold_for_parallelism} است",
+    "en": "cost threshold for parallelism is {sql.config.cost_threshold_for_parallelism}"
+  },
+  "explanation": {
+    "fa": "مقدار این تنظیم توسط ابزار ستاد فنی تعیین می‌شود. مقدار ۵ پیش‌فرض SQL Server است (احتمالاً ابزار اجرا نشده) و مقدار بیش از ۱۰۰ معمولاً دستی تنظیم شده است.",
+    "en": "This value is set by the ستاد فنی tool. 5 is the SQL Server default (the tool probably did not run); above 100 is usually a manual change."
+  },
+  "recommendation": {
+    "fa": "مقدار را با خروجی ابزار ستاد فنی مقایسه کنید.",
+    "en": "Compare the value with the ستاد فنی tool's output."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Instance settings"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "cost threshold for parallelism",
+      "en": "cost threshold for parallelism"
+    },
+    "expected": {
+      "fa": "بیش از پیش‌فرض ۵ و حداکثر ۱۰۰",
+      "en": "Above the default 5 and at most 100"
+    },
+    "actual": "sql.config.cost_threshold_for_parallelism"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.cost_threshold_for_parallelism": 5
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.config.cost_threshold_for_parallelism": 150
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.config.cost_threshold_for_parallelism": 50
+      },
+      "expect": null
+    }
+  ]
+}

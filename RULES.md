@@ -48,6 +48,9 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 
 ## 2. Storage (§9.5, §7.14, TV3 Storage) — P1 (config) / P2 (live)
 
+*P1 ships STO-003, STO-004, STO-005 (from SQL Server's view of the volumes). STO-001/002 need the Windows collector
+(block size, system drive) and STO-006…009 need live counters — they arrive in P2.*
+
 | ID | Check | Sev | Source |
 |---|---|---|---|
 | STO-001 | Volume hosting SQL data/log/tempdb has allocation unit ≠ 64 KB | W | TV3 (Storage) |
@@ -68,7 +71,8 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 |---|---|---|---|
 | SQL-VER-001 | Major version below SQL Server 2022 | I | TV3 |
 | SQL-VER-002 | Not on the latest CU listed in `known-builds.json` for its major version | W | TV3 |
-| SQL-VER-003 | Major version out of Microsoft extended support | W | GEN |
+| SQL-VER-003 | Extended support ends within 365 days (I) or has ended (W) — dates from `known-builds.json` | I/W | GEN |
+| SQL-VER-004 | Latest CU installed but the newer security update (CU + GDR) is missing | I | GEN |
 | SQL-MEM-001 | `max server memory` left at default (2147483647) | C | TV3 (Instance) |
 | SQL-MEM-002 | Shared-box: `max server memory` outside 65 % ± 5 % of RAM | W | TV3 (Instance) |
 | SQL-MEM-003 | Shared-box: `min server memory` outside 15 % ± 5 % of RAM | I | TV3 (Instance) |
@@ -115,7 +119,7 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 | SQL-AGT-005 | Backup destination on a UNC path (slow-share risk; combine with throughput) | I | KB-BKP |
 | SQL-AGT-006 | CDC-enabled DB without CDC capture/cleanup jobs, or capture job not running | C | KB-LOG |
 | SQL-AGT-007 | Running job duration > 2 × its historical p95 | I | GEN |
-| SQL-AGT-008 | No index/statistics maintenance job ran in last 48 h ⚠U (patterns) | I | TV3 (Maintenance) |
+| SQL-AGT-008 | No index/statistics maintenance job ran in last 48 h ⚠U (patterns) — *deferred until the job-name patterns are confirmed (decision Q6); DB-STAT-001 covers the symptom* | I | TV3 (Maintenance) |
 | SQL-AGT-009 | Full backup schedule not in the evening window (default 22:00 ± 2 h) | I | TV3 (Maintenance) |
 
 ### 3.4 Security posture — P1
@@ -130,9 +134,12 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 | SQL-SEC-006 | `guest` has CONNECT in a user DB | W | GEN |
 | SQL-SEC-007 | Unencrypted connections from remote hosts | I | GEN |
 | SQL-SEC-008 | Linked servers present | I | GEN |
-| SQL-SEC-009 | RSM connected with a sysadmin login (banner: "high-privilege account used; RSM stays read-only") | I | spec §2.4 |
+| SQL-SEC-009 | RSM connected with a sysadmin login (banner: "high-privilege account used; RSM stays read-only") | I | GEN (spec §2.4) |
 
 ### 3.5 Live performance — P2
+
+*Shipped in P1 already (snapshot values, no sampling needed):* SQL-MEM-005, SQL-TDB-001, SQL-TDB-002, SQL-TDB-004.
+*Facts collected in P1 for the report only (rules in P2, need live deltas):* cumulative file latency per database.
 
 | ID | Check | Sev | Source |
 |---|---|---|---|
@@ -185,7 +192,7 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 | DB-FILE-003 | Data/log file max size restricted | W | TV3 (Database: unrestricted) |
 | DB-FILE-004 | File < 10 % free and autogrowth disabled | C | GEN |
 | DB-BKP-001 | No FULL in 26 h (or for "large" DBs: no DIFF in 26 h **and** no FULL in 8 d) | C | TV3 (Maintenance) |
-| DB-BKP-002 | Log backup interval > 2 h during working hours | W | TV3 (Maintenance) |
+| DB-BKP-002 | Non-Rahkaran user DB in FULL recovery without a log backup for > 24 h (log keeps growing). The 2-hour rule for the Rahkaran DB is DB-RM-002 | W | KB-LOG |
 | DB-BKP-003 | Log backup LSN chain gap since last full | C | KB-BKP |
 | DB-BKP-004 | More than one non-COPY_ONLY full per day from different devices/jobs (chain-break risk) | W | TV3 + KB-BKP |
 | DB-BKP-005 | Backups without CHECKSUM | I | GEN |
@@ -293,6 +300,29 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 | RK-003 | Report node and Data node are the same machine while site profile says separate | I | ARCH |
 
 ---
+
+## Implementation status
+
+Rules marked P1 above live in [`rules/`](rules/) — one JSON file per rule, named after its id, with fa/en title,
+explanation and recommendation, source, parameters and **built-in examples** (at least one that fires with the expected
+severity and one that stays quiet). `RSM.Tests.RuleCatalogTests` runs every example and checks that each rule id has a
+row in this file. Instance-scoped rules use `"forEach": "db"` / `"volume"`.
+
+### Compliance baseline (Phase 1)
+
+33 rules carry a `baseline` block — `item` and `expected` (fa + en) plus the `actual` fact key. The report's
+compliance table lists one row per such rule (per Rahkaran / ReportServer database for `forEach: db` rules), so the
+expected value is written next to the threshold and source it describes. `RuleCatalogTests` checks that every
+`baseline.actual` is a fact a collector emits and that the spec §7.2 configuration items are all covered;
+`ReportTests` checks that every fact a rule reads is emitted by a collector.
+
+Changes made while building the report (behaviour, not thresholds):
+- `SQL-AGT-004` evaluates `agent.maint_plan_mentions_backup` first, so it is quiet instead of *unknown* when no
+  ستاد فنی tool-job patterns are configured.
+- `SQL-AGT-009` requires `db.has_full_backup`; a database that was never backed up is reported by `DB-BKP-001`
+  instead of leaving the schedule rule *unknown*.
+- `DB-INT-001` / `DB-RM-002` titles no longer print the "never" sentinel (99999); reports show "never".
+- Rule placeholders that hold lists (user or job names) render as "a, b, c" (max 10).
 
 ## Rule hygiene
 

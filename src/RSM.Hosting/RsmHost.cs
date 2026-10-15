@@ -1,7 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RSM.Collectors.Redis;
+using RSM.Collectors.Database;
 using RSM.Collectors.Sql.Capabilities;
+using RSM.Collectors.Sql.Instance;
+using RSM.Core.Model;
+using RSM.Storage.Snapshots;
 using RSM.Safety.Files;
 using RSM.Safety.Logging;
 using RSM.Safety.Secrets;
@@ -15,6 +19,9 @@ namespace RSM.Hosting;
 /// <summary>Builds the RSM service container. No internet, telemetry or auto-update services exist.</summary>
 public static class RsmHost
 {
+    /// <summary>Every assembly that embeds catalog queries (all are guarded at startup).</summary>
+    public static readonly System.Reflection.Assembly[] CatalogAssemblies = [typeof(SqlCapabilityProbe).Assembly, typeof(DatabaseCollector).Assembly];
+
     public static IHost Build(IDataFolder dataFolder, Action<IServiceCollection>? configure = null)
     {
         var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings
@@ -38,11 +45,25 @@ public static class RsmHost
         services.AddSingleton<RSM.Storage.Settings.AppSettingsStore>();
 
         // Every embedded catalog query is parsed and passed through SqlGuard once at startup.
-        services.AddSingleton(_ => QueryCatalog.Load(typeof(SqlCapabilityProbe).Assembly));
+        services.AddSingleton(_ => QueryCatalog.Load(CatalogAssemblies));
         services.AddSingleton<SafeSqlExecutor>();
         services.AddSingleton<SqlCapabilityProbe>();
         services.AddSingleton<RedisCapabilityProbe>();
         services.AddSingleton<ConnectionTester>();
+
+        // Phase 1 snapshot collectors (run once per diagnosis, sequentially per node).
+        services.AddSingleton<ICollector, SqlInventoryCollector>();
+        services.AddSingleton<ICollector, SqlConfigurationCollector>();
+        services.AddSingleton<ICollector, SqlStorageCollector>();
+        services.AddSingleton<ICollector, SqlErrorLogCollector>();
+        services.AddSingleton<ICollector, SqlAgentCollector>();
+        services.AddSingleton<ICollector, SqlSecurityCollector>();
+        services.AddSingleton<ICollector, DatabaseCollector>();
+        services.AddSingleton<RuleRepository>();
+        services.AddSingleton<SnapshotStore>();
+        services.AddSingleton<SnapshotService>();
+        services.AddSingleton<RSM.Reporting.ReportExporter>();
+        services.AddSingleton<ReportService>();
     }
 
     /// <summary>Rolling file log in the data folder; every event passes the redaction enricher.</summary>

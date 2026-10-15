@@ -52,26 +52,8 @@ public sealed class Loc : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FlowDirection)));
     }
 
-    /// <summary>Formats a timestamp as Jalali + Gregorian, local time (e.g. "1405/07/22 23:10 — 2026-10-14 23:10").</summary>
-    public string FormatTimestamp(DateTimeOffset utc)
-    {
-        var local = utc.ToLocalTime().DateTime;
-        var pc = new PersianCalendar();
-        var jalali = $"{pc.GetYear(local):0000}/{pc.GetMonth(local):00}/{pc.GetDayOfMonth(local):00} {local:HH\\:mm}";
-        var gregorian = local.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
-        var text = Language == UiLanguage.Fa ? $"{jalali} — {gregorian}" : $"{gregorian} ({jalali})";
-        return UsePersianDigits && Language == UiLanguage.Fa ? ToPersianDigits(text) : text;
-    }
-
-    public static string ToPersianDigits(string text) =>
-        string.Create(text.Length, text, static (span, source) =>
-        {
-            for (var i = 0; i < source.Length; i++)
-            {
-                var c = source[i];
-                span[i] = c is >= '0' and <= '9' ? (char)('۰' + (c - '0')) : c;
-            }
-        });
+    /// <summary>Formats a timestamp as Jalali + Gregorian, local time.</summary>
+    public string FormatTimestamp(DateTimeOffset utc) => RSM.Core.Localization.DateText.Format(utc, Language, UsePersianDigits);
 
     private static CultureInfo CreatePersianCulture()
     {

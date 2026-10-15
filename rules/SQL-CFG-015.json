@@ -1,0 +1,42 @@
+{
+  "id": "SQL-CFG-015",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.schedulers.offline > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "بخشی از هسته‌های CPU برای SQL Server غیرفعال است",
+    "en": "Some CPU schedulers are offline for SQL Server"
+  },
+  "explanation": {
+    "fa": "{sql.schedulers.offline} زمان‌بند (Scheduler) غیرفعال است؛ معمولاً به دلیل محدودیت نسخه (مثلاً Standard) یا Affinity. SQL از همه هسته‌ها استفاده نمی‌کند.",
+    "en": "{sql.schedulers.offline} schedulers are offline, usually due to edition limits (e.g. Standard) or affinity. SQL Server is not using all cores."
+  },
+  "recommendation": {
+    "fa": "مجوز/نسخه SQL و تنظیم Affinity را با ستاد فنی بررسی کنید.",
+    "en": "Review the SQL edition/licence and affinity settings with ستاد فنی."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.schedulers.offline": 8
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "sql.schedulers.offline": 0
+      },
+      "expect": null
+    }
+  ]
+}

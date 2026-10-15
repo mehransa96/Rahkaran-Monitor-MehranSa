@@ -6,7 +6,7 @@ SQL Server, databases, Windows, IIS/ARR, Redis, SSRS, services and event logs, w
 
 ابزاری **فقط‌خواندنی** برای پایش و عیب‌یابی سرورهای راهکاران؛ هیچ تغییری روی سرور ایجاد نمی‌کند.
 
-**Status: Phase 0 (foundation & safety) delivered.** → [`README.en.md`](README.en.md) · [`README.fa.md`](README.fa.md)
+**Status: Phase 1 (SQL & database health + report v1) delivered — awaiting review.** → [`README.en.md`](README.en.md) · [`README.fa.md`](README.fa.md)
 
 | Document | Content |
 |---|---|

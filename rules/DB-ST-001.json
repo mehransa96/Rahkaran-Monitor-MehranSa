@@ -1,0 +1,45 @@
+{
+  "id": "DB-ST-001",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_user && db.state != 'ONLINE'",
+  "severity": "Critical",
+  "title": {
+    "fa": "پایگاه داده {instance} آنلاین نیست ({db.state})",
+    "en": "Database {instance} is not online ({db.state})"
+  },
+  "explanation": {
+    "fa": "وضعیت پایگاه داده {db.state} است.",
+    "en": "The database state is {db.state}."
+  },
+  "recommendation": {
+    "fa": "اگر عمدی نیست فوراً بررسی شود (SUSPECT/RECOVERY_PENDING نیاز به اقدام DBA دارد).",
+    "en": "If this is not intentional, investigate now (SUSPECT/RECOVERY_PENDING need DBA action)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].state": "SUSPECT"
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].state": "ONLINE"
+      },
+      "expect": null
+    }
+  ]
+}

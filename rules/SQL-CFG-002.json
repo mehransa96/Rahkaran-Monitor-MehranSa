@@ -1,0 +1,56 @@
+{
+  "id": "SQL-CFG-002",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.max_worker_threads != 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "max worker threads مقدار دستی دارد ({sql.config.max_worker_threads})",
+    "en": "max worker threads is set manually ({sql.config.max_worker_threads})"
+  },
+  "explanation": {
+    "fa": "ستاد فنی مقدار 0 (خودکار) را تعیین کرده است.",
+    "en": "ستاد فنی requires 0 (automatic)."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "evidence": [
+    "sql.config.max_worker_threads"
+  ],
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Instance settings"
+  },
+  "verified": true,
+  "confidence": 0.9,
+  "baseline": {
+    "item": {
+      "fa": "max worker threads",
+      "en": "max worker threads"
+    },
+    "expected": {
+      "fa": "0 (خودکار)",
+      "en": "0 (automatic)"
+    },
+    "actual": "sql.config.max_worker_threads"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.max_worker_threads": 512
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.config.max_worker_threads": 0
+      },
+      "expect": null
+    }
+  ]
+}

@@ -324,3 +324,22 @@ team once confirmed.
 | `sp_MSforeachdb` / dynamic SQL | banned | executor opens one connection per DB |
 | Creating XE sessions / traces / Query Store changes | write | read `system_health` only |
 | `sys.dm_db_index_physical_stats` SAMPLED/DETAILED | too heavy | LIMITED, top-N, on demand |
+
+## Phase 1 implementation notes
+
+Every embedded catalog file has a row above (checked by `RSM.Tests`). Planned keys that Phase 1 did **not** need as
+separate queries:
+
+| Planned key | Phase 1 implementation |
+|---|---|
+| `sql.log.agentlog` | `sql.log.errorlog` takes `@LogType` (1 = SQL Server, 2 = Agent) instead of a second file. |
+| `sql.log.path` | `SERVERPROPERTY('ErrorLogFileName')` is read by the capability probe (`cap.*`) and `sql.inv.server_properties`. |
+| `sql.cfg.auth_mode` | Folded into `sql.inv.server_properties` (`IsIntegratedSecurityOnly`). |
+| `sql.agent.service` | Folded into `sql.inv.services` (`sys.dm_server_services`). |
+| `sql.inv.nodes` | NUMA node count comes from `sql.inv.sys_info`. |
+| `db.vlf` | VLF counts come from `db.log_stats` (`sys.dm_db_log_stats`, 13 SP2+); `dm_db_log_info` is not used. |
+| `db.backups.log_chain` | Computed client-side from `db.backups_history` rows (`BackupAnalysis.IsLogChainBroken`): no window functions on msdb. |
+| `sql.mem.grants`, `sql.mem.semaphores`, `sql.mem.buffer_by_db` | Live memory views — Phase 2. |
+
+`sql.tempdb.session_usage` runs in `tempdb` (header `database: tempdb`); since `dcda00e` the executor always opens the
+connection in the database a header declares, and rejects a conflicting argument.

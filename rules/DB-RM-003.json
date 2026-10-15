@@ -1,0 +1,58 @@
+{
+  "id": "DB-RM-003",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "(db.is_reportserver || db.is_reportserver_temp) && db.recovery_model != 'SIMPLE'",
+  "severity": "Warning",
+  "title": {
+    "fa": "پایگاه گزارش‌ساز {instance} در مدل SIMPLE نیست",
+    "en": "Report server database {instance} is not in SIMPLE recovery"
+  },
+  "explanation": {
+    "fa": "ستاد فنی مدل SIMPLE را برای ReportServer و ReportServerTempDB تعیین کرده است؛ در غیر این صورت لاگ آن‌ها بی‌رویه رشد می‌کند.",
+    "en": "ستاد فنی sets SIMPLE recovery for ReportServer and ReportServerTempDB; otherwise their logs grow without bound."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Database"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "Recovery model (ReportServer)",
+      "en": "Recovery model (ReportServer)"
+    },
+    "expected": {
+      "fa": "SIMPLE",
+      "en": "SIMPLE"
+    },
+    "actual": "db.recovery_model"
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[ReportServer].is_reportserver": true,
+        "db[ReportServer].is_reportserver_temp": false,
+        "db[ReportServer].recovery_model": "FULL"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[ReportServer].is_reportserver": true,
+        "db[ReportServer].is_reportserver_temp": false,
+        "db[ReportServer].recovery_model": "SIMPLE"
+      },
+      "expect": null
+    }
+  ]
+}

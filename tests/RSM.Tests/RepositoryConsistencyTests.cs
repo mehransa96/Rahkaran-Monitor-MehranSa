@@ -23,7 +23,7 @@ public partial class RepositoryConsistencyTests
     public void Every_catalog_key_is_documented_in_SQL_CATALOG_md()
     {
         var doc = File.ReadAllText(Path.Combine(RepoRoot(), "SQL_CATALOG.md"));
-        var catalog = QueryCatalog.Load(typeof(SqlCapabilityProbe).Assembly);
+        var catalog = QueryCatalog.Load(typeof(SqlCapabilityProbe).Assembly, typeof(RSM.Collectors.Database.DatabaseCollector).Assembly);
 
         foreach (var key in catalog.Keys)
         {

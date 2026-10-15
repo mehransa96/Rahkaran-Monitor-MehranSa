@@ -1,9 +1,12 @@
 using System.Reflection;
 using NetArchTest.Rules;
+using RSM.Collectors.Database;
 using RSM.Collectors.Redis;
 using RSM.Collectors.Sql.Capabilities;
 using RSM.Core.Model;
 using RSM.Hosting;
+using RSM.Parsers.ErrorLog;
+using RSM.Reporting;
 using RSM.Safety.Sql;
 using RSM.Storage.Profiles;
 
@@ -16,7 +19,9 @@ public class DependencyTests
     private static readonly Assembly Safety = typeof(SqlGuard).Assembly;
     private static readonly Assembly Storage = typeof(ProfileStore).Assembly;
     private static readonly Assembly Hosting = typeof(RsmHost).Assembly;
-    private static readonly Assembly[] Collectors = [typeof(SqlCapabilityProbe).Assembly, typeof(RedisCapabilityProbe).Assembly];
+    private static readonly Assembly Parsers = typeof(ErrorLogParser).Assembly;
+    private static readonly Assembly Reporting = typeof(ReportExporter).Assembly;
+    private static readonly Assembly[] Collectors = [typeof(SqlCapabilityProbe).Assembly, typeof(RedisCapabilityProbe).Assembly, typeof(DatabaseCollector).Assembly];
 
     private static readonly string[] TransportNamespaces =
     [
@@ -38,7 +43,7 @@ public class DependencyTests
     [Fact]
     public void Storage_and_hosting_never_touch_transports_directly()
     {
-        foreach (var assembly in new[] { Storage, Hosting })
+        foreach (var assembly in new[] { Storage, Hosting, Parsers, Reporting })
         {
             var result = Types.InAssembly(assembly).ShouldNot().HaveDependencyOnAny(TransportNamespaces).GetResult();
 
@@ -58,7 +63,7 @@ public class DependencyTests
     [Fact]
     public void Only_safety_references_scriptdom_sqlclient_and_sockets()
     {
-        var others = Collectors.Append(Core).Append(Storage).Append(Hosting);
+        var others = Collectors.Append(Core).Append(Storage).Append(Hosting).Append(Parsers).Append(Reporting);
         foreach (var assembly in others)
         {
             assembly.GetReferencedAssemblies().Select(a => a.Name).Should().NotContain(
@@ -73,6 +78,14 @@ public class DependencyTests
         var result = Types.InAssembly(Safety).ShouldNot().HaveDependencyOnAny("RSM.Storage", "RSM.Hosting", "RSM.Collectors", "RSM.App").GetResult();
 
         result.IsSuccessful.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Reporting_works_on_snapshots_only()
+    {
+        var result = Types.InAssembly(Reporting).ShouldNot().HaveDependencyOnAny("RSM.Collectors", "RSM.Storage", "RSM.Hosting", "RSM.App", "RSM.Safety.Sql", "RSM.Safety.Redis").GetResult();
+
+        result.IsSuccessful.Should().BeTrue($"reports are built from SiteSnapshot data, never from live connections: {string.Join(", ", result.FailingTypeNames ?? [])}");
     }
 
     [Fact]

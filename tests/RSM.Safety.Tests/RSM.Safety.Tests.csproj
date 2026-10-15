@@ -2,6 +2,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\RSM.Safety\RSM.Safety.csproj" />
     <ProjectReference Include="..\..\src\RSM.Collectors.Sql\RSM.Collectors.Sql.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Collectors.Database\RSM.Collectors.Database.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Serilog.Sinks.File" />

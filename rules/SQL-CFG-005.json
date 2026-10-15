@@ -1,0 +1,56 @@
+{
+  "id": "SQL-CFG-005",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.max_degree_of_parallelism != 4",
+  "severity": "Warning",
+  "title": {
+    "fa": "MAXDOP برابر {sql.config.max_degree_of_parallelism} است (انتظار: ۴)",
+    "en": "MAXDOP is {sql.config.max_degree_of_parallelism} (expected 4)"
+  },
+  "explanation": {
+    "fa": "ستاد فنی مقدار MAXDOP را ۴ تعیین کرده است.",
+    "en": "ستاد فنی sets MAXDOP to 4."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "evidence": [
+    "sql.config.max_degree_of_parallelism"
+  ],
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Instance settings"
+  },
+  "verified": true,
+  "confidence": 0.9,
+  "baseline": {
+    "item": {
+      "fa": "MAXDOP",
+      "en": "MAXDOP"
+    },
+    "expected": {
+      "fa": "4",
+      "en": "4"
+    },
+    "actual": "sql.config.max_degree_of_parallelism"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.max_degree_of_parallelism": 0
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.config.max_degree_of_parallelism": 4
+      },
+      "expect": null
+    }
+  ]
+}

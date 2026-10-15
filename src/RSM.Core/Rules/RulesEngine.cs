@@ -109,8 +109,14 @@ public sealed partial class RulesEngine(IReadOnlyList<CompiledRule> rules)
     {
         null => "—",
         double d => d.ToString("0.##", CultureInfo.InvariantCulture),
+        string s => s,
+        System.Collections.IEnumerable items => FormatList(items.Cast<object?>().Select(FormatValue).ToList()),
         var other => Values.ToText(other),
     };
+
+    /// <summary>Lists (e.g. user or job names) read as "a, b, c", capped at 10 items.</summary>
+    private static string FormatList(List<string> items) =>
+        items.Count == 0 ? "—" : items.Count <= 10 ? string.Join(", ", items) : string.Join(", ", items.Take(10)) + $", … (+{items.Count - 10})";
 
     [GeneratedRegex(@"\{([A-Za-z_][\w.\[\]]*)\}", RegexOptions.CultureInvariant)]
     private static partial Regex Placeholder();

@@ -1,0 +1,42 @@
+{
+  "id": "DB-INT-002",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.suspect_pages > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "صفحات مشکوک در msdb.dbo.suspect_pages ثبت شده است ({sql.suspect_pages})",
+    "en": "Suspect pages are recorded in msdb.dbo.suspect_pages ({sql.suspect_pages})"
+  },
+  "explanation": {
+    "fa": "SQL Server هنگام خواندن صفحات خطای 823/824 یا Checksum دیده است.",
+    "en": "SQL Server hit 823/824 or checksum errors reading pages."
+  },
+  "recommendation": {
+    "fa": "سلامت دیسک را بررسی و DBCC CHECKDB را توسط DBA اجرا کنید.",
+    "en": "Check disks and have the DBA run DBCC CHECKDB."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.suspect_pages": 2
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "sql.suspect_pages": 0
+      },
+      "expect": null
+    }
+  ]
+}

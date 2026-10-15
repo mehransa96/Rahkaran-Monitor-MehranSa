@@ -1,0 +1,55 @@
+{
+  "id": "SQL-VER-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.major < 16",
+  "severity": "Info",
+  "title": {
+    "fa": "نسخه SQL Server پایین‌تر از 2022 است ({sql.product_name})",
+    "en": "SQL Server is older than 2022 ({sql.product_name})"
+  },
+  "explanation": {
+    "fa": "ستاد فنی SQL Server 2022 با آخرین CU را برای راهکاران توصیه می‌کند.",
+    "en": "ستاد فنی recommends SQL Server 2022 with the latest CU for Rahkaran."
+  },
+  "recommendation": {
+    "fa": "ارتقای نسخه SQL Server را با ستاد فنی برنامه‌ریزی کنید.",
+    "en": "Plan the SQL Server upgrade with ستاد فنی."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — SQL Server 2022 + latest CU"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "نسخهٔ SQL Server",
+      "en": "SQL Server version"
+    },
+    "expected": {
+      "fa": "۲۰۲۲ یا جدیدتر",
+      "en": "2022 or later"
+    },
+    "actual": "sql.product_name"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.major": 15,
+        "sql.product_name": "SQL Server 2019"
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.major": 16,
+        "sql.product_name": "SQL Server 2022"
+      },
+      "expect": null
+    }
+  ]
+}

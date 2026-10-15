@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Database module (§8). All T-SQL lives in Queries/**/*.sql (embedded), run via SafeSqlExecutor. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>RSM.Collectors.Database</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RSM.Core\RSM.Core.csproj" />
+    <ProjectReference Include="..\RSM.Safety\RSM.Safety.csproj" />
+    <ProjectReference Include="..\RSM.Collectors.Sql\RSM.Collectors.Sql.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Queries\**\*.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="RSM.Tests" />
+  </ItemGroup>
+</Project>

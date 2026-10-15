@@ -1,0 +1,45 @@
+{
+  "id": "DB-STAT-001",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_rahkaran && db.stale_stats > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "آمار قدیمی در {instance} ({db.stale_stats})",
+    "en": "Stale statistics in {instance} ({db.stale_stats})"
+  },
+  "explanation": {
+    "fa": "آمارهایی با تغییر بیش از ۲۰٪ ردیف‌ها شناسایی شد؛ آمار قدیمی باعث انتخاب طرح اجرای نامناسب می‌شود. ستاد فنی به‌روزرسانی شبانه آمار را تعیین کرده است.",
+    "en": "Statistics with more than 20 % of rows modified were found; stale statistics lead to poor plans. ستاد فنی requires nightly statistics maintenance."
+  },
+  "recommendation": {
+    "fa": "اجرای Job نگهداری شبانه را بررسی کنید.",
+    "en": "Check that the nightly maintenance job runs."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].stale_stats": 40
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].stale_stats": 0
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "id": "SQL-ERR-007",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.errorlog.e3041 > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "پشتیبان‌گیری ناموفق (3041)",
+    "en": "Backup failures (3041)"
+  },
+  "explanation": {
+    "fa": "{sql.errorlog.e3041} پشتیبان‌گیری ناموفق در بازه اخیر ثبت شده است.",
+    "en": "{sql.errorlog.e3041} failed backups were logged recently."
+  },
+  "recommendation": {
+    "fa": "علت را در تاریخچه Job و لاگ ابزار پشتیبان بررسی کنید؛ مقصد شبکه‌ای کند یا پر شدن دیسک از علل رایج است.",
+    "en": "Check Agent job history and the backup tool log; slow network destinations and full disks are common causes."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — backups over network shares; maintenance plan and «ابزار پایگاه داده» conflicts"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.errorlog.e3041": 2
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "sql.errorlog.e3041": 0
+      },
+      "expect": null
+    }
+  ]
+}

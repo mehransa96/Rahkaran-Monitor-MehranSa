@@ -39,9 +39,27 @@ public sealed record RuleDefinition
     public double Confidence { get; init; } = 0.8;
 
     public IReadOnlyDictionary<string, JsonElement> Params { get; init; } = new Dictionary<string, JsonElement>();
+
+    /// <summary>
+    /// Built-in fixtures: every rule ships at least one example that must fire (with the expected severity) and one
+    /// that must stay quiet. A generic test evaluates all of them (CLAUDE.md: "new rule ⇒ … a fixture test").
+    /// </summary>
+    public IReadOnlyList<RuleExample> Examples { get; init; } = [];
+
+    /// <summary>
+    /// Set on rules that check a ستاد فنی / baseline setting: the report's compliance table lists one row per such
+    /// rule (Compliant / Deviation / Unknown), so the expected value lives next to the threshold it describes.
+    /// </summary>
+    public RuleBaseline? Baseline { get; init; }
 }
 
+/// <summary>A compliance-table row: what is checked, the expected value, and the fact holding the actual value.</summary>
+public sealed record RuleBaseline(LocalizedText Item, LocalizedText Expected, string Actual);
+
 public sealed record RuleEscalation(string When, Severity Severity);
+
+/// <summary>Facts for one example; <see cref="Expect"/> null = must not fire (and must be determinate).</summary>
+public sealed record RuleExample(IReadOnlyDictionary<string, JsonElement> Facts, Severity? Expect, IReadOnlyList<NodeRoles>? Roles = null, string? Note = null);
 
 public sealed record RuleSource(SourceKind Kind, string Citation);
 
@@ -115,6 +133,13 @@ public static class RuleLoader
         if (def.Source is null || string.IsNullOrWhiteSpace(def.Source.Citation))
         {
             problems.Add("source.citation is required");
+        }
+
+        if (def.Baseline is { } baseline
+            && (baseline.Item is null || baseline.Expected is null || string.IsNullOrWhiteSpace(baseline.Item.Fa) || string.IsNullOrWhiteSpace(baseline.Item.En)
+                || string.IsNullOrWhiteSpace(baseline.Expected.Fa) || string.IsNullOrWhiteSpace(baseline.Expected.En) || string.IsNullOrWhiteSpace(baseline.Actual)))
+        {
+            problems.Add("baseline needs item and expected (fa and en) and an actual fact key");
         }
 
         if (def.Confidence is < 0 or > 1)

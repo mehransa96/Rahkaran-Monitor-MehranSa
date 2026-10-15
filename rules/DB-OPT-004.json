@@ -1,0 +1,58 @@
+{
+  "id": "DB-OPT-004",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_user && (!db.auto_create_stats || !db.auto_update_stats)",
+  "severity": "Info",
+  "title": {
+    "fa": "ایجاد/به‌روزرسانی خودکار آمار در {instance} خاموش است",
+    "en": "Auto create/update statistics is off for {instance}"
+  },
+  "explanation": {
+    "fa": "ستاد فنی گفته است گزینه‌های Automatic تغییر داده نشوند؛ خاموش بودن آن‌ها غیرمعمول است.",
+    "en": "ستاد فنی says the Automatic options must not be changed; having them off is unusual."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Database"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "Auto create / update statistics",
+      "en": "Auto create / update statistics"
+    },
+    "expected": {
+      "fa": "روشن",
+      "en": "On"
+    },
+    "actual": "db.auto_update_stats"
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].auto_create_stats": false,
+        "db[Rk].auto_update_stats": true
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].auto_create_stats": true,
+        "db[Rk].auto_update_stats": true
+      },
+      "expect": null
+    }
+  ]
+}

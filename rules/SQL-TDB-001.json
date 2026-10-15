@@ -1,0 +1,62 @@
+{
+  "id": "SQL-TDB-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "tempdb.data_files < min(sql.cpu.logical, 8)",
+  "severity": "Warning",
+  "title": {
+    "fa": "تعداد فایل‌های داده TempDB کم است ({tempdb.data_files})",
+    "en": "Too few TempDB data files ({tempdb.data_files})"
+  },
+  "explanation": {
+    "fa": "توصیه عمومی: تعداد فایل‌های داده TempDB برابر تعداد هسته‌های منطقی تا حداکثر ۸ باشد تا رقابت روی صفحات تخصیص کاهش یابد.",
+    "en": "General guidance: one TempDB data file per logical core up to 8, to reduce allocation-page contention."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "تعداد فایل‌های داده TempDB",
+      "en": "TempDB data files"
+    },
+    "expected": {
+      "fa": "برابر تعداد هسته‌ها، حداکثر ۸",
+      "en": "One per core, up to 8"
+    },
+    "actual": "tempdb.data_files"
+  },
+  "examples": [
+    {
+      "facts": {
+        "tempdb.data_files": 1,
+        "sql.cpu.logical": 16
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "tempdb.data_files": 8,
+        "sql.cpu.logical": 16
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "tempdb.data_files": 4,
+        "sql.cpu.logical": 4
+      },
+      "expect": null
+    }
+  ]
+}

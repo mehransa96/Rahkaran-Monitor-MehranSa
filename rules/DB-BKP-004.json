@@ -1,0 +1,45 @@
+{
+  "id": "DB-BKP-004",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.full_backups_24h > 1 && db.full_backup_destinations_24h > 1",
+  "severity": "Warning",
+  "title": {
+    "fa": "چند پشتیبان کامل غیر COPY_ONLY از {instance} به مقصدهای مختلف",
+    "en": "Several non-copy-only full backups of {instance} to different destinations"
+  },
+  "explanation": {
+    "fa": "در ۲۴ ساعت گذشته {db.full_backups_24h} پشتیبان کامل به {db.full_backup_destinations_24h} مقصد گرفته شده است. ستاد فنی الزام کرده پشتیبان‌های اضافی COPY_ONLY باشند تا زنجیره تفاضلی/لاگ نشکند.",
+    "en": "{db.full_backups_24h} full backups went to {db.full_backup_destinations_24h} destinations in 24 h. ستاد فنی requires extra backups to be COPY_ONLY so the differential/log chain stays intact."
+  },
+  "recommendation": {
+    "fa": "منبع پشتیبان اضافی را پیدا و آن را COPY_ONLY کنید.",
+    "en": "Find the extra backup source and make it COPY_ONLY."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Maintenance"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].full_backups_24h": 2,
+        "db[Rk].full_backup_destinations_24h": 2
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].full_backups_24h": 1,
+        "db[Rk].full_backup_destinations_24h": 1
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": "DB-INT-001",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_user && db.state == 'ONLINE' && db.days_since_checkdb > params.warn_days",
+  "severity": "Warning",
+  "escalate": [
+    {
+      "when": "db.days_since_checkdb > params.crit_days",
+      "severity": "Critical"
+    }
+  ],
+  "title": {
+    "fa": "CHECKDB سالم اخیر برای {instance} ثبت نشده",
+    "en": "No recent clean CHECKDB for {instance}"
+  },
+  "explanation": {
+    "fa": "ستاد فنی اجرای هفتگی CHECKDB را تعیین کرده است (۹۹۹۹۹ یعنی هرگز).",
+    "en": "ستاد فنی requires a weekly CHECKDB (99999 = never)."
+  },
+  "recommendation": {
+    "fa": "Job بررسی صحت را با ستاد فنی تنظیم کنید.",
+    "en": "Set up the integrity job with ستاد فنی."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Maintenance"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "warn_days": 7,
+    "crit_days": 14
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].state": "ONLINE",
+        "db[Rk].days_since_checkdb": 10
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].state": "ONLINE",
+        "db[Rk].days_since_checkdb": 99999
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].state": "ONLINE",
+        "db[Rk].days_since_checkdb": 3
+      },
+      "expect": null
+    }
+  ]
+}

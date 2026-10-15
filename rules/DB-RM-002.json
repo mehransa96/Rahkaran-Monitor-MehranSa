@@ -1,0 +1,79 @@
+{
+  "id": "DB-RM-002",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_rahkaran && db.recovery_model != 'SIMPLE' && (db.hours_since_log > params.max_hours_any || (rsm.in_working_hours && db.hours_since_log > params.max_hours_work))",
+  "severity": "Warning",
+  "escalate": [
+    {
+      "when": "db.hours_since_log > params.max_hours_any",
+      "severity": "Critical"
+    }
+  ],
+  "title": {
+    "fa": "پشتیبان لاگ {instance} به‌موقع گرفته نشده",
+    "en": "The log backup of {instance} is overdue"
+  },
+  "explanation": {
+    "fa": "ستاد فنی پشتیبان لاگ هر ۲ ساعت در ساعات کاری را تعیین کرده است. بدون پشتیبان لاگ، لاگ تراکنش رشد می‌کند و نقطه بازیابی از دست می‌رود.",
+    "en": "ستاد فنی requires a log backup every 2 hours during working hours. Without it the log grows and recovery points are lost."
+  },
+  "recommendation": {
+    "fa": "Job پشتیبان لاگ و خطاهای آن را بررسی کنید.",
+    "en": "Check the log backup job and its errors."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Maintenance"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max_hours_work": 2,
+    "max_hours_any": 24
+  },
+  "baseline": {
+    "item": {
+      "fa": "فاصلهٔ پشتیبان Log (راهکاران)",
+      "en": "Log backup interval (Rahkaran)"
+    },
+    "expected": {
+      "fa": "≤ ۲ ساعت در ساعات کاری، ≤ ۲۴ ساعت",
+      "en": "≤ 2 h in working hours, ≤ 24 h otherwise"
+    },
+    "actual": "db.hours_since_log"
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].recovery_model": "FULL",
+        "db[Rk].hours_since_log": 3,
+        "rsm.in_working_hours": true
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].recovery_model": "FULL",
+        "db[Rk].hours_since_log": 30,
+        "rsm.in_working_hours": false
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].recovery_model": "FULL",
+        "db[Rk].hours_since_log": 3,
+        "rsm.in_working_hours": false
+      },
+      "expect": null
+    }
+  ]
+}

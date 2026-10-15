@@ -1,0 +1,63 @@
+{
+  "id": "DB-RM-001",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_rahkaran && db.recovery_model == 'SIMPLE'",
+  "severity": "Critical",
+  "title": {
+    "fa": "پایگاه داده راهکاران ({instance}) در مدل بازیابی SIMPLE است",
+    "en": "The Rahkaran database ({instance}) uses the SIMPLE recovery model"
+  },
+  "explanation": {
+    "fa": "ستاد فنی مدل بازیابی FULL (یا Bulk-logged) با پشتیبان لاگ را برای پایگاه اصلی الزامی کرده و تغییر به Simple را بدون هماهنگی ممنوع کرده است. در مدل SIMPLE بازیابی تا لحظه خرابی ممکن نیست.",
+    "en": "ستاد فنی requires FULL (or bulk-logged) recovery with log backups for the main database and forbids switching to SIMPLE without approval. SIMPLE cannot restore to the point of failure."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Database"
+  },
+  "verified": true,
+  "confidence": 0.95,
+  "baseline": {
+    "item": {
+      "fa": "Recovery model (راهکاران)",
+      "en": "Recovery model (Rahkaran)"
+    },
+    "expected": {
+      "fa": "FULL",
+      "en": "FULL"
+    },
+    "actual": "db.recovery_model"
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].recovery_model": "SIMPLE"
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].recovery_model": "FULL"
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "db[Other].is_rahkaran": false,
+        "db[Other].recovery_model": "SIMPLE"
+      },
+      "expect": null
+    }
+  ]
+}

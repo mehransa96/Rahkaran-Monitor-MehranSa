@@ -1,0 +1,56 @@
+{
+  "id": "SQL-CFG-013",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.cross_db_ownership_chaining == 1",
+  "severity": "Warning",
+  "title": {
+    "fa": "cross db ownership chaining فعال است",
+    "en": "cross db ownership chaining is on"
+  },
+  "explanation": {
+    "fa": "این گزینه در سطح سرور خطر دسترسی ناخواسته بین پایگاه‌های داده را ایجاد می‌کند.",
+    "en": "Server-wide ownership chaining can grant unintended cross-database access."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "evidence": [
+    "sql.config.cross_db_ownership_chaining"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.9,
+  "baseline": {
+    "item": {
+      "fa": "cross db ownership chaining",
+      "en": "cross db ownership chaining"
+    },
+    "expected": {
+      "fa": "0 (خاموش)",
+      "en": "0 (off)"
+    },
+    "actual": "sql.config.cross_db_ownership_chaining"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.cross_db_ownership_chaining": 1
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.config.cross_db_ownership_chaining": 0
+      },
+      "expect": null
+    }
+  ]
+}

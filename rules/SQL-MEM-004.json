@@ -1,0 +1,63 @@
+{
+  "id": "SQL-MEM-004",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "!node.shared_box && !sql.config.max_server_memory_default && sql.config.os_reserve_mb < max(params.min_mb, sql.memory.physical_mb * params.min_ratio)",
+  "severity": "Warning",
+  "title": {
+    "fa": "حافظه باقی‌مانده برای سیستم‌عامل کم است ({sql.config.os_reserve_mb} مگابایت)",
+    "en": "Too little memory left for the OS ({sql.config.os_reserve_mb} MB)"
+  },
+  "explanation": {
+    "fa": "روی سرور اختصاصی پایگاه داده توصیه عمومی این است که حداقل ۴ گیگابایت یا ۱۰٪ RAM (هرکدام بیشتر) برای سیستم‌عامل باقی بماند.",
+    "en": "On a dedicated database server the general guidance is to leave at least 4 GB or 10 % of RAM (whichever is larger) to the OS."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "min_mb": 4096,
+    "min_ratio": 0.1
+  },
+  "baseline": {
+    "item": {
+      "fa": "حافظهٔ باقی‌مانده برای سیستم‌عامل",
+      "en": "Memory left for the OS"
+    },
+    "expected": {
+      "fa": "دست‌کم max(4 GB، ۱۰٪ RAM)",
+      "en": "At least max(4 GB, 10% of RAM)"
+    },
+    "actual": "sql.config.os_reserve_mb"
+  },
+  "examples": [
+    {
+      "facts": {
+        "node.shared_box": false,
+        "sql.config.max_server_memory_default": false,
+        "sql.config.os_reserve_mb": 2048,
+        "sql.memory.physical_mb": 65536
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "node.shared_box": false,
+        "sql.config.max_server_memory_default": false,
+        "sql.config.os_reserve_mb": 8192,
+        "sql.memory.physical_mb": 65536
+      },
+      "expect": null
+    }
+  ]
+}

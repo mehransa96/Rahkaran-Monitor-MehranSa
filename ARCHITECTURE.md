@@ -81,9 +81,9 @@ dependency and are the most test-heavy code, so isolating them lets the bulk of 
 | Perf counters | System.Diagnostics.PerformanceCounter 8.x | local PDH; remote via CIM `Win32_PerfFormattedData_*` |
 | IIS | Microsoft.Web.Administration | **P0 spike**: confirm a .NET 8-compatible build and `ServerManager(readOnly: true, path)` |
 | .NET counters | Microsoft.Diagnostics.NETCore.Client | optional, local, off by default |
-| Storage | Microsoft.Data.Sqlite 8.x | WAL mode |
+| Storage | Microsoft.Data.Sqlite 8.x — **not used yet** (P1 stores snapshots as files, see §10) | WAL mode |
 | Compression | System.IO.Compression (Brotli) | **instead of zstd** – zero extra dependency; see §10 |
-| Templates | Scriban 5.x | sandboxed: no `import`, no file includes outside embedded resources |
+| Templates | Scriban 7.5.0 | one embedded template; strict variables; model is pre-masked and pre-encoded |
 | PDF | WebView2 `PrintToPdf` (decision Q1) | fallback: open HTML and print |
 | Logging | Serilog + Serilog.Sinks.File | redaction enricher + destructuring policy |
 | Tests | xUnit 2.9, FluentAssertions 6.12 (v7+ is commercial), NetArchTest.Rules, Microsoft.CodeAnalysis.CSharp (analyzer canary), Verify.Xunit (P1) | |
@@ -500,6 +500,17 @@ clears after its condition is false for N evaluations (hysteresis, default 2). H
 
 ## 10. Storage (SQLite, `data/rsm.db`, WAL)
 
+> **Status after Phase 1 — open decision for the repository owner.** CLAUDE.md requires that *all* SQL in
+> `src/` lives in embedded `Queries/**/*.sql` files executed by catalog key, and the architecture tests enforce
+> that (`No_sql_text_is_built_in_csharp`, `Sql_files_exist_only_in_query_catalog_folders`). RSM's own SQLite
+> statements (CREATE/INSERT on the local history file) cannot satisfy that rule as written, and exempting them
+> would change how a non-negotiable rule is enforced. Phase 1 therefore stores diagnosis history **without SQL**:
+> `snapshots/<id>.json.br` (Brotli JSON of the whole `SiteSnapshot`) plus `snapshots/<id>.meta.json` (for
+> listing), both written through `IDataFolder`. Phase 5 (time series, baselines) needs a real database; before
+> P5 the owner decides either (a) a §2 spec clarification that allows RSM's *local* SQLite statements as embedded
+> resources in one pinned folder (`src/RSM.Storage/LocalDb/`), executed only by `Microsoft.Data.Sqlite` against
+> the data-folder file, or (b) a non-SQL store. The schema below is the plan for option (a).
+
 ```sql
 sites(id, name, created_utc, profile_json)                     -- secrets NOT here (DPAPI blobs in profile store)
 nodes(id, site_id, name, host, roles, settings_json)
@@ -574,6 +585,28 @@ pick a spike on any chart ⇒ events ±5 min across all nodes.
 - **Masking** (`IMasker`): deterministic per-export pseudonyms (`SRV-1`, `DB-2`, `10.x.x.7`, `LOGIN-3`),
   query literals replaced via ScriptDom token stream (strings/numbers → `?`), applied to *all* outputs.
 - Snapshot tests (Verify) for fa and en HTML with a fixed fixture bundle.
+
+**As built in Phase 1** (`src/RSM.Reporting`, works on `SiteSnapshot` only — an arch test forbids it from touching
+collectors, storage, hosting or live connections):
+- `ReportBuilder` → view model in which every server-supplied string is masked (if requested) and HTML-encoded;
+  the Scriban template outputs values as-is. Structure per spec §13: cover → executive summary (indicative score
+  = 100 − 15·critical − 5·warning − 1·info, counts, SVG bar, top 5) → per node: inventory, **compliance table**,
+  findings per layer (evidence, recommendation, source, "general guidance" and "unverified" chips, fixed index
+  caution) and databases → appendix: Capability Matrix, collector status, indeterminate rules, rule errors, glossary.
+- **Compliance table**: one row per rule that carries a `baseline` block (`item`, `expected`, `actual` fact) —
+  so the expected value lives in the same JSON as its threshold and source. Status: Deviation (+severity) if the
+  rule fired, Not applicable for shared-box/dedicated-box rules on the other kind of node, Unknown if the rule was
+  indeterminate or the fact is missing, otherwise Compliant. `forEach: db` rules list the Rahkaran databases
+  (ReportServer databases for the ReportServer rule) plus any database with a finding.
+- Self-contained HTML: Vazirmatn base64, inline CSS + SVG, **no script**, a CSP meta tag forbidding external
+  loads, print CSS (for the P2 PDF path).
+- `Masker`: pseudonyms for site, node, host, server (incl. `HOST\INSTANCE,port` parts), DB, login (incl.
+  `DOMAIN\user` parts), job, IPv4 (`10.x.x.7`, version numbers untouched), UNC hosts; system DBs, `sa` and virtual
+  service accounts stay. Applied to HTML text and to JSON values **and property names**. Masked bundles also drop
+  collector payloads (raw rows) and site notes.
+- JSON bundle v1: zip with `manifest.json` + `snapshot.json` (`results/…`, `events.json`, samples arrive with the
+  phases that produce them). Files go to `<data>/reports/RSM_<site>_<yyyyMMdd-HHmm>[_masked][_fa|_en].*` via
+  `IDataFolder`; the UI shows the path to copy and never opens a shell.
 
 ---
 

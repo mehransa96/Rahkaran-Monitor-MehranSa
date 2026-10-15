@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+{{- # Every value in the model is already masked and HTML-encoded by ReportBuilder; output it as-is. -}}
+<html lang="{{ m.Lang }}" dir="{{ m.Dir }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="RSM {{ m.RsmVersion }}">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; font-src data:; img-src data:">
+<title>{{ m.Title }} — {{ m.SiteName }}</title>
+<style>
+{{ fonts }}
+{{ css }}
+</style>
+</head>
+<body>
+<header class="cover">
+  <h1>{{ m.Title }}</h1>
+  <table class="meta">
+    <tr><th>{{ m.L.Site }}</th><td>{{ m.SiteName }}</td></tr>
+    <tr><th>{{ m.L.Nodes }}</th><td>{{ for n in m.Nodes }}<a href="#{{ n.Anchor }}">{{ n.Name }}</a>{{ if !for.last }}{{ sep }}{{ end }}{{ end }}</td></tr>
+    <tr><th>{{ m.L.Generated }}</th><td class="ltr-num">{{ m.Generated }}</td></tr>
+    <tr><th>{{ m.L.SnapshotWindow }}</th><td class="ltr-num">{{ m.Window }}</td></tr>
+    <tr><th>{{ m.L.RsmVersion }}</th><td class="ltr-num">{{ m.RsmVersion }}</td></tr>
+    <tr><th>{{ m.L.Rules }}</th><td class="ltr-num">{{ m.RuleCount }}</td></tr>
+  </table>
+  <p class="note">{{ m.HeavyNote }}</p>
+  {{ if m.Masked }}<p class="note masked">{{ m.L.Masked }}</p>{{ end }}
+  <p class="note readonly">{{ m.L.ReadOnlyNote }}</p>
+</header>
+
+<section id="summary">
+  <h2>{{ m.L.Summary }}</h2>
+  <div class="cards">
+    <div class="card score {{ m.ScoreClass }}"><div class="num">{{ m.Score }}</div><div>{{ m.L.Score }}</div></div>
+    <div class="card critical"><div class="num">{{ m.Critical }}</div><div>{{ m.L.Critical }}</div></div>
+    <div class="card warning"><div class="num">{{ m.Warning }}</div><div>{{ m.L.Warning }}</div></div>
+    <div class="card info"><div class="num">{{ m.Info }}</div><div>{{ m.L.Info }}</div></div>
+  </div>
+  {{ chart }}
+  <p class="hint">{{ m.L.ScoreNote }}</p>
+  <h3>{{ m.L.TopIssues }}</h3>
+  {{ if m.TopIssues.size == 0 }}<p>{{ m.L.NoFindings }}</p>{{ else }}
+  <ol class="top">
+    {{ for f in m.TopIssues }}<li><span class="sev {{ f.SeverityClass }}">{{ f.Severity }}</span> <code>{{ f.RuleId }}</code> {{ f.Title }} <span class="muted">— {{ f.Node }}</span></li>{{ end }}
+  </ol>
+  {{ end }}
+</section>
+
+{{ for n in m.Nodes }}
+<section class="node" id="{{ n.Anchor }}">
+  <h2>{{ n.Name }} <span class="muted">({{ n.Host }} · {{ n.Roles }})</span></h2>
+  <p><span class="sev critical">{{ m.L.Critical }}: {{ n.Critical }}</span> <span class="sev warning">{{ m.L.Warning }}: {{ n.Warning }}</span> <span class="sev info">{{ m.L.Info }}: {{ n.Info }}</span></p>
+
+  {{ if n.Inventory.size > 0 }}
+  <h3>{{ m.L.Inventory }}</h3>
+  <table class="kv">{{ for kv in n.Inventory }}<tr><th>{{ kv.Key }}</th><td>{{ kv.Value }}</td></tr>{{ end }}</table>
+  {{ end }}
+
+  {{ if n.Compliance.size > 0 }}
+  <h3>{{ m.L.Compliance }}</h3>
+  <table class="grid">
+    <thead><tr><th>{{ m.L.Item }}</th><th>{{ m.L.Database }}</th><th>{{ m.L.Expected }}</th><th>{{ m.L.Actual }}</th><th>{{ m.L.Status }}</th><th>{{ m.L.Rule }}</th></tr></thead>
+    <tbody>
+    {{ for r in n.Compliance }}<tr class="row-{{ r.StatusClass }}"><td>{{ r.Item }}</td><td>{{ r.Instance }}</td><td>{{ r.Expected }}</td><td class="ltr-num">{{ r.Actual }}</td><td><span class="sev {{ r.StatusClass }}">{{ r.Status }}</span></td><td><code>{{ r.RuleId }}</code>{{ if r.General }} <span class="chip general">{{ m.L.GeneralGuidance }}</span>{{ end }}</td></tr>
+    {{ end }}
+    </tbody>
+  </table>
+  {{ end }}
+
+  <h3>{{ m.L.Findings }}</h3>
+  {{ if n.Layers.size == 0 }}<p>{{ m.L.NoFindings }}</p>{{ end }}
+  {{ for layer in n.Layers }}
+  <h4>{{ layer.Name }}</h4>
+  {{ for f in layer.Findings }}
+  <article class="finding {{ f.SeverityClass }}">
+    <header><span class="sev {{ f.SeverityClass }}">{{ f.Severity }}</span> <code>{{ f.RuleId }}</code> <strong>{{ f.Title }}</strong>
+      {{ if f.General }}<span class="chip general">{{ m.L.GeneralGuidance }}</span>{{ end }}
+      {{ if f.Unverified }}<span class="chip unverified">{{ m.L.Unverified }}</span>{{ end }}</header>
+    <p>{{ f.Explanation }}</p>
+    {{ if f.Caution }}<p class="caution">{{ f.Caution }}</p>{{ end }}
+    {{ if f.Evidence.size > 0 }}<details><summary>{{ m.L.Evidence }}</summary><table class="kv">{{ for e in f.Evidence }}<tr><th><code>{{ e.Key }}</code></th><td class="ltr-num">{{ e.Value }}</td></tr>{{ end }}</table></details>{{ end }}
+    <p><b>{{ m.L.Recommendation }}:</b> {{ f.Recommendation }}</p>
+    <p class="muted">{{ m.L.Source }}: {{ f.Source }}</p>
+  </article>
+  {{ end }}
+  {{ end }}
+
+  {{ if n.Databases.size > 0 }}
+  <h3>{{ m.L.Databases }}</h3>
+  <table class="grid">
+    <thead><tr><th>{{ m.L.Database }}</th><th>{{ m.L.State }}</th><th>{{ m.L.Recovery }}</th><th>{{ m.L.SizeMb }}</th><th>{{ m.L.LastFull }}</th><th>{{ m.L.LastLog }}</th><th>{{ m.L.LastCheckdb }}</th></tr></thead>
+    <tbody>
+    {{ for d in n.Databases }}<tr><td>{{ d.Name }}{{ if d.IsRahkaran }} <span class="chip rk">{{ m.L.RahkaranDb }}</span>{{ end }}</td><td><span class="sev {{ d.StateClass }}">{{ d.State }}</span></td><td>{{ d.Recovery }}</td><td class="ltr-num">{{ d.DataMb }}</td><td class="ltr-num">{{ d.LastFull }}</td><td class="ltr-num">{{ d.LastLog }}</td><td class="ltr-num">{{ d.LastCheckdb }}</td></tr>
+    {{ end }}
+    </tbody>
+  </table>
+  {{ end }}
+</section>
+{{ end }}
+
+<section id="appendix">
+  <h2>{{ m.L.Appendix }}</h2>
+  {{ for n in m.Nodes }}
+  <h3>{{ n.Name }} — {{ m.L.Capabilities }}</h3>
+  <table class="grid">
+    <thead><tr><th>{{ m.L.Capability }}</th><th>{{ m.L.Status }}</th><th>{{ m.L.Detail }}</th></tr></thead>
+    <tbody>{{ for c in n.Capabilities }}<tr><td>{{ c.Title }}</td><td><span class="sev {{ c.StateClass }}">{{ c.State }}</span></td><td>{{ c.Detail }}</td></tr>{{ end }}</tbody>
+  </table>
+  {{ if n.Collectors.size > 0 }}
+  <h3>{{ n.Name }} — {{ m.L.Collectors }}</h3>
+  <table class="grid">
+    <thead><tr><th>{{ m.L.Collector }}</th><th>{{ m.L.Status }}</th><th>{{ m.L.Detail }}</th><th>{{ m.L.Duration }}</th></tr></thead>
+    <tbody>{{ for c in n.Collectors }}<tr><td><code>{{ c.Id }}</code></td><td><span class="sev {{ c.StateClass }}">{{ c.State }}</span></td><td>{{ c.Reason }}</td><td class="ltr-num">{{ c.Duration }}</td></tr>{{ end }}</tbody>
+  </table>
+  {{ end }}
+  {{ if n.Indeterminate.size > 0 }}
+  <h3>{{ n.Name }} — {{ m.L.Indeterminate }}</h3>
+  <table class="grid">
+    <thead><tr><th>{{ m.L.Rule }}</th><th>{{ m.L.Database }}</th><th>{{ m.L.MissingFact }}</th></tr></thead>
+    <tbody>{{ for i in n.Indeterminate }}<tr><td><code>{{ i.RuleId }}</code></td><td>{{ i.Instance }}</td><td><code>{{ i.MissingFact }}</code></td></tr>{{ end }}</tbody>
+  </table>
+  {{ end }}
+  {{ if n.RuleErrors.size > 0 }}
+  <h3>{{ n.Name }} — {{ m.L.RuleErrors }}</h3>
+  <ul>{{ for e in n.RuleErrors }}<li>{{ e }}</li>{{ end }}</ul>
+  {{ end }}
+  {{ end }}
+  <h3>{{ m.L.Glossary }}</h3>
+  <table class="kv">{{ for g in m.Glossary }}<tr><th>{{ g.Key }}</th><td>{{ g.Value }}</td></tr>{{ end }}</table>
+</section>
+<footer class="muted">RSM {{ m.RsmVersion }} — {{ m.L.ReadOnlyNote }}</footer>
+</body>
+</html>

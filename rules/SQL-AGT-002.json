@@ -1,0 +1,50 @@
+{
+  "id": "SQL-AGT-002",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "agent.failed_jobs_7d > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "Jobهای ناموفق در ۷ روز اخیر ({agent.failed_jobs_7d})",
+    "en": "Failed jobs in the last 7 days ({agent.failed_jobs_7d})"
+  },
+  "explanation": {
+    "fa": "Jobهای ناموفق: {agent.failed_job_names}.",
+    "en": "Failed jobs: {agent.failed_job_names}."
+  },
+  "recommendation": {
+    "fa": "تاریخچه این Jobها را بررسی کنید؛ پشتیبان‌گیری و نگهداری باید بدون خطا اجرا شوند.",
+    "en": "Review their history; backup and maintenance jobs must run without errors."
+  },
+  "evidence": [
+    "agent.failed_job_names"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "agent.failed_jobs_7d": 2,
+        "agent.failed_job_names": [
+          "Backup",
+          "Index"
+        ]
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "agent.failed_jobs_7d": 0,
+        "agent.failed_job_names": []
+      },
+      "expect": null
+    }
+  ]
+}

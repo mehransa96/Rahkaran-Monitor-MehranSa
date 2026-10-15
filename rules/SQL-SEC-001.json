@@ -1,0 +1,42 @@
+{
+  "id": "SQL-SEC-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sec.sa.blank_password",
+  "severity": "Critical",
+  "title": {
+    "fa": "رمز حساب sa خالی است",
+    "en": "The sa login has an empty password"
+  },
+  "explanation": {
+    "fa": "ستاد فنی الزام کرده است sa رمز داشته باشد.",
+    "en": "ستاد فنی requires a password for sa."
+  },
+  "recommendation": {
+    "fa": "فوراً رمز قوی برای sa تعیین شود (توسط DBA).",
+    "en": "Have the DBA set a strong sa password immediately."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Maintenance"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sec.sa.blank_password": true
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "sec.sa.blank_password": false
+      },
+      "expect": null
+    }
+  ]
+}

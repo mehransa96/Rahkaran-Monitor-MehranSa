@@ -1,0 +1,56 @@
+{
+  "id": "DB-FILE-001",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_user && db.percent_growth_files > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "رشد درصدی فایل در {instance}",
+    "en": "Percent-based file growth in {instance}"
+  },
+  "explanation": {
+    "fa": "ستاد فنی رشد فایل را بر حسب مگابایت (مضرب ۱۰۲۴) تعیین کرده است؛ رشد درصدی در فایل‌های بزرگ رشدهای بسیار بزرگ و کند ایجاد می‌کند.",
+    "en": "ستاد فنی requires growth in MB (multiples of 1024); percent growth creates huge, slow growth events on large files."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Database"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "رشد فایل‌ها",
+      "en": "File growth"
+    },
+    "expected": {
+      "fa": "بر حسب MB (نه درصد)",
+      "en": "In MB (not percent)"
+    },
+    "actual": "db.percent_growth_files"
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].percent_growth_files": 1
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].percent_growth_files": 0
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "id": "DB-BKP-002",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_user && !db.is_rahkaran && db.state == 'ONLINE' && db.recovery_model == 'FULL' && db.hours_since_log > params.max_hours",
+  "severity": "Warning",
+  "title": {
+    "fa": "پایگاه {instance} در مدل FULL است ولی پشتیبان لاگ ندارد",
+    "en": "{instance} is in FULL recovery without log backups"
+  },
+  "explanation": {
+    "fa": "آخرین پشتیبان لاگ {db.hours_since_log} ساعت پیش (۹۹۹۹۹ یعنی هرگز). بدون پشتیبان لاگ، فایل لاگ پیوسته رشد می‌کند.",
+    "en": "Last log backup {db.hours_since_log} h ago (99999 = never). Without log backups the log grows continuously."
+  },
+  "recommendation": {
+    "fa": "پشتیبان لاگ زمان‌بندی کنید یا (فقط برای پایگاه‌های غیر راهکاران و با تأیید) مدل بازیابی را بازبینی کنید.",
+    "en": "Schedule log backups, or (non-Rahkaran databases only, with approval) review the recovery model."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — transaction log growth (1403/12/28)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max_hours": 24
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[App].is_user": true,
+        "db[App].is_rahkaran": false,
+        "db[App].state": "ONLINE",
+        "db[App].recovery_model": "FULL",
+        "db[App].hours_since_log": 99999
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[App].is_user": true,
+        "db[App].is_rahkaran": false,
+        "db[App].state": "ONLINE",
+        "db[App].recovery_model": "SIMPLE",
+        "db[App].hours_since_log": 99999
+      },
+      "expect": null
+    }
+  ]
+}

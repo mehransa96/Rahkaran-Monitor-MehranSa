@@ -7,7 +7,7 @@ namespace RSM.Safety.Tests;
 /// <summary>Every embedded catalog file must have a valid header and pass SqlGuard (fails the build otherwise).</summary>
 public class SqlCatalogTests
 {
-    private static readonly System.Reflection.Assembly[] CatalogAssemblies = [typeof(SqlCapabilityProbe).Assembly];
+    private static readonly System.Reflection.Assembly[] CatalogAssemblies = [typeof(SqlCapabilityProbe).Assembly, typeof(RSM.Collectors.Database.DatabaseCollector).Assembly];
 
     public static TheoryData<string> CatalogResources()
     {

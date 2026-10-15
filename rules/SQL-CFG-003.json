@@ -1,0 +1,56 @@
+{
+  "id": "SQL-CFG-003",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.lightweight_pooling != 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "lightweight pooling روشن است",
+    "en": "lightweight pooling is on"
+  },
+  "explanation": {
+    "fa": "ستاد فنی این گزینه را خاموش تعیین کرده است.",
+    "en": "ستاد فنی requires lightweight pooling off."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "evidence": [
+    "sql.config.lightweight_pooling"
+  ],
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Instance settings"
+  },
+  "verified": true,
+  "confidence": 0.9,
+  "baseline": {
+    "item": {
+      "fa": "lightweight pooling",
+      "en": "lightweight pooling"
+    },
+    "expected": {
+      "fa": "0 (خاموش)",
+      "en": "0 (off)"
+    },
+    "actual": "sql.config.lightweight_pooling"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.lightweight_pooling": 1
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.config.lightweight_pooling": 0
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "id": "SQL-VER-002",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.build.behind",
+  "severity": "Warning",
+  "title": {
+    "fa": "آخرین به‌روزرسانی تجمعی (CU) نصب نیست",
+    "en": "The latest cumulative update is not installed"
+  },
+  "explanation": {
+    "fa": "نسخه فعلی {sql.version} است؛ آخرین نسخه شناخته‌شده در این شاخه {sql.build.latest} ({sql.build.latest_label}) است. فهرست نسخه‌ها از known-builds.json (تاریخ {sql.build.catalog_as_of}) خوانده می‌شود.",
+    "en": "Current build {sql.version}; the latest known build of this branch is {sql.build.latest} ({sql.build.latest_label}), per known-builds.json dated {sql.build.catalog_as_of}."
+  },
+  "recommendation": {
+    "fa": "نصب آخرین CU را در پنجره نگهداری با ستاد فنی برنامه‌ریزی کنید. اگر فایل known-builds.json قدیمی است آن را به‌روز کنید.",
+    "en": "Schedule the latest CU in a maintenance window with ستاد فنی. Update known-builds.json if it is outdated."
+  },
+  "evidence": [
+    "sql.version",
+    "sql.build.latest",
+    "sql.build.catalog_as_of"
+  ],
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — SQL Server 2022 + latest CU"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "آخرین به‌روزرسانی تجمعی (CU)",
+      "en": "Latest cumulative update"
+    },
+    "expected": {
+      "fa": "آخرین CU نصب شده باشد",
+      "en": "Latest CU installed"
+    },
+    "actual": "sql.version"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.build.behind": true,
+        "sql.version": "16.0.4135.4",
+        "sql.build.latest": "16.0.4305.5",
+        "sql.build.latest_label": "CU27 + GDR",
+        "sql.build.catalog_as_of": "2026-10-13"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.build.behind": false
+      },
+      "expect": null
+    }
+  ]
+}

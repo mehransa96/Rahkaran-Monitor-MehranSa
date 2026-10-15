@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Snapshot report: self-contained HTML (fa RTL / en LTR, Scriban), JSON bundle, masking. Writes only via IDataFolder. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>RSM.Reporting</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RSM.Core\RSM.Core.csproj" />
+    <ProjectReference Include="..\RSM.Safety\RSM.Safety.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Scriban" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\*.ttf" />
+    <EmbeddedResource Include="Html\*.sbn" />
+    <EmbeddedResource Include="Html\*.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="RSM.Tests" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,43 @@
+{
+  "id": "DB-FILE-004",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.no_growth_low_free_files > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "فایل داده {instance} پر است و رشد خودکار ندارد",
+    "en": "A data file of {instance} is nearly full and cannot grow"
+  },
+  "explanation": {
+    "fa": "کمتر از ۱۰٪ فضای آزاد و رشد خودکار خاموش؛ به‌زودی نوشتن متوقف می‌شود (خطای 1105).",
+    "en": "Less than 10 % free and autogrowth off; writes will soon fail (error 1105)."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].no_growth_low_free_files": 1
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "db[Rk].no_growth_low_free_files": 0
+      },
+      "expect": null
+    }
+  ]
+}

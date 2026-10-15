@@ -1,0 +1,46 @@
+{
+  "id": "SQL-AGT-005",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "agent.unc_backup_steps > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "مقصد پشتیبان‌گیری یک مسیر شبکه‌ای (UNC) است",
+    "en": "Backups are written to a network (UNC) path"
+  },
+  "explanation": {
+    "fa": "پشتیبان‌گیری روی اشتراک شبکه‌ای کند، زمان پشتیبان‌گیری و قفل‌ها را طولانی می‌کند. Jobها: {agent.unc_backup_job_names}.",
+    "en": "Backups to a slow network share take longer and hold resources longer. Jobs: {agent.unc_backup_job_names}."
+  },
+  "recommendation": {
+    "fa": "سرعت پشتیبان‌گیری را پایش کنید؛ در صورت کندی، ابتدا روی دیسک محلی و سپس کپی کنید.",
+    "en": "Watch backup throughput; if slow, back up locally and copy afterwards."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — backups over network shares; maintenance plan and «ابزار پایگاه داده» conflicts"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "agent.unc_backup_steps": 1,
+        "agent.unc_backup_job_names": [
+          "Full"
+        ]
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "agent.unc_backup_steps": 0,
+        "agent.unc_backup_job_names": []
+      },
+      "expect": null
+    }
+  ]
+}

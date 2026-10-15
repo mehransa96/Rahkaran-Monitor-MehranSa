@@ -20,14 +20,14 @@ public sealed partial class NavItem(string titleKey, Func<object> createPage) : 
 
 public sealed partial class MainViewModel : ObservableObject
 {
-    public MainViewModel(SitesViewModel sites, SettingsViewModel settings, StatusBarViewModel status)
+    public MainViewModel(SitesViewModel sites, SettingsViewModel settings, DiagnosisViewModel diagnosis, StatusBarViewModel status)
     {
         Status = status;
         NavItems =
         [
             new NavItem("Nav_Overview", () => new OverviewViewModel()),
-            new NavItem("Nav_Sql", () => new PlaceholderViewModel("Nav_Sql", 1)),
-            new NavItem("Nav_Databases", () => new PlaceholderViewModel("Nav_Databases", 1)),
+            new NavItem("Nav_Sql", () => new LayerFindingsViewModel("Nav_Sql", Core.Model.Layer.Sql, diagnosis)),
+            new NavItem("Nav_Databases", () => new LayerFindingsViewModel("Nav_Databases", Core.Model.Layer.Database, diagnosis)),
             new NavItem("Nav_Queries", () => new PlaceholderViewModel("Nav_Queries", 2)),
             new NavItem("Nav_Windows", () => new PlaceholderViewModel("Nav_Windows", 2)),
             new NavItem("Nav_Iis", () => new PlaceholderViewModel("Nav_Iis", 3)),
@@ -37,7 +37,7 @@ public sealed partial class MainViewModel : ObservableObject
             new NavItem("Nav_Services", () => new PlaceholderViewModel("Nav_Services", 3)),
             new NavItem("Nav_Events", () => new PlaceholderViewModel("Nav_Events", 3)),
             new NavItem("Nav_Slowness", () => new PlaceholderViewModel("Nav_Slowness", 5)),
-            new NavItem("Nav_Reports", () => new PlaceholderViewModel("Nav_Reports", 1)),
+            new NavItem("Nav_Reports", () => diagnosis),
             new NavItem("Nav_History", () => new PlaceholderViewModel("Nav_History", 5)),
             new NavItem("Nav_Sites", () => sites),
             new NavItem("Nav_Settings", () => settings),

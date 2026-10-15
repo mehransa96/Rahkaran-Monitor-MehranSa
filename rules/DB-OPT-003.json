@@ -1,0 +1,54 @@
+{
+  "id": "DB-OPT-003",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.auto_shrink",
+  "severity": "Warning",
+  "title": {
+    "fa": "AUTO_SHRINK پایگاه {instance} روشن است",
+    "en": "AUTO_SHRINK is on for {instance}"
+  },
+  "explanation": {
+    "fa": "ستاد فنی Shrink پایگاه داده را ممنوع کرده است؛ AUTO_SHRINK باعث Fragmentation، مصرف CPU/I/O و رشد مجدد فایل‌ها می‌شود.",
+    "en": "ستاد فنی forbids shrinking databases; AUTO_SHRINK fragments indexes, burns CPU/I/O and the files grow again."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Maintenance"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "AUTO_SHRINK",
+      "en": "AUTO_SHRINK"
+    },
+    "expected": {
+      "fa": "خاموش",
+      "en": "Off"
+    },
+    "actual": "db.auto_shrink"
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].auto_shrink": true
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].auto_shrink": false
+      },
+      "expect": null
+    }
+  ]
+}

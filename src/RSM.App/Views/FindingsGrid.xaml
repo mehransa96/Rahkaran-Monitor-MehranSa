@@ -1,0 +1,43 @@
+<UserControl x:Class="RSM.App.Views.FindingsGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:model="clr-namespace:RSM.Core.Model;assembly=RSM.Core">
+  <!-- DataContext: a collection of FindingRowViewModel. Read-only: recommendations are text only. -->
+  <DataGrid ItemsSource="{Binding}" IsReadOnly="True" AutoGenerateColumns="False" MinHeight="120" HeadersVisibility="Column">
+    <DataGrid.RowStyle>
+      <Style TargetType="DataGridRow">
+        <Setter Property="ToolTip" Value="{Binding Recommendation}" />
+      </Style>
+    </DataGrid.RowStyle>
+    <DataGrid.Columns>
+      <DataGridTemplateColumn Width="90" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Finding_Severity]}" SortMemberPath="Severity">
+        <DataGridTemplateColumn.CellTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding SeverityText}" FontWeight="SemiBold" Margin="4,0">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                  <Setter Property="Foreground" Value="{DynamicResource Brush.Info}" />
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding Severity}" Value="{x:Static model:Severity.Critical}">
+                      <Setter Property="Foreground" Value="{DynamicResource Brush.Critical}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Severity}" Value="{x:Static model:Severity.Warning}">
+                      <Setter Property="Foreground" Value="{DynamicResource Brush.Warning}" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
+          </DataTemplate>
+        </DataGridTemplateColumn.CellTemplate>
+      </DataGridTemplateColumn>
+      <DataGridTextColumn Width="100" Binding="{Binding RuleId}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Finding_Rule]}" />
+      <DataGridTextColumn Width="110" Binding="{Binding Node}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Finding_Node]}" />
+      <DataGridTextColumn Width="120" Binding="{Binding Instance}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Finding_Instance]}" />
+      <DataGridTextColumn Width="3*" Binding="{Binding Title}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Finding_Title]}" />
+      <DataGridTextColumn Width="2*" Binding="{Binding Source}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Finding_Source]}" />
+      <DataGridTextColumn Width="1.4*" Binding="{Binding GuidanceLabel}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Finding_Guidance]}" />
+    </DataGrid.Columns>
+  </DataGrid>
+</UserControl>

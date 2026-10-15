@@ -1,0 +1,56 @@
+{
+  "id": "DB-OPT-001",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.state == 'ONLINE' && db.page_verify != 'CHECKSUM'",
+  "severity": "Warning",
+  "title": {
+    "fa": "Page Verify پایگاه {instance} روی CHECKSUM نیست ({db.page_verify})",
+    "en": "Page verify of {instance} is not CHECKSUM ({db.page_verify})"
+  },
+  "explanation": {
+    "fa": "ستاد فنی Page Verify = CHECKSUM را الزامی کرده است تا خرابی صفحات هنگام خواندن تشخیص داده شود.",
+    "en": "ستاد فنی requires PAGE_VERIFY CHECKSUM so damaged pages are detected on read."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Database"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "Page verify",
+      "en": "Page verify"
+    },
+    "expected": {
+      "fa": "CHECKSUM",
+      "en": "CHECKSUM"
+    },
+    "actual": "db.page_verify"
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].state": "ONLINE",
+        "db[Rk].page_verify": "NONE"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].state": "ONLINE",
+        "db[Rk].page_verify": "CHECKSUM"
+      },
+      "expect": null
+    }
+  ]
+}

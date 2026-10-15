@@ -4,9 +4,10 @@ A portable, **strictly read-only** Windows tool that support engineers run on (o
 servers to see the health of SQL Server, databases, Windows, IIS/ARR, Redis, SSRS and services, find the cause of
 slowness, and export a diagnostic report — in Persian or English.
 
-**Status: Phase 0 (foundation & safety).** You can define sites and servers and run *Test connection* to get the
-Capability Matrix (what RSM can read with the given credentials, and why something is unavailable). Monitoring
-pages arrive in Phases 1–5 (`PLAN.md`).
+**Status: Phase 1 (SQL Server & database health + report v1).** Define sites and servers, run *Test connection* to
+get the Capability Matrix, then *Reports → Diagnose now* for a read-only health check of SQL Server and its databases
+against the ستاد فنی baseline. Save it as a Persian or English HTML report or a JSON bundle, optionally with names and
+addresses masked. Live monitoring pages arrive in Phases 2–5 (`PLAN.md`).
 
 ## Read-only by construction
 

@@ -1,0 +1,37 @@
+2026-10-12 08:00:01.12 Server      Microsoft SQL Server 2022 (RTM-CU14) (KB5038325) - 16.0.4135.4 (X64)
+	Jul 10 2024 14:09:09
+	Copyright (C) 2022 Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2022 Standard 10.0 <X64> (Build 20348: ) (Hypervisor)
+2026-10-12 08:00:01.20 Server      Registry startup parameters: 
+	 -d D:\Data\master.mdf
+	 -e D:\Log\ERRORLOG
+	 -l D:\Data\mastlog.ldf
+	 -T1117
+2026-10-12 08:00:01.21 Server      Command Line Startup Parameters:
+	 -s "MSSQLSERVER"
+	 -T3226
+2026-10-12 08:05:00.00 spid52      DBCC TRACEON 1222, server process ID (SPID) 52. This is an informational message only; no user action is required.
+2026-10-13 09:15:10.31 Logon       Error: 18456, Severity: 14, State: 8.
+2026-10-13 09:15:10.31 Logon       Login failed for user 'sa'. Reason: Password did not match that for the login provided. [CLIENT: 10.0.0.25]
+2026-10-13 09:15:11.02 Logon       Error: 18456, Severity: 14, State: 8.
+2026-10-13 09:15:11.02 Logon       Login failed for user 'sa'. Reason: Password did not match that for the login provided. [CLIENT: 10.0.0.25]
+2026-10-13 09:20:00.00 Logon       Error: 18456, Severity: 14, State: 5.
+2026-10-13 09:20:00.00 Logon       Login failed for user 'olduser'. Reason: Could not find a login matching the name provided. [CLIENT: <local machine>]
+2026-10-13 10:00:00.50 spid61      Error: 823, Severity: 24, State: 2.
+2026-10-13 10:00:00.50 spid61      The operating system returned error 21(The device is not ready.) to SQL Server during a read at offset 0x00000000012000 in file 'E:\Data\Rahkaran.mdf'. Additional messages in the SQL Server error log and system event log may provide more detail.
+2026-10-13 10:01:00.00 spid62      Error: 824, Severity: 24, State: 2.
+2026-10-13 10:01:00.00 spid62      SQL Server detected a logical consistency-based I/O error: incorrect checksum (expected: 0x1; actual: 0x2). It occurred during a read of page (1:12345) in database ID 5 at offset 0x00000006072000 in file 'E:\Data\Rahkaran.mdf'.
+2026-10-13 10:02:00.00 spid63      Error: 825, Severity: 10, State: 2.
+2026-10-13 10:02:00.00 spid63      A read of the file 'E:\Data\Rahkaran.mdf' at offset 0x000000a1b2c000 succeeded after failing 1 time(s) with error: incorrect checksum.
+2026-10-13 11:00:00.00 spid8s      SQL Server has encountered 3 occurrence(s) of I/O requests taking longer than 15 seconds to complete on file [E:\Log\Rahkaran_log.ldf] in database id 5.  The OS file handle is 0x0000000000000AB4.
+2026-10-13 11:30:00.00 Server      Process 0:0:0 (0x1a2c) Worker 0x00000004E7C1C160 appears to be non-yielding on Scheduler 3. Thread creation time: 13371234567890. Approx Thread CPU Used: kernel 0 ms, user 70109 ms.
+2026-10-13 11:31:00.00 Server      ***Stack Dump being sent to D:\Log\SQLDump0001.txt
+2026-10-13 12:00:00.00 spid70      Error: 9002, Severity: 17, State: 2.
+2026-10-13 12:00:00.00 spid70      The transaction log for database 'Rahkaran' is full due to 'LOG_BACKUP'.
+2026-10-13 13:00:00.00 spid71      Error: 701, Severity: 17, State: 123.
+2026-10-13 13:00:00.00 spid71      There is insufficient system memory in resource pool 'default' to run this query.
+2026-10-13 22:30:00.00 Backup      Error: 3041, Severity: 16, State: 1.
+2026-10-13 22:30:00.00 Backup      BACKUP failed to complete the command BACKUP DATABASE Rahkaran. Check the backup application log for detailed messages.
+2026-10-14 02:00:00.00 spid9s      SQL Server has encountered 1 occurrence(s) of cachestore flush for the 'SQL Plans' cachestore (part of plan cache) due to 'DBCC FREEPROCCACHE' or 'DBCC FREESYSTEMCACHE' operations.
+2026-10-14 03:00:00.00 spid10s     Error: 50000, Severity: 16, State: 1.
+2026-10-14 03:00:00.00 spid10s     Custom application message that RSM does not classify.

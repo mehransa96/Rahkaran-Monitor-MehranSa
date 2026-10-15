@@ -1,0 +1,56 @@
+{
+  "id": "DB-FILE-002",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_user && db.growth_not_1024_files > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "رشد فایل داده {instance} مضرب ۱۰۲۴ مگابایت نیست",
+    "en": "Data-file growth of {instance} is not a multiple of 1024 MB"
+  },
+  "explanation": {
+    "fa": "ستاد فنی رشد فایل داده را مضربی از ۱۰۲۴ مگابایت تعیین کرده است.",
+    "en": "ستاد فنی sets data-file growth to multiples of 1024 MB."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Database"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "رشد فایل‌های داده",
+      "en": "Data-file growth"
+    },
+    "expected": {
+      "fa": "مضربی از 1024 MB",
+      "en": "A multiple of 1024 MB"
+    },
+    "actual": "db.growth_not_1024_files"
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].growth_not_1024_files": 1
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].growth_not_1024_files": 0
+      },
+      "expect": null
+    }
+  ]
+}

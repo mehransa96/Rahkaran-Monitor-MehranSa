@@ -1,0 +1,49 @@
+{
+  "id": "STO-003",
+  "layer": "Storage",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_rahkaran && db.data_log_same_volume",
+  "severity": "Info",
+  "title": {
+    "fa": "فایل‌های داده و لاگ پایگاه {instance} روی یک دیسک هستند",
+    "en": "Data and log files of {instance} share a volume"
+  },
+  "explanation": {
+    "fa": "ستاد فنی توصیه می‌کند در صورت امکان داده، لاگ و TempDB روی دیسک‌های جدا باشند تا I/O آن‌ها با هم رقابت نکند. دیسک داده: {db.data_volumes}، دیسک لاگ: {db.log_volumes}.",
+    "en": "ستاد فنی recommends separate disks for data, log and TempDB when possible so their I/O does not compete. Data: {db.data_volumes}, log: {db.log_volumes}."
+  },
+  "recommendation": {
+    "fa": "در برنامه ارتقای سخت‌افزار، انتقال فایل لاگ به دیسک جداگانه را با ستاد فنی بررسی کنید.",
+    "en": "Plan moving the log file to a separate disk with ستاد فنی at the next hardware change."
+  },
+  "evidence": [
+    "db.data_volumes",
+    "db.log_volumes"
+  ],
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Storage"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].data_log_same_volume": true
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].data_log_same_volume": false
+      },
+      "expect": null
+    }
+  ]
+}

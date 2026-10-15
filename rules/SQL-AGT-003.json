@@ -1,0 +1,46 @@
+{
+  "id": "SQL-AGT-003",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "agent.shrink_steps > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "Job زمان‌بندی‌شده برای Shrink فایل داده وجود دارد",
+    "en": "A scheduled job shrinks data files"
+  },
+  "explanation": {
+    "fa": "ستاد فنی Shrink زمان‌بندی‌شده پایگاه داده/فایل داده را ممنوع کرده است؛ Shrink باعث Fragmentation و رشد مجدد می‌شود. Jobها: {agent.shrink_job_names}.",
+    "en": "ستاد فنی forbids scheduled shrinks of databases/data files; shrinking fragments indexes and the files grow again. Jobs: {agent.shrink_job_names}."
+  },
+  "recommendation": {
+    "fa": "حذف مرحله Shrink از این Jobها را با ستاد فنی هماهنگ کنید.",
+    "en": "Coordinate removing the shrink steps with ستاد فنی."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Maintenance"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "agent.shrink_steps": 1,
+        "agent.shrink_job_names": [
+          "Nightly"
+        ]
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "agent.shrink_steps": 0,
+        "agent.shrink_job_names": []
+      },
+      "expect": null
+    }
+  ]
+}

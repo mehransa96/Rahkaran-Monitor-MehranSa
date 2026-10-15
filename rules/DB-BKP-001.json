@@ -1,0 +1,68 @@
+{
+  "id": "DB-BKP-001",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_user && db.state == 'ONLINE' && !db.is_reportserver_temp && (db.is_large ? (db.hours_since_full > params.large_full_hours || (db.hours_since_full > params.max_hours && db.hours_since_diff > params.max_hours)) : db.hours_since_full > params.max_hours)",
+  "severity": "Critical",
+  "title": {
+    "fa": "پشتیبان کامل به‌موقع از {instance} وجود ندارد",
+    "en": "{instance} has no recent full backup"
+  },
+  "explanation": {
+    "fa": "آخرین پشتیبان کامل {db.hours_since_full} ساعت پیش بوده است (۹۹۹۹۹ یعنی هرگز). ستاد فنی پشتیبان کامل روزانه (پایگاه‌های بزرگ: تفاضلی روزانه و کامل هفتگی) را تعیین کرده است.",
+    "en": "Last full backup: {db.hours_since_full} h ago (99999 = never). ستاد فنی requires a daily full (large databases: daily differential + weekly full)."
+  },
+  "recommendation": {
+    "fa": "Job پشتیبان‌گیری و خطاهای آن را بررسی کنید.",
+    "en": "Check the backup job and its errors."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Maintenance"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max_hours": 26,
+    "large_full_hours": 192
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].state": "ONLINE",
+        "db[Rk].is_reportserver_temp": false,
+        "db[Rk].is_large": false,
+        "db[Rk].hours_since_full": 99999,
+        "db[Rk].hours_since_diff": 99999
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].state": "ONLINE",
+        "db[Rk].is_reportserver_temp": false,
+        "db[Rk].is_large": true,
+        "db[Rk].hours_since_full": 100,
+        "db[Rk].hours_since_diff": 10
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].state": "ONLINE",
+        "db[Rk].is_reportserver_temp": false,
+        "db[Rk].is_large": false,
+        "db[Rk].hours_since_full": 10,
+        "db[Rk].hours_since_diff": 99999
+      },
+      "expect": null
+    }
+  ]
+}

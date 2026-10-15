@@ -1,0 +1,62 @@
+{
+  "id": "STO-004",
+  "layer": "Storage",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "volume",
+  "when": "volume.free_pct < params.warn",
+  "severity": "Warning",
+  "escalate": [
+    {
+      "when": "volume.free_pct < params.crit",
+      "severity": "Critical"
+    }
+  ],
+  "title": {
+    "fa": "فضای آزاد دیسک {instance} کم است ({volume.free_pct}٪)",
+    "en": "Low free space on {instance} ({volume.free_pct}%)"
+  },
+  "explanation": {
+    "fa": "روی این دیسک فایل‌های SQL Server قرار دارند و فقط {volume.free_mb} مگابایت آزاد مانده است. پر شدن دیسک باعث توقف رشد فایل‌ها و خطای 1105/9002 می‌شود.",
+    "en": "This volume holds SQL Server files and only {volume.free_mb} MB are free. A full disk stops file growth (errors 1105/9002)."
+  },
+  "recommendation": {
+    "fa": "فایل‌های غیرضروری (نسخه‌های پشتیبان قدیمی و …) را بررسی و فضای دیسک را افزایش دهید. هرگز فایل‌های داده را Shrink نکنید.",
+    "en": "Review unnecessary files (old backups, …) and add disk space. Never shrink data files."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "warn": 15,
+    "crit": 5
+  },
+  "examples": [
+    {
+      "facts": {
+        "volume[E:\\].free_pct": 12,
+        "volume[E:\\].free_mb": 5000
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "volume[E:\\].free_pct": 3,
+        "volume[E:\\].free_mb": 900
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "volume[E:\\].free_pct": 40,
+        "volume[E:\\].free_mb": 90000
+      },
+      "expect": null
+    }
+  ]
+}

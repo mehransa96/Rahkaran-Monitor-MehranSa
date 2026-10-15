@@ -1,0 +1,47 @@
+{
+  "id": "SQL-ERR-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.errorlog.e823 + sql.errorlog.e824 + sql.errorlog.e825 > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "خطای I/O و خطر خرابی داده (823/824/825)",
+    "en": "I/O errors with corruption risk (823/824/825)"
+  },
+  "explanation": {
+    "fa": "در {sql.errorlog.window_days} روز اخیر خطاهای 823: {sql.errorlog.e823}، 824: {sql.errorlog.e824}، 825: {sql.errorlog.e825} ثبت شده است. این خطاها نشانه مشکل دیسک/کنترلر و خطر خرابی داده هستند.",
+    "en": "In the last {sql.errorlog.window_days} days: 823 ×{sql.errorlog.e823}, 824 ×{sql.errorlog.e824}, 825 ×{sql.errorlog.e825}. These indicate disk/controller problems and a risk of corruption."
+  },
+  "recommendation": {
+    "fa": "فوراً سلامت دیسک و کنترلر را بررسی کنید، از آخرین پشتیبان سالم اطمینان یابید و DBCC CHECKDB را در زمان مناسب (توسط DBA) اجرا کنید.",
+    "en": "Check disks and controller now, make sure a good backup exists, and have the DBA run DBCC CHECKDB at a suitable time."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.errorlog.e823": 0,
+        "sql.errorlog.e824": 1,
+        "sql.errorlog.e825": 0,
+        "sql.errorlog.window_days": 7
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "sql.errorlog.e823": 0,
+        "sql.errorlog.e824": 0,
+        "sql.errorlog.e825": 0
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "SQL-CFG-011",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.clr_enabled == 1",
+  "severity": "Info",
+  "title": {
+    "fa": "CLR فعال است",
+    "en": "CLR is enabled"
+  },
+  "explanation": {
+    "fa": "اطلاع: CLR فعال است. معلوم نیست راهکاران به آن نیاز دارد یا نه (تأییدنشده).",
+    "en": "Info: CLR is enabled. Whether Rahkaran needs it is unknown (unverified)."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "evidence": [
+    "sql.config.clr_enabled"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": false,
+  "confidence": 0.4,
+  "baseline": {
+    "item": {
+      "fa": "clr enabled",
+      "en": "clr enabled"
+    },
+    "expected": {
+      "fa": "0 مگر آنکه لازم باشد",
+      "en": "0 unless required"
+    },
+    "actual": "sql.config.clr_enabled"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.clr_enabled": 1
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.config.clr_enabled": 0
+      },
+      "expect": null
+    }
+  ]
+}

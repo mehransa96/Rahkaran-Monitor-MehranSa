@@ -1,0 +1,53 @@
+{
+  "id": "SQL-MEM-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.max_server_memory_default",
+  "severity": "Critical",
+  "title": {
+    "fa": "max server memory روی مقدار پیش‌فرض (نامحدود) است",
+    "en": "max server memory is left at its default (unlimited)"
+  },
+  "explanation": {
+    "fa": "SQL Server می‌تواند تقریباً تمام حافظه سرور را بگیرد و سیستم‌عامل و IIS/راهکاران را دچار کمبود حافظه کند. ستاد فنی مقدار مشخصی (روی سرور مشترک ۶۵٪ RAM) تعیین کرده است.",
+    "en": "SQL Server can take nearly all server memory and starve Windows and IIS/Rahkaran. ستاد فنی sets an explicit value (65 % of RAM on a shared server)."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Instance settings"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "max server memory",
+      "en": "max server memory"
+    },
+    "expected": {
+      "fa": "تنظیم شده (نه پیش‌فرض نامحدود)",
+      "en": "Set (not the unlimited default)"
+    },
+    "actual": "sql.config.max_server_memory_mb"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.max_server_memory_default": true
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "sql.config.max_server_memory_default": false
+      },
+      "expect": null
+    }
+  ]
+}

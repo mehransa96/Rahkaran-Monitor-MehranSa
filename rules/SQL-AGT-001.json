@@ -1,0 +1,46 @@
+{
+  "id": "SQL-AGT-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.service.agent.present && (sql.service.agent.startup != 'Automatic' || sql.service.agent.status != 'Running')",
+  "severity": "Critical",
+  "title": {
+    "fa": "سرویس SQL Agent خودکار یا در حال اجرا نیست",
+    "en": "SQL Server Agent is not automatic or not running"
+  },
+  "explanation": {
+    "fa": "نوع راه‌اندازی: {sql.service.agent.startup}، وضعیت: {sql.service.agent.status}. بدون Agent، پشتیبان‌گیری، نگهداری و CDC اجرا نمی‌شوند.",
+    "en": "Startup: {sql.service.agent.startup}, status: {sql.service.agent.status}. Without the Agent, backups, maintenance and CDC do not run."
+  },
+  "recommendation": {
+    "fa": "سرویس را Automatic و در حال اجرا تنظیم کنید (توسط مدیر سرور).",
+    "en": "Have the administrator set the service to Automatic and start it."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Maintenance"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.service.agent.present": true,
+        "sql.service.agent.startup": "Manual",
+        "sql.service.agent.status": "Stopped"
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "sql.service.agent.present": true,
+        "sql.service.agent.startup": "Automatic",
+        "sql.service.agent.status": "Running"
+      },
+      "expect": null
+    }
+  ]
+}

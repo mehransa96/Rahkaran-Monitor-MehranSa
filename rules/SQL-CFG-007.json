@@ -1,0 +1,56 @@
+{
+  "id": "SQL-CFG-007",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.optimize_for_ad_hoc_workloads == 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "optimize for ad hoc workloads خاموش است",
+    "en": "optimize for ad hoc workloads is off"
+  },
+  "explanation": {
+    "fa": "ستاد فنی این گزینه را روشن تعیین کرده است؛ از پر شدن Plan Cache با طرح‌های یک‌بارمصرف جلوگیری می‌کند.",
+    "en": "ستاد فنی requires it on; it prevents single-use plans from bloating the plan cache."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "evidence": [
+    "sql.config.optimize_for_ad_hoc_workloads"
+  ],
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Instance settings"
+  },
+  "verified": true,
+  "confidence": 0.9,
+  "baseline": {
+    "item": {
+      "fa": "optimize for ad hoc workloads",
+      "en": "optimize for ad hoc workloads"
+    },
+    "expected": {
+      "fa": "1 (روشن)",
+      "en": "1 (on)"
+    },
+    "actual": "sql.config.optimize_for_ad_hoc_workloads"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.optimize_for_ad_hoc_workloads": 0
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.config.optimize_for_ad_hoc_workloads": 1
+      },
+      "expect": null
+    }
+  ]
+}

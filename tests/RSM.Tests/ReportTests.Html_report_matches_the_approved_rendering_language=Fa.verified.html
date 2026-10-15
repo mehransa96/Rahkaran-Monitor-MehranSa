@@ -1,0 +1,353 @@
+﻿<!DOCTYPE html><html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="RSM 1.0.0-test">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; font-src data:; img-src data:">
+<title>گزارش سلامت سرورهای راهکاران — Tehran HQ Lab</title>
+<style>
+@font-face { font-family:Vazirmatn; font-weight:400; src:url(data:font/ttf;base64,{font}) format("truetype"); }
+@font-face { font-family:Vazirmatn; font-weight:700; src:url(data:font/ttf;base64,{font}) format("truetype"); }
+
+:root { --fg:#1d2433; --muted:#5b6475; --line:#d9dee7; --bg:#ffffff; --panel:#f5f7fa;
+  --critical:#b42318; --warning:#b54708; --info:#175cd3; --ok:#067647; --unknown:#5b6475; }
+* { box-sizing:border-box; }
+body { font-family:Vazirmatn, "Segoe UI", Tahoma, sans-serif; color:var(--fg); background:var(--bg); margin:0 auto; max-width:1100px; padding:24px; line-height:1.6; font-size:14px; }
+h1 { font-size:26px; margin:0 0 12px; } h2 { font-size:20px; border-bottom:2px solid var(--line); padding-bottom:4px; margin-top:32px; }
+h3 { font-size:16px; margin-top:24px; } h4 { font-size:15px; margin:18px 0 8px; color:var(--muted); }
+a { color:var(--info); }
+code { font-family:Consolas, "Courier New", monospace; font-size:12px; direction:ltr; unicode-bidi:embed; }
+.cover { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:20px; }
+.meta th, .kv th { text-align:start; font-weight:600; padding:2px 12px 2px 0; white-space:nowrap; vertical-align:top; color:var(--muted); }
+[dir=rtl] .meta th, [dir=rtl] .kv th { padding:2px 0 2px 12px; }
+.note { margin:6px 0; } .masked { color:var(--info); } .readonly { color:var(--ok); font-weight:600; }
+.cards { display:flex; gap:12px; flex-wrap:wrap; margin:12px 0; }
+.card { flex:1 1 140px; border:1px solid var(--line); border-radius:8px; padding:12px; text-align:center; }
+.card .num { font-size:30px; font-weight:700; }
+.card.critical .num, .score.critical .num { color:var(--critical); } .card.warning .num, .score.warning .num { color:var(--warning); }
+.card.info .num { color:var(--info); } .score.ok .num { color:var(--ok); }
+.hint, .muted { color:var(--muted); font-size:12px; }
+table.grid { width:100%; border-collapse:collapse; margin:8px 0; }
+table.grid th, table.grid td { border:1px solid var(--line); padding:4px 8px; text-align:start; vertical-align:top; }
+table.grid thead th { background:var(--panel); }
+.ltr-num { direction:ltr; unicode-bidi:embed; }
+.sev { display:inline-block; border-radius:10px; padding:0 8px; font-size:12px; font-weight:600; color:#fff; background:var(--unknown); white-space:nowrap; }
+.sev.critical { background:var(--critical); } .sev.warning { background:var(--warning); } .sev.info { background:var(--info); }
+.sev.ok { background:var(--ok); } .sev.muted { background:#98a2b3; } .sev.unknown { background:var(--unknown); }
+.chip { display:inline-block; border:1px solid var(--line); border-radius:10px; padding:0 8px; font-size:11px; }
+.chip.general { border-color:var(--warning); color:var(--warning); } .chip.unverified { border-color:var(--critical); color:var(--critical); }
+.chip.rk { border-color:var(--ok); color:var(--ok); }
+.finding { border:1px solid var(--line); border-inline-start:4px solid var(--unknown); border-radius:6px; padding:8px 12px; margin:8px 0; page-break-inside:avoid; }
+.finding.critical { border-inline-start-color:var(--critical); } .finding.warning { border-inline-start-color:var(--warning); } .finding.info { border-inline-start-color:var(--info); }
+.finding p { margin:4px 0; }
+.caution { background:#fffaeb; border:1px solid #fedf89; border-radius:4px; padding:4px 8px; }
+.top li { margin:4px 0; }
+svg.chart text { font-family:inherit; font-size:12px; }
+footer { margin-top:32px; border-top:1px solid var(--line); padding-top:8px; }
+@media print { body { max-width:none; padding:0; font-size:11px; } details { display:block; } details > summary { display:none; }
+  .node, #appendix { page-break-before:always; } a { color:inherit; text-decoration:none; } }
+
+</style>
+</head>
+<body>
+<header class="cover">
+  <h1>گزارش سلامت سرورهای راهکاران</h1>
+  <table class="meta">
+    <tr><th>سایت</th><td>Tehran HQ Lab</td></tr>
+    <tr><th>سرورها</th><td><a href="#node-0">DB-Node-Tehran</a></td></tr>
+    <tr><th>تاریخ تهیه</th><td class="ltr-num">1405/07/22 10:30 — 2026-10-14 10:30</td></tr>
+    <tr><th>بازهٔ جمع‌آوری</th><td class="ltr-num">1405/07/22 10:00 — 2026-10-14 10:00 → 1405/07/22 10:02 — 2026-10-14 10:02</td></tr>
+    <tr><th>نسخهٔ RSM</th><td class="ltr-num">1.0.0-test</td></tr>
+    <tr><th>قواعد ارزیابی‌شده</th><td class="ltr-num">85</td></tr>
+  </table>
+  <p class="note">بررسی‌های سنگین اجرا نشد (فقط به درخواست)</p>
+  
+  <p class="note readonly">RSM فقط‌خواندنی است: هیچ تغییری روی سرورها ایجاد نکرده است. توصیه‌ها فقط متن هستند؛ هر تغییر را با ستاد فنی هماهنگ کنید.</p>
+</header>
+
+<section id="summary">
+  <h2>خلاصهٔ مدیریتی</h2>
+  <div class="cards">
+    <div class="card score critical"><div class="num">1</div><div>امتیاز کلی</div></div>
+    <div class="card critical"><div class="num">4</div><div>بحرانی</div></div>
+    <div class="card warning"><div class="num">7</div><div>هشدار</div></div>
+    <div class="card info"><div class="num">4</div><div>اطلاع</div></div>
+  </div>
+  <svg class="chart" role="img" aria-label="یافته‌ها" viewBox="0 0 600 28" width="100%" height="28" preserveAspectRatio="none"><rect x="0" y="0" width="160" height="28" fill="#b42318"/><rect x="160" y="0" width="280" height="28" fill="#b54708"/><rect x="440" y="0" width="160" height="28" fill="#175cd3"/></svg>
+  <p class="hint">امتیاز تقریبی: ۱۰۰ منهای ۱۵ برای هر مورد بحرانی، ۵ برای هر هشدار و ۱ برای هر اطلاع.</p>
+  <h3>مهم‌ترین موارد</h3>
+  
+    <ol class="top">
+      <li><span class="sev critical">بحرانی</span> <code>DB-BKP-001</code> پشتیبان کامل به‌موقع از RK_Tehran1405 وجود ندارد <span class="muted">— DB-Node-Tehran</span></li><li><span class="sev critical">بحرانی</span> <code>DB-INT-001</code> CHECKDB سالم اخیر برای RK_Tehran1405 ثبت نشده <span class="muted">— DB-Node-Tehran</span></li><li><span class="sev critical">بحرانی</span> <code>DB-RM-001</code> پایگاه داده راهکاران (RK_Tehran1405) در مدل بازیابی SIMPLE است <span class="muted">— DB-Node-Tehran</span></li><li><span class="sev critical">بحرانی</span> <code>SQL-MEM-001</code> max server memory روی مقدار پیش‌فرض (نامحدود) است <span class="muted">— DB-Node-Tehran</span></li><li><span class="sev warning">هشدار</span> <code>DB-FILE-001</code> رشد درصدی فایل در RK_Tehran1405 <span class="muted">— DB-Node-Tehran</span></li>
+    </ol>
+    
+</section>
+
+
+<section class="node" id="node-0">
+  <h2>DB-Node-Tehran <span class="muted">(lab-sql01.corp.example · Data)</span></h2>
+  <p><span class="sev critical">بحرانی: 4</span> <span class="sev warning">هشدار: 7</span> <span class="sev info">اطلاع: 4</span></p>
+
+  
+    <h3>مشخصات</h3>
+    <table class="kv"><tr><th>نسخه</th><td>SQL Server 2022</td></tr><tr><th>شمارهٔ نسخه</th><td>16.0.4305.5</td></tr><tr><th>ویرایش</th><td>Developer Edition (64-bit)</td></tr><tr><th>آخرین CU شناخته‌شده</th><td>16.0.4305.5</td></tr><tr><th>پایان پشتیبانی (روز مانده)</th><td>2280</td></tr><tr><th>نام سرور</th><td>LAB-SQL01</td></tr><tr><th>سیستم‌عامل</th><td>Windows Server 2022 Standard</td></tr><tr><th>مجازی‌سازی</th><td>HYPERVISOR</td></tr><tr><th>هستهٔ منطقی</th><td>4</td></tr><tr><th>NUMA</th><td>1</td></tr><tr><th>حافظهٔ فیزیکی (MB)</th><td>16384</td></tr><tr><th>max server memory (MB)</th><td>2147483647</td></tr><tr><th>Collation</th><td>Arabic_CI_AS</td></tr><tr><th>زمان کارکرد (ساعت)</th><td>1.5</td></tr><tr><th>SQL Agent</th><td>Running</td></tr><tr><th>پایگاه‌های راهکاران</th><td>RK_Tehran1405</td></tr><tr><th>روش تشخیص</th><td>setting</td></tr></table>
+    
+
+  
+    <h3>انطباق با توصیه‌های ستاد فنی</h3>
+    <table class="grid">
+      <thead><tr><th>مورد</th><th>پایگاه داده</th><th>مقدار مورد انتظار</th><th>مقدار فعلی</th><th>وضعیت</th><th>قاعده</th></tr></thead>
+      <tbody>
+      <tr class="row-ok"><td>priority boost</td><td></td><td>0 (خاموش)</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-001</code></td></tr>
+        <tr class="row-ok"><td>max worker threads</td><td></td><td>0 (خودکار)</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-002</code></td></tr>
+        <tr class="row-ok"><td>lightweight pooling</td><td></td><td>0 (خاموش)</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-003</code></td></tr>
+        <tr class="row-warning"><td>backup compression default</td><td></td><td>1 (روشن)</td><td class="ltr-num">0</td><td><span class="sev warning">مغایر · هشدار</span></td><td><code>SQL-CFG-004</code></td></tr>
+        <tr class="row-warning"><td>MAXDOP</td><td></td><td>4</td><td class="ltr-num">0</td><td><span class="sev warning">مغایر · هشدار</span></td><td><code>SQL-CFG-005</code></td></tr>
+        <tr class="row-ok"><td>cost threshold for parallelism</td><td></td><td>بیش از پیش‌فرض ۵ و حداکثر ۱۰۰</td><td class="ltr-num">50</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-006</code></td></tr>
+        <tr class="row-warning"><td>optimize for ad hoc workloads</td><td></td><td>1 (روشن)</td><td class="ltr-num">0</td><td><span class="sev warning">مغایر · هشدار</span></td><td><code>SQL-CFG-007</code></td></tr>
+        <tr class="row-ok"><td>xp_cmdshell</td><td></td><td>0 (خاموش)</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-009</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
+        <tr class="row-ok"><td>Ole Automation Procedures</td><td></td><td>0 (خاموش)</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-010</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
+        <tr class="row-ok"><td>clr enabled</td><td></td><td>0 مگر آنکه لازم باشد</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-011</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
+        <tr class="row-ok"><td>remote admin connections (DAC)</td><td></td><td>1 (روشن)</td><td class="ltr-num">1</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-012</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
+        <tr class="row-ok"><td>cross db ownership chaining</td><td></td><td>0 (خاموش)</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-013</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
+        <tr class="row-ok"><td>Instant File Initialization</td><td></td><td>فعال</td><td class="ltr-num">بله</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-014</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
+        <tr class="row-critical"><td>max server memory</td><td></td><td>تنظیم شده (نه پیش‌فرض نامحدود)</td><td class="ltr-num">2147483647</td><td><span class="sev critical">مغایر · بحرانی</span></td><td><code>SQL-MEM-001</code></td></tr>
+        <tr class="row-muted"><td>max server memory (سرور مشترک با IIS)</td><td></td><td>حدود ۶۵٪ RAM</td><td class="ltr-num">—</td><td><span class="sev muted">غیرمرتبط</span></td><td><code>SQL-MEM-002</code></td></tr>
+        <tr class="row-muted"><td>min server memory (سرور مشترک با IIS)</td><td></td><td>حدود ۱۵٪ RAM</td><td class="ltr-num">—</td><td><span class="sev muted">غیرمرتبط</span></td><td><code>SQL-MEM-003</code></td></tr>
+        <tr class="row-unknown"><td>حافظهٔ باقی‌مانده برای سیستم‌عامل</td><td></td><td>دست‌کم max(4 GB، ۱۰٪ RAM)</td><td class="ltr-num">—</td><td><span class="sev unknown">نامعلوم</span></td><td><code>SQL-MEM-004</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
+        <tr class="row-ok"><td>تعداد فایل‌های داده TempDB</td><td></td><td>برابر تعداد هسته‌ها، حداکثر ۸</td><td class="ltr-num">4</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-TDB-001</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
+        <tr class="row-ok"><td>اندازه و رشد یکسان فایل‌های TempDB</td><td></td><td>یکسان</td><td class="ltr-num">بله</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-TDB-002</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
+        <tr class="row-ok"><td>نسخهٔ SQL Server</td><td></td><td>۲۰۲۲ یا جدیدتر</td><td class="ltr-num">SQL Server 2022</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-VER-001</code></td></tr>
+        <tr class="row-ok"><td>آخرین به‌روزرسانی تجمعی (CU)</td><td></td><td>آخرین CU نصب شده باشد</td><td class="ltr-num">16.0.4305.5</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-VER-002</code></td></tr>
+        <tr class="row-warning"><td>رشد فایل‌ها</td><td>RK_Tehran1405</td><td>بر حسب MB (نه درصد)</td><td class="ltr-num">2</td><td><span class="sev warning">مغایر · هشدار</span></td><td><code>DB-FILE-001</code></td></tr>
+        <tr class="row-info"><td>رشد فایل‌های داده</td><td>RK_Tehran1405</td><td>مضربی از 1024 MB</td><td class="ltr-num">1</td><td><span class="sev info">مغایر · اطلاع</span></td><td><code>DB-FILE-002</code></td></tr>
+        <tr class="row-ok"><td>حداکثر اندازهٔ فایل‌ها</td><td>RK_Tehran1405</td><td>نامحدود</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>DB-FILE-003</code></td></tr>
+        <tr class="row-info"><td>اندازهٔ فایل Log (راهکاران)</td><td>RK_Tehran1405</td><td>≥ 1 GB (پایگاه بزرگ: ≥ 10 GB)</td><td class="ltr-num">64</td><td><span class="sev info">مغایر · اطلاع</span></td><td><code>DB-LOG-004</code></td></tr>
+        <tr class="row-warning"><td>Page verify</td><td>RK_Tehran1405</td><td>CHECKSUM</td><td class="ltr-num">NONE</td><td><span class="sev warning">مغایر · هشدار</span></td><td><code>DB-OPT-001</code></td></tr>
+        <tr class="row-ok"><td>AUTO_CLOSE</td><td>RK_Tehran1405</td><td>خاموش</td><td class="ltr-num">خیر</td><td><span class="sev ok">منطبق</span></td><td><code>DB-OPT-002</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
+        <tr class="row-warning"><td>AUTO_SHRINK</td><td>RK_Tehran1405</td><td>خاموش</td><td class="ltr-num">بله</td><td><span class="sev warning">مغایر · هشدار</span></td><td><code>DB-OPT-003</code></td></tr>
+        <tr class="row-ok"><td>Auto create / update statistics</td><td>RK_Tehran1405</td><td>روشن</td><td class="ltr-num">بله</td><td><span class="sev ok">منطبق</span></td><td><code>DB-OPT-004</code></td></tr>
+        <tr class="row-ok"><td>Compatibility level (راهکاران)</td><td>RK_Tehran1405</td><td>برابر سطح بومی سرور</td><td class="ltr-num">160</td><td><span class="sev ok">منطبق</span></td><td><code>DB-OPT-005</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
+        <tr class="row-critical"><td>Recovery model (راهکاران)</td><td>RK_Tehran1405</td><td>FULL</td><td class="ltr-num">SIMPLE</td><td><span class="sev critical">مغایر · بحرانی</span></td><td><code>DB-RM-001</code></td></tr>
+        <tr class="row-ok"><td>فاصلهٔ پشتیبان Log (راهکاران)</td><td>RK_Tehran1405</td><td>≤ ۲ ساعت در ساعات کاری، ≤ ۲۴ ساعت</td><td class="ltr-num">هرگز</td><td><span class="sev ok">منطبق</span></td><td><code>DB-RM-002</code></td></tr>
+        
+      </tbody>
+    </table>
+    
+
+  <h3>یافته‌ها</h3>
+  
+  
+    <h4>SQL Server</h4>
+    
+    <article class="finding critical">
+      <header><span class="sev critical">بحرانی</span> <code>SQL-MEM-001</code> <strong>max server memory روی مقدار پیش‌فرض (نامحدود) است</strong>
+        
+        </header>
+      <p>SQL Server می‌تواند تقریباً تمام حافظه سرور را بگیرد و سیستم‌عامل و IIS/راهکاران را دچار کمبود حافظه کند. ستاد فنی مقدار مشخصی (روی سرور مشترک ۶۵٪ RAM) تعیین کرده است.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>sql.config.max_server_memory_default</code></th><td class="ltr-num">بله</td></tr></table></details>
+      <p><b>توصیه:</b> قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Instance settings</p>
+    </article>
+    
+    <article class="finding warning">
+      <header><span class="sev warning">هشدار</span> <code>SQL-AGT-003</code> <strong>Job زمان‌بندی‌شده برای Shrink فایل داده وجود دارد</strong>
+        
+        </header>
+      <p>ستاد فنی Shrink زمان‌بندی‌شده پایگاه داده/فایل داده را ممنوع کرده است؛ Shrink باعث Fragmentation و رشد مجدد می‌شود. Jobها: Rahkaran - nightly shrink.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>agent.shrink_steps</code></th><td class="ltr-num">1</td></tr></table></details>
+      <p><b>توصیه:</b> حذف مرحله Shrink از این Jobها را با ستاد فنی هماهنگ کنید.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Maintenance</p>
+    </article>
+    
+    <article class="finding warning">
+      <header><span class="sev warning">هشدار</span> <code>SQL-CFG-004</code> <strong>فشرده‌سازی پیش‌فرض پشتیبان خاموش است</strong>
+        
+        </header>
+      <p>ستاد فنی فشرده‌سازی پیش‌فرض پشتیبان را روشن تعیین کرده است؛ پشتیبان‌ها کوچک‌تر و سریع‌تر می‌شوند.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>sql.config.backup_compression_default</code></th><td class="ltr-num">0</td></tr></table></details>
+      <p><b>توصیه:</b> قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Instance settings</p>
+    </article>
+    
+    <article class="finding warning">
+      <header><span class="sev warning">هشدار</span> <code>SQL-CFG-005</code> <strong>MAXDOP برابر 0 است (انتظار: ۴)</strong>
+        
+        </header>
+      <p>ستاد فنی مقدار MAXDOP را ۴ تعیین کرده است.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>sql.config.max_degree_of_parallelism</code></th><td class="ltr-num">0</td></tr></table></details>
+      <p><b>توصیه:</b> قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Instance settings</p>
+    </article>
+    
+    <article class="finding warning">
+      <header><span class="sev warning">هشدار</span> <code>SQL-CFG-007</code> <strong>optimize for ad hoc workloads خاموش است</strong>
+        
+        </header>
+      <p>ستاد فنی این گزینه را روشن تعیین کرده است؛ از پر شدن Plan Cache با طرح‌های یک‌بارمصرف جلوگیری می‌کند.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>sql.config.optimize_for_ad_hoc_workloads</code></th><td class="ltr-num">0</td></tr></table></details>
+      <p><b>توصیه:</b> قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Instance settings</p>
+    </article>
+    
+    <article class="finding info">
+      <header><span class="sev info">اطلاع</span> <code>SQL-SEC-002</code> <strong>حساب sa فعال است و نامش تغییر نکرده</strong>
+        <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span>
+        </header>
+      <p>حساب sa هدف اصلی حملات حدس رمز است.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>sec.sa.enabled</code></th><td class="ltr-num">بله</td></tr><tr><th><code>sec.sa.renamed</code></th><td class="ltr-num">خیر</td></tr></table></details>
+      <p><b>توصیه:</b> غیرفعال‌سازی یا تغییر نام sa را بررسی کنید (اگر برنامه‌ها به آن وابسته نیستند).</p>
+      <p class="muted">منبع: General guidance (Microsoft documentation / common DBA practice)</p>
+    </article>
+    
+    
+    <h4>پایگاه‌های داده</h4>
+    
+    <article class="finding critical">
+      <header><span class="sev critical">بحرانی</span> <code>DB-BKP-001</code> <strong>پشتیبان کامل به‌موقع از RK_Tehran1405 وجود ندارد</strong>
+        
+        </header>
+      <p>آخرین پشتیبان کامل 99999 ساعت پیش بوده است (۹۹۹۹۹ یعنی هرگز). ستاد فنی پشتیبان کامل روزانه (پایگاه‌های بزرگ: تفاضلی روزانه و کامل هفتگی) را تعیین کرده است.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>db[RK_Tehran1405].is_user</code></th><td class="ltr-num">بله</td></tr><tr><th><code>db[RK_Tehran1405].state</code></th><td class="ltr-num">ONLINE</td></tr><tr><th><code>db[RK_Tehran1405].is_reportserver_temp</code></th><td class="ltr-num">خیر</td></tr><tr><th><code>db[RK_Tehran1405].is_large</code></th><td class="ltr-num">خیر</td></tr><tr><th><code>db[RK_Tehran1405].hours_since_full</code></th><td class="ltr-num">هرگز</td></tr><tr><th><code>params.large_full_hours</code></th><td class="ltr-num">192</td></tr><tr><th><code>params.max_hours</code></th><td class="ltr-num">26</td></tr><tr><th><code>db[RK_Tehran1405].hours_since_diff</code></th><td class="ltr-num">هرگز</td></tr></table></details>
+      <p><b>توصیه:</b> Job پشتیبان‌گیری و خطاهای آن را بررسی کنید.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Maintenance</p>
+    </article>
+    
+    <article class="finding critical">
+      <header><span class="sev critical">بحرانی</span> <code>DB-INT-001</code> <strong>CHECKDB سالم اخیر برای RK_Tehran1405 ثبت نشده</strong>
+        
+        </header>
+      <p>ستاد فنی اجرای هفتگی CHECKDB را تعیین کرده است (۹۹۹۹۹ یعنی هرگز).</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>db[RK_Tehran1405].is_user</code></th><td class="ltr-num">بله</td></tr><tr><th><code>db[RK_Tehran1405].state</code></th><td class="ltr-num">ONLINE</td></tr><tr><th><code>db[RK_Tehran1405].days_since_checkdb</code></th><td class="ltr-num">هرگز</td></tr><tr><th><code>params.warn_days</code></th><td class="ltr-num">7</td></tr></table></details>
+      <p><b>توصیه:</b> Job بررسی صحت را با ستاد فنی تنظیم کنید.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Maintenance</p>
+    </article>
+    
+    <article class="finding critical">
+      <header><span class="sev critical">بحرانی</span> <code>DB-RM-001</code> <strong>پایگاه داده راهکاران (RK_Tehran1405) در مدل بازیابی SIMPLE است</strong>
+        
+        </header>
+      <p>ستاد فنی مدل بازیابی FULL (یا Bulk-logged) با پشتیبان لاگ را برای پایگاه اصلی الزامی کرده و تغییر به Simple را بدون هماهنگی ممنوع کرده است. در مدل SIMPLE بازیابی تا لحظه خرابی ممکن نیست.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>db[RK_Tehran1405].is_rahkaran</code></th><td class="ltr-num">بله</td></tr><tr><th><code>db[RK_Tehran1405].recovery_model</code></th><td class="ltr-num">SIMPLE</td></tr></table></details>
+      <p><b>توصیه:</b> قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Database</p>
+    </article>
+    
+    <article class="finding warning">
+      <header><span class="sev warning">هشدار</span> <code>DB-FILE-001</code> <strong>رشد درصدی فایل در RK_Tehran1405</strong>
+        
+        </header>
+      <p>ستاد فنی رشد فایل را بر حسب مگابایت (مضرب ۱۰۲۴) تعیین کرده است؛ رشد درصدی در فایل‌های بزرگ رشدهای بسیار بزرگ و کند ایجاد می‌کند.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>db[RK_Tehran1405].is_user</code></th><td class="ltr-num">بله</td></tr><tr><th><code>db[RK_Tehran1405].percent_growth_files</code></th><td class="ltr-num">2</td></tr></table></details>
+      <p><b>توصیه:</b> قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Database</p>
+    </article>
+    
+    <article class="finding warning">
+      <header><span class="sev warning">هشدار</span> <code>DB-OPT-001</code> <strong>Page Verify پایگاه RK_Tehran1405 روی CHECKSUM نیست (NONE)</strong>
+        
+        </header>
+      <p>ستاد فنی Page Verify = CHECKSUM را الزامی کرده است تا خرابی صفحات هنگام خواندن تشخیص داده شود.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>db[RK_Tehran1405].state</code></th><td class="ltr-num">ONLINE</td></tr><tr><th><code>db[RK_Tehran1405].page_verify</code></th><td class="ltr-num">NONE</td></tr></table></details>
+      <p><b>توصیه:</b> قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Database</p>
+    </article>
+    
+    <article class="finding warning">
+      <header><span class="sev warning">هشدار</span> <code>DB-OPT-003</code> <strong>AUTO_SHRINK پایگاه RK_Tehran1405 روشن است</strong>
+        
+        </header>
+      <p>ستاد فنی Shrink پایگاه داده را ممنوع کرده است؛ AUTO_SHRINK باعث Fragmentation، مصرف CPU/I/O و رشد مجدد فایل‌ها می‌شود.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>db[RK_Tehran1405].auto_shrink</code></th><td class="ltr-num">بله</td></tr></table></details>
+      <p><b>توصیه:</b> قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Maintenance</p>
+    </article>
+    
+    <article class="finding info">
+      <header><span class="sev info">اطلاع</span> <code>DB-FILE-002</code> <strong>رشد فایل داده RK_Tehran1405 مضرب ۱۰۲۴ مگابایت نیست</strong>
+        
+        </header>
+      <p>ستاد فنی رشد فایل داده را مضربی از ۱۰۲۴ مگابایت تعیین کرده است.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>db[RK_Tehran1405].is_user</code></th><td class="ltr-num">بله</td></tr><tr><th><code>db[RK_Tehran1405].growth_not_1024_files</code></th><td class="ltr-num">1</td></tr></table></details>
+      <p><b>توصیه:</b> قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Database</p>
+    </article>
+    
+    <article class="finding info">
+      <header><span class="sev info">اطلاع</span> <code>DB-LOG-004</code> <strong>حجم فایل لاگ RK_Tehran1405 کمتر از مقدار توصیه‌شده است (64 مگابایت)</strong>
+        
+        </header>
+      <p>ستاد فنی اندازه اولیه لاگ را ۱۰۲۴ مگابایت (مشتریان بزرگ ۱۰۲۴۰ مگابایت) تعیین کرده است. (اندازه فعلی بررسی می‌شود.)</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>db[RK_Tehran1405].is_rahkaran</code></th><td class="ltr-num">بله</td></tr><tr><th><code>db[RK_Tehran1405].log_file_size_mb</code></th><td class="ltr-num">64</td></tr><tr><th><code>db[RK_Tehran1405].is_large</code></th><td class="ltr-num">خیر</td></tr><tr><th><code>params.large_mb</code></th><td class="ltr-num">10240</td></tr><tr><th><code>params.normal_mb</code></th><td class="ltr-num">1024</td></tr></table></details>
+      <p><b>توصیه:</b> قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.</p>
+      <p class="muted">منبع: SQL Server Tuning V.3 — Database</p>
+    </article>
+    
+    <article class="finding info">
+      <header><span class="sev info">اطلاع</span> <code>SQL-SEC-005</code> <strong>کاربر بدون Login در پایگاه RK_Tehran1405</strong>
+        <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span>
+        </header>
+      <p>کاربران: olduser.</p>
+      
+      <details><summary>شواهد</summary><table class="kv"><tr><th><code>db[RK_Tehran1405].is_user</code></th><td class="ltr-num">بله</td></tr><tr><th><code>db[RK_Tehran1405].orphaned_users</code></th><td class="ltr-num">1</td></tr></table></details>
+      <p><b>توصیه:</b> پس از بازیابی پایگاه داده، کاربران را به Login مربوط وصل یا حذف کنید (توسط DBA).</p>
+      <p class="muted">منبع: General guidance (Microsoft documentation / common DBA practice)</p>
+    </article>
+    
+    
+
+  
+    <h3>پایگاه‌های داده</h3>
+    <table class="grid">
+      <thead><tr><th>پایگاه داده</th><th>وضعیت</th><th>Recovery</th><th>حجم داده (MB)</th><th>آخرین Full (ساعت پیش)</th><th>آخرین Log (ساعت پیش)</th><th>آخرین CHECKDB (روز پیش)</th></tr></thead>
+      <tbody>
+      <tr><td>master</td><td><span class="sev ok">ONLINE</span></td><td>SIMPLE</td><td class="ltr-num">512</td><td class="ltr-num">6</td><td class="ltr-num">—</td><td class="ltr-num">1</td></tr>
+        <tr><td>model</td><td><span class="sev ok">ONLINE</span></td><td>FULL</td><td class="ltr-num">512</td><td class="ltr-num">6</td><td class="ltr-num">0.5</td><td class="ltr-num">1</td></tr>
+        <tr><td>msdb</td><td><span class="sev ok">ONLINE</span></td><td>SIMPLE</td><td class="ltr-num">512</td><td class="ltr-num">6</td><td class="ltr-num">—</td><td class="ltr-num">1</td></tr>
+        <tr><td>RK_Tehran1405 <span class="chip rk">راهکاران</span></td><td><span class="sev ok">ONLINE</span></td><td>SIMPLE</td><td class="ltr-num">256</td><td class="ltr-num">هرگز</td><td class="ltr-num">—</td><td class="ltr-num">هرگز</td></tr>
+        <tr><td>tempdb</td><td><span class="sev ok">ONLINE</span></td><td>SIMPLE</td><td class="ltr-num">512</td><td class="ltr-num">هرگز</td><td class="ltr-num">—</td><td class="ltr-num">هرگز</td></tr>
+        
+      </tbody>
+    </table>
+    
+</section>
+
+
+<section id="appendix">
+  <h2>پیوست</h2>
+  
+    <h3>DB-Node-Tehran — ماتریس قابلیت‌ها</h3>
+    <table class="grid">
+      <thead><tr><th>قابلیت</th><th>وضعیت</th><th>توضیح</th></tr></thead>
+      <tbody><tr><td>اتصال به SQL Server</td><td><span class="sev ok">در دسترس</span></td><td></td></tr><tr><td>خواندن ErrorLog سرور SQL</td><td><span class="sev warning">دسترسی ندارد</span></td><td>Login rsm_monitor lacks securityadmin; read via \\lab-sql01.corp.example\D$ instead</td></tr><tr><td>خواندن تاریخچه پشتیبان‌گیری در msdb</td><td><span class="sev ok">در دسترس</span></td><td></td></tr><tr><td>حساب با دسترسی sysadmin</td><td><span class="sev muted">کاربرد ندارد</span></td><td></td></tr><tr><td>مجوز VIEW SERVER STATE</td><td><span class="sev ok">در دسترس</span></td><td></td></tr><tr><td>WMI/CIM (فقط Query)</td><td><span class="sev muted">در فازهای بعدی</span></td><td></td></tr></tbody>
+    </table>
+    
+    <h3>DB-Node-Tehran — وضعیت جمع‌آورها</h3>
+    <table class="grid">
+      <thead><tr><th>جمع‌آور</th><th>وضعیت</th><th>توضیح</th><th>مدت (ثانیه)</th></tr></thead>
+      <tbody><tr><td><code>sql.inventory</code></td><td><span class="sev ok">کامل</span></td><td></td><td class="ltr-num">1.2</td></tr><tr><td><code>sql.errorlog</code></td><td><span class="sev warning">ناقص</span></td><td>Read the archived logs over \\lab-sql01.corp.example\D$</td><td class="ltr-num">0.4</td></tr><tr><td><code>sql.security</code></td><td><span class="sev ok">کامل</span></td><td></td><td class="ltr-num">0.3</td></tr></tbody>
+    </table>
+    
+    
+    
+    
+  <h3>واژه‌نامه</h3>
+  <table class="kv"><tr><th>ستاد فنی</th><td>واحد پشتیبانی فنی سیستم (سازندهٔ راهکاران)؛ مرجع توصیه‌های پیکربندی.</td></tr><tr><th>CU / GDR</th><td>به‌روزرسانی تجمعی / به‌روزرسانی امنیتی SQL Server.</td></tr><tr><th>MAXDOP</th><td>حداکثر درجهٔ موازی‌سازی پرس‌وجو.</td></tr><tr><th>VLF</th><td>فایل مجازی Log؛ تعداد زیاد آن بازیابی و پشتیبان‌گیری را کند می‌کند.</td></tr><tr><th>CHECKDB</th><td>بررسی سازگاری پایگاه داده (DBCC CHECKDB).</td></tr></table>
+</section>
+<footer class="muted">RSM 1.0.0-test — RSM فقط‌خواندنی است: هیچ تغییری روی سرورها ایجاد نکرده است. توصیه‌ها فقط متن هستند؛ هر تغییر را با ستاد فنی هماهنگ کنید.</footer>
+</body>
+</html>

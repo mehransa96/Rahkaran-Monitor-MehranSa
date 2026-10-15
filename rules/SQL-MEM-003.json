@@ -1,0 +1,59 @@
+{
+  "id": "SQL-MEM-003",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "node.shared_box && abs(sql.config.min_server_memory_pct - params.target) > params.tolerance",
+  "severity": "Info",
+  "title": {
+    "fa": "min server memory روی سرور مشترک {sql.config.min_server_memory_pct}٪ RAM است (انتظار: ۱۵٪)",
+    "en": "min server memory is {sql.config.min_server_memory_pct}% of RAM on a shared server (expected 15%)"
+  },
+  "explanation": {
+    "fa": "ستاد فنی حداقل حافظه SQL روی سرور مشترک را ۱۵٪ RAM تعیین کرده است.",
+    "en": "ستاد فنی sets SQL's min memory to 15 % of RAM on a shared server."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Instance settings"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "target": 15,
+    "tolerance": 5
+  },
+  "baseline": {
+    "item": {
+      "fa": "min server memory (سرور مشترک با IIS)",
+      "en": "min server memory (server shared with IIS)"
+    },
+    "expected": {
+      "fa": "حدود ۱۵٪ RAM",
+      "en": "About 15% of RAM"
+    },
+    "actual": "sql.config.min_server_memory_pct"
+  },
+  "examples": [
+    {
+      "facts": {
+        "node.shared_box": true,
+        "sql.config.min_server_memory_pct": 0
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "node.shared_box": true,
+        "sql.config.min_server_memory_pct": 15
+      },
+      "expect": null
+    }
+  ]
+}

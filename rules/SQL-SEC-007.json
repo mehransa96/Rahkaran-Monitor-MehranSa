@@ -1,0 +1,42 @@
+{
+  "id": "SQL-SEC-007",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sec.unencrypted_remote_connections > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "اتصالات رمزنگاری‌نشده از راه دور ({sec.unencrypted_remote_connections})",
+    "en": "Unencrypted remote connections ({sec.unencrypted_remote_connections})"
+  },
+  "explanation": {
+    "fa": "ترافیک این اتصالات (شامل داده‌ها) رمزنگاری نشده است.",
+    "en": "Traffic of these connections, including data, is not encrypted."
+  },
+  "recommendation": {
+    "fa": "فعال‌سازی TLS برای SQL Server را بررسی کنید.",
+    "en": "Consider enabling TLS for SQL Server."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sec.unencrypted_remote_connections": 12
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sec.unencrypted_remote_connections": 0
+      },
+      "expect": null
+    }
+  ]
+}

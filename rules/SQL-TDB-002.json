@@ -1,0 +1,55 @@
+{
+  "id": "SQL-TDB-002",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "!tempdb.files_equal_size || !tempdb.files_equal_growth",
+  "severity": "Warning",
+  "title": {
+    "fa": "فایل‌های داده TempDB هم‌اندازه یا هم‌رشد نیستند",
+    "en": "TempDB data files differ in size or growth"
+  },
+  "explanation": {
+    "fa": "SQL Server تخصیص را بر اساس فضای آزاد بین فایل‌ها تقسیم می‌کند؛ فایل‌های نابرابر باعث تمرکز بار روی یک فایل می‌شوند.",
+    "en": "SQL Server spreads allocations by free space; unequal files concentrate load on one file."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "اندازه و رشد یکسان فایل‌های TempDB",
+      "en": "Equal TempDB file size and growth"
+    },
+    "expected": {
+      "fa": "یکسان",
+      "en": "Equal"
+    },
+    "actual": "tempdb.files_equal_size"
+  },
+  "examples": [
+    {
+      "facts": {
+        "tempdb.files_equal_size": false,
+        "tempdb.files_equal_growth": true
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "tempdb.files_equal_size": true,
+        "tempdb.files_equal_growth": true
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "id": "SQL-ERR-004",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.errorlog.e701 + sql.errorlog.e802 > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "کمبود حافظه در SQL Server (701/802)",
+    "en": "Out-of-memory errors in SQL Server (701/802)"
+  },
+  "explanation": {
+    "fa": "خطاهای کمبود حافظه ثبت شده است؛ کوئری‌ها به دلیل نبود حافظه شکست خورده‌اند.",
+    "en": "Out-of-memory errors were logged; queries failed for lack of memory."
+  },
+  "recommendation": {
+    "fa": "تنظیم max server memory، مصرف حافظه سایر فرایندها و حافظه سرور را بررسی کنید.",
+    "en": "Review max server memory, memory used by other processes and server RAM."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.errorlog.e701": 2,
+        "sql.errorlog.e802": 0
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "sql.errorlog.e701": 0,
+        "sql.errorlog.e802": 0
+      },
+      "expect": null
+    }
+  ]
+}

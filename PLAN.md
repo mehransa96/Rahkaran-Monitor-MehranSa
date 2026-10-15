@@ -48,8 +48,8 @@ starts only after explicit approval.**
 - [x] Redis client refuses `SET`, `FLUSHALL`, `CONFIG SET`, `EVAL`, CRLF injection … (28 cases) — and a live Redis
       confirmed via `INFO commandstats` that the probe sent only whitelisted commands.
 - [x] Logging a connection string / password / AUTH never puts the secret in the log file.
-- [ ] *Test connection* against SQL Server with the `rsm_monitor` login → runs in the CI `integration` job
-      (SQL Server could not be installed in the build sandbox).
+- [x] *Test connection* against SQL Server with the `rsm_monitor` login → CI `integration` job green on `dcda00e`
+      (SQL Server 2022 container; the first run caught the msdb-database bug fixed in that commit).
 - [ ] App starts in fa (RTL) / en (LTR) and switches at runtime → compiles and publishes here; **needs a run on Windows**.
 
 ## Phase 1 — SQL & DB health + report v1
@@ -57,17 +57,21 @@ starts only after explicit approval.**
 **Scope** — §7 items 1–2, 12–17; §8 database module (incl. backups, VLFs, CDC, integrity, top tables,
 stats; index physical stats on demand); rules from `RULES.md` §2 (config parts), §3.1–3.4, §4; Rahkaran
 DB auto-detect + override; snapshot runner; HTML report v1 (Scriban, fa + en, masking); JSON bundle v1;
-`known-builds.json` initial content; SQLite storage for snapshots & findings.
+`known-builds.json` initial content; ~~SQLite~~ file storage for snapshots (see ARCHITECTURE §10 — SQLite is an
+open owner decision before P5).
 
-**Acceptance**
-- [ ] Snapshot against a test instance seeded with deliberate deviations (MAXDOP 0, max memory default,
-      ad hoc off, percent growth, SIMPLE recovery on "Rahkaran" DB, no log backups, auto_shrink on,
-      page_verify NONE, shrink job step) produces exactly the expected findings — fixture-verified.
-- [ ] Compliance table vs ستاد فنی baseline renders with expected/actual/status/source per row.
-- [ ] Least-privilege login: all P1 collectors OK or `Unavailable` with a correct reason (no crash).
-- [ ] HTML report renders in fa (RTL, Jalali + Gregorian) and en; Verify snapshot tests pass; masked
-      export contains no server/DB/login/host names or query literals.
-- [ ] Errorlog parser unit tests cover every classified error number in §7.15.
+**Acceptance** (status after P1 — evidence in `docs/phase-notes/P1.md`)
+- [x] Seeded deviations produce exactly the expected findings — fixture-verified (`ReportTests` pins the exact 15
+      findings of the lab fact set, no indeterminate rule); the CI integration job seeds a real SQL Server 2022
+      the same way and asserts the findings with the least-privilege login (result: see P1 notes / CI run).
+- [x] Compliance table vs ستاد فنی baseline renders with item/expected/actual/status/rule/source per row
+      (33 baseline rules; Deviation / Compliant / Unknown / Not applicable tested).
+- [ ] Least-privilege login: all P1 collectors OK or `Unavailable` with a correct reason → asserted by the CI
+      integration test (no collector `Error`), plus a before/after server fingerprint diff as `sa`.
+- [x] HTML report renders in fa (RTL, Jalali + Gregorian) and en; Verify snapshot tests pass; masked HTML and
+      bundle contain none of 16 sensitive lab tokens (names, hosts, logins, IPs, job names, payload-only data).
+      (Query literals: P1 reports contain no query text; literal masking arrives with query text in P2.)
+- [x] Errorlog parser unit tests cover every classified error number in §7.15.
 
 ## Phase 2 — Live SQL + Windows
 

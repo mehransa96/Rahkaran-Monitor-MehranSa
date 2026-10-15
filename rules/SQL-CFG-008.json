@@ -1,0 +1,49 @@
+{
+  "id": "SQL-CFG-008",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config_pending_count > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "تنظیماتی منتظر RECONFIGURE یا راه‌اندازی مجدد هستند",
+    "en": "Settings are waiting for RECONFIGURE or a restart"
+  },
+  "explanation": {
+    "fa": "مقدار ذخیره‌شده با مقدار در حال استفاده متفاوت است: {sql.config_pending}.",
+    "en": "Configured value differs from the value in use: {sql.config_pending}."
+  },
+  "recommendation": {
+    "fa": "علت تغییر را بررسی و در پنجره نگهداری اعمال یا برگردانید.",
+    "en": "Find out why it was changed and apply or revert it in a maintenance window."
+  },
+  "evidence": [
+    "sql.config_pending"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.config_pending_count": 1,
+        "sql.config_pending": [
+          "max degree of parallelism"
+        ]
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.config_pending_count": 0,
+        "sql.config_pending": []
+      },
+      "expect": null
+    }
+  ]
+}

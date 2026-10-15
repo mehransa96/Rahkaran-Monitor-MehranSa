@@ -1,0 +1,56 @@
+{
+  "id": "SQL-CFG-012",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.remote_admin_connections == 0",
+  "severity": "Info",
+  "title": {
+    "fa": "اتصال مدیریتی اضطراری (DAC) از راه دور غیرفعال است",
+    "en": "Remote dedicated admin connection (DAC) is disabled"
+  },
+  "explanation": {
+    "fa": "در هنگ کردن سرور، DAC تنها راه اتصال برای عیب‌یابی است؛ فعال‌بودن آن از راه دور توصیه عمومی است.",
+    "en": "When the server hangs, the DAC is often the only way in; enabling it remotely is common guidance."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "evidence": [
+    "sql.config.remote_admin_connections"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.9,
+  "baseline": {
+    "item": {
+      "fa": "remote admin connections (DAC)",
+      "en": "remote admin connections (DAC)"
+    },
+    "expected": {
+      "fa": "1 (روشن)",
+      "en": "1 (on)"
+    },
+    "actual": "sql.config.remote_admin_connections"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.remote_admin_connections": 0
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.config.remote_admin_connections": 1
+      },
+      "expect": null
+    }
+  ]
+}

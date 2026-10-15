@@ -1,0 +1,65 @@
+{
+  "id": "SQL-AGT-009",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_rahkaran && db.has_full_backup && !(db.full_backup_hour in params.window)",
+  "severity": "Info",
+  "title": {
+    "fa": "پشتیبان کامل {instance} خارج از بازه شبانه گرفته می‌شود",
+    "en": "The full backup of {instance} runs outside the evening window"
+  },
+  "explanation": {
+    "fa": "ستاد فنی پشتیبان کامل روزانه را ساعت ۲۲ تعیین کرده است؛ معمولاً ساعت {db.full_backup_hour} پایان می‌یابد.",
+    "en": "ستاد فنی schedules the daily full backup at 22:00; it usually finishes around {db.full_backup_hour}:00."
+  },
+  "recommendation": {
+    "fa": "زمان‌بندی را با ساعات کاری مشتری و ستاد فنی تطبیق دهید.",
+    "en": "Align the schedule with business hours and ستاد فنی."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Maintenance"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "window": [
+      20,
+      21,
+      22,
+      23,
+      0,
+      1
+    ]
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].full_backup_hour": 13,
+        "db[Rk].has_full_backup": true
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].full_backup_hour": 23,
+        "db[Rk].has_full_backup": true
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "db[Rk].is_rahkaran": true,
+        "db[Rk].has_full_backup": false
+      },
+      "expect": null,
+      "note": "never backed up: DB-BKP-001 reports it; no backup hour to judge"
+    }
+  ]
+}

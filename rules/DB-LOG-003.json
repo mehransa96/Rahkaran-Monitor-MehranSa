@@ -1,0 +1,46 @@
+{
+  "id": "DB-LOG-003",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.vlf_count > params.max",
+  "severity": "Warning",
+  "title": {
+    "fa": "تعداد VLFهای لاگ {instance} زیاد است ({db.vlf_count})",
+    "en": "Too many VLFs in the log of {instance} ({db.vlf_count})"
+  },
+  "explanation": {
+    "fa": "VLF زیاد (معمولاً به دلیل رشد کوچک لاگ) بازیابی و پشتیبان لاگ را کند می‌کند.",
+    "en": "Many VLFs (usually from small log growth increments) slow recovery and log backups."
+  },
+  "recommendation": {
+    "fa": "رشد لاگ را با گام‌های بزرگ‌تر تنظیم و کاهش VLF را با ستاد فنی برنامه‌ریزی کنید.",
+    "en": "Use larger log growth increments and plan VLF reduction with ستاد فنی."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max": 1000
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].vlf_count": 4000
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rk].vlf_count": 120
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "SQL-SEC-005",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.is_user && db.orphaned_users > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "کاربر بدون Login در پایگاه {instance}",
+    "en": "Orphaned users in {instance}"
+  },
+  "explanation": {
+    "fa": "کاربران: {db.orphaned_user_names}.",
+    "en": "Users: {db.orphaned_user_names}."
+  },
+  "recommendation": {
+    "fa": "پس از بازیابی پایگاه داده، کاربران را به Login مربوط وصل یا حذف کنید (توسط DBA).",
+    "en": "After restores, have the DBA remap or remove these users."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].orphaned_users": 1,
+        "db[Rk].orphaned_user_names": [
+          "old"
+        ]
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "db[Rk].is_user": true,
+        "db[Rk].orphaned_users": 0,
+        "db[Rk].orphaned_user_names": []
+      },
+      "expect": null
+    }
+  ]
+}

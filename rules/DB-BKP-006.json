@@ -1,0 +1,45 @@
+{
+  "id": "DB-BKP-006",
+  "layer": "Database",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.backup_throughput_dropped",
+  "severity": "Info",
+  "title": {
+    "fa": "سرعت پشتیبان‌گیری {instance} به کمتر از نصف رسیده است",
+    "en": "Backup throughput of {instance} dropped below half"
+  },
+  "explanation": {
+    "fa": "سرعت آخرین پشتیبان کامل کمتر از نصف میانه قبلی است؛ مقصد شبکه‌ای کند (پشتیبان روی UNC: {db.backup_to_unc}) علت رایج است.",
+    "en": "The last full backup ran at under half its usual throughput; a slow network destination (UNC: {db.backup_to_unc}) is a common cause."
+  },
+  "recommendation": {
+    "fa": "مسیر و کارایی مقصد پشتیبان را بررسی کنید.",
+    "en": "Check the backup destination path and its performance."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — backups over network shares; maintenance plan and «ابزار پایگاه داده» conflicts"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rk].backup_throughput_dropped": true,
+        "db[Rk].backup_to_unc": true
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "db[Rk].backup_throughput_dropped": false,
+        "db[Rk].backup_to_unc": false
+      },
+      "expect": null
+    }
+  ]
+}

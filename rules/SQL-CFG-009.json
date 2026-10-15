@@ -1,0 +1,56 @@
+{
+  "id": "SQL-CFG-009",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.xp_cmdshell == 1",
+  "severity": "Warning",
+  "title": {
+    "fa": "xp_cmdshell فعال است",
+    "en": "xp_cmdshell is enabled"
+  },
+  "explanation": {
+    "fa": "xp_cmdshell اجرای دستور سیستم‌عامل از داخل SQL Server را ممکن می‌کند و سطح حمله را افزایش می‌دهد.",
+    "en": "xp_cmdshell lets T-SQL run operating-system commands and widens the attack surface."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "evidence": [
+    "sql.config.xp_cmdshell"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.9,
+  "baseline": {
+    "item": {
+      "fa": "xp_cmdshell",
+      "en": "xp_cmdshell"
+    },
+    "expected": {
+      "fa": "0 (خاموش)",
+      "en": "0 (off)"
+    },
+    "actual": "sql.config.xp_cmdshell"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.xp_cmdshell": 1
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.config.xp_cmdshell": 0
+      },
+      "expect": null
+    }
+  ]
+}

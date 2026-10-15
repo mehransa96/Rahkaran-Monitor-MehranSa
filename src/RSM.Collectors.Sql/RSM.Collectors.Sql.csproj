@@ -7,8 +7,13 @@
   <ItemGroup>
     <ProjectReference Include="..\RSM.Core\RSM.Core.csproj" />
     <ProjectReference Include="..\RSM.Safety\RSM.Safety.csproj" />
+    <ProjectReference Include="..\RSM.Parsers\RSM.Parsers.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Queries\**\*.sql" />
+    <EmbeddedResource Include="Builds\known-builds.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="RSM.Tests" />
   </ItemGroup>
 </Project>

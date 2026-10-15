@@ -1,0 +1,57 @@
+{
+  "id": "SQL-SEC-004",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sec.sysadmin_count > params.max",
+  "severity": "Info",
+  "title": {
+    "fa": "تعداد اعضای sysadmin زیاد است ({sec.sysadmin_count})",
+    "en": "Many sysadmin members ({sec.sysadmin_count})"
+  },
+  "explanation": {
+    "fa": "اعضا: {sec.sysadmin_names}.",
+    "en": "Members: {sec.sysadmin_names}."
+  },
+  "recommendation": {
+    "fa": "دسترسی‌ها را به حداقل لازم کاهش دهید.",
+    "en": "Reduce to the minimum needed."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max": 3
+  },
+  "examples": [
+    {
+      "facts": {
+        "sec.sysadmin_count": 6,
+        "sec.sysadmin_names": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f"
+        ]
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sec.sysadmin_count": 2,
+        "sec.sysadmin_names": [
+          "a",
+          "b"
+        ]
+      },
+      "expect": null
+    }
+  ]
+}

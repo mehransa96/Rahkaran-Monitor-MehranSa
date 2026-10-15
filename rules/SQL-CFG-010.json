@@ -1,0 +1,56 @@
+{
+  "id": "SQL-CFG-010",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.config.ole_automation_procedures == 1",
+  "severity": "Warning",
+  "title": {
+    "fa": "Ole Automation Procedures فعال است",
+    "en": "Ole Automation Procedures are enabled"
+  },
+  "explanation": {
+    "fa": "این قابلیت ایجاد شیء COM از داخل SQL Server را ممکن می‌کند و سطح حمله را افزایش می‌دهد.",
+    "en": "It allows creating COM objects from T-SQL and widens the attack surface."
+  },
+  "recommendation": {
+    "fa": "قبل از هر تغییر با ستاد فنی هماهنگ کنید؛ RSM هیچ تغییری روی سرور ایجاد نمی‌کند.",
+    "en": "Coordinate any change with ستاد فنی; RSM never changes the server."
+  },
+  "evidence": [
+    "sql.config.ole_automation_procedures"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.9,
+  "baseline": {
+    "item": {
+      "fa": "Ole Automation Procedures",
+      "en": "Ole Automation Procedures"
+    },
+    "expected": {
+      "fa": "0 (خاموش)",
+      "en": "0 (off)"
+    },
+    "actual": "sql.config.ole_automation_procedures"
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.config.ole_automation_procedures": 1
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.config.ole_automation_procedures": 0
+      },
+      "expect": null
+    }
+  ]
+}
