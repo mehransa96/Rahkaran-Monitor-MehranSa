@@ -33,6 +33,8 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+# Query catalog folder that the Visual Studio "[Ll]og/" pattern above would hide
+!src/**/Queries/log/
 [Ll]ogs/
 
 # Visual Studio 2015/2017 cache/options directory

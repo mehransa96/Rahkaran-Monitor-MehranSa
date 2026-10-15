@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using RSM.Core.Model;
 using RSM.Core.Rules;
 using RSM.Core.Snapshots;
+using RSM.Hosting;
 using RSM.Reporting;
 using RSM.Reporting.Masking;
 using RSM.Reporting.Model;
@@ -226,6 +227,22 @@ public sealed partial class ReportTests : IDisposable
         missing.Should().BeEmpty("a fact no collector emits would leave the rule permanently indeterminate");
     }
 
+    [Fact]
+    public void Every_catalog_key_a_collector_uses_is_in_the_embedded_catalog()
+    {
+        // Guards against a query file that exists on a developer machine but never reached the build
+        // (e.g. hidden by a .gitignore pattern): CI would load a catalog without it.
+        var keys = RSM.Safety.Sql.QueryCatalog.Load(RsmHost.CatalogAssemblies).All.Select(q => q.Header.Key.Value).ToHashSet(StringComparer.Ordinal);
+        var used = Directory.EnumerateFiles(Path.Combine(RepoRoot(), "src"), "*.cs", SearchOption.AllDirectories)
+            .Where(f => f.Contains("RSM.Collectors.", StringComparison.Ordinal))
+            .SelectMany(f => CatalogKeyUse().Matches(File.ReadAllText(f)).Select(m => m.Groups["key"].Value))
+            .Distinct()
+            .ToList();
+
+        used.Should().NotBeEmpty();
+        used.Should().OnlyContain(k => keys.Contains(k), "every key passed to the query runner must be an embedded catalog file");
+    }
+
     private static (string Manifest, string Snapshot) ReadBundle(byte[] zip)
     {
         using var archive = new ZipArchive(new MemoryStream(zip), ZipArchiveMode.Read);
@@ -251,6 +268,9 @@ public sealed partial class ReportTests : IDisposable
 
         return dir!.FullName;
     }
+
+    [GeneratedRegex(@"Query(?:Optional)?Async<\w+>\(""(?<key>[a-z0-9_.]+)""")]
+    private static partial Regex CatalogKeyUse();
 
     [GeneratedRegex("base64,[A-Za-z0-9+/=]+")]
     private static partial Regex FontData();
