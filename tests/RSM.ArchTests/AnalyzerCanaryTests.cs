@@ -27,6 +27,9 @@ public class AnalyzerCanaryTests
         { "Microsoft.Win32.Registry.LocalMachine.CreateSubKey(\"x\");", "CreateSubKey" },
         { "Microsoft.Win32.Registry.LocalMachine.DeleteSubKeyTree(\"x\");", "DeleteSubKeyTree" },
         { "new System.Net.WebClient();", "WebClient" },
+        { "System.Xml.Linq.XDocument.Parse(\"<a/>\");", "Parse" },
+        { "System.Xml.Linq.XElement.Parse(\"<a/>\");", "Parse" },
+        { "new System.Xml.XmlDocument().LoadXml(\"<a/>\");", "LoadXml" },
     };
 
     public static TheoryData<string, string> BannedOutsideSafety => new()

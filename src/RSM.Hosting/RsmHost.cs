@@ -4,6 +4,7 @@ using RSM.Collectors.Redis;
 using RSM.Collectors.Database;
 using RSM.Collectors.Sql.Capabilities;
 using RSM.Collectors.Sql.Instance;
+using RSM.Collectors.Sql.Live;
 using RSM.Core.Model;
 using RSM.Storage.Snapshots;
 using RSM.Safety.Files;
@@ -59,6 +60,16 @@ public static class RsmHost
         services.AddSingleton<ICollector, SqlAgentCollector>();
         services.AddSingleton<ICollector, SqlSecurityCollector>();
         services.AddSingleton<ICollector, DatabaseCollector>();
+
+        // Phase 2 live collectors (ILiveCollector): scheduled by the live view, and run once in a diagnosis too.
+        services.AddSingleton<ICollector, SqlPerfCollector>();
+        services.AddSingleton<ICollector, SqlCpuCollector>();
+        services.AddSingleton<ICollector, SqlActivityCollector>();
+        services.AddSingleton<ICollector, SqlDeadlockCollector>();
+        services.AddSingleton<ICollector, SqlQueryStatsCollector>();
+        services.AddSingleton<ICollector, SqlAvailabilityCollector>();
+        services.AddSingleton<ICollector, SqlSelfOverheadCollector>();
+        services.AddSingleton<ICollector, QueryStoreCollector>();
         services.AddSingleton<RuleRepository>();
         services.AddSingleton<SnapshotStore>();
         services.AddSingleton<SnapshotService>();

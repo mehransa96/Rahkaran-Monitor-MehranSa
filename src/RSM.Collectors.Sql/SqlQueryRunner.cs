@@ -18,10 +18,12 @@ public sealed class SqlQueryRunner(SafeSqlExecutor executor, SqlNodeSession sess
 
     public SqlNodeSession Session { get; } = session;
 
+    public CancellationToken CancellationToken { get; } = cancellationToken;
+
     /// <summary>Runs a query; returns null (and records why) when it could not run.</summary>
     public async Task<IReadOnlyList<T>?> QueryAsync<T>(QueryKey key, object? parameters = null, string? database = null)
     {
-        var result = await executor.QueryAsync<T>(Session, key, parameters, database, cancellationToken).ConfigureAwait(false);
+        var result = await executor.QueryAsync<T>(Session, key, parameters, database, CancellationToken).ConfigureAwait(false);
         _outcomes.Add(new QueryOutcome(key.Value, database, result.Status, result.Rows.Count, result.Duration, result.Message));
         return result.IsOk ? result.Rows : null;
     }
@@ -32,7 +34,7 @@ public sealed class SqlQueryRunner(SafeSqlExecutor executor, SqlNodeSession sess
     /// </summary>
     public async Task<IReadOnlyList<T>?> QueryOptionalAsync<T>(QueryKey key, object? parameters = null, string? database = null)
     {
-        var result = await executor.QueryAsync<T>(Session, key, parameters, database, cancellationToken).ConfigureAwait(false);
+        var result = await executor.QueryAsync<T>(Session, key, parameters, database, CancellationToken).ConfigureAwait(false);
         if (result.IsOk)
         {
             _outcomes.Add(new QueryOutcome(key.Value, database, result.Status, result.Rows.Count, result.Duration, null));

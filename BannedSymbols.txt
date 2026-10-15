@@ -128,3 +128,11 @@ T:System.Net.WebRequest;forbidden: no internet access
 T:System.Net.HttpWebRequest;forbidden: no internet access
 T:System.Net.FtpWebRequest;forbidden: no internet access
 T:System.Net.Mail.SmtpClient;forbidden: no outbound mail / telemetry
+M:System.Xml.Linq.XDocument.Parse(System.String);server XML is untrusted: use RSM.Parsers.Xml.SafeXml (no DTD, no resolver, size cap)
+M:System.Xml.Linq.XDocument.Parse(System.String,System.Xml.Linq.LoadOptions);server XML is untrusted: use RSM.Parsers.Xml.SafeXml
+M:System.Xml.Linq.XDocument.Load(System.String);server XML is untrusted: use RSM.Parsers.Xml.SafeXml
+M:System.Xml.Linq.XDocument.Load(System.String,System.Xml.Linq.LoadOptions);server XML is untrusted: use RSM.Parsers.Xml.SafeXml
+M:System.Xml.Linq.XElement.Parse(System.String);server XML is untrusted: use RSM.Parsers.Xml.SafeXml
+M:System.Xml.Linq.XElement.Parse(System.String,System.Xml.Linq.LoadOptions);server XML is untrusted: use RSM.Parsers.Xml.SafeXml
+M:System.Xml.XmlDocument.LoadXml(System.String);server XML is untrusted: use RSM.Parsers.Xml.SafeXml
+T:System.Xml.XmlTextReader;server XML is untrusted: use RSM.Parsers.Xml.SafeXml

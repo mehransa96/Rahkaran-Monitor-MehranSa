@@ -33,3 +33,9 @@ public interface ICollector
 
     Task<CollectorResult> CollectAsync(INodeContext node, CollectContext context, CancellationToken cancellationToken);
 }
+
+/// <summary>
+/// Marker for collectors the live view schedules at <see cref="ICollector.DefaultInterval"/> (P2). Every collector
+/// still runs once in a full diagnosis; snapshot-only collectors are not repeated by the live view.
+/// </summary>
+public interface ILiveCollector : ICollector;

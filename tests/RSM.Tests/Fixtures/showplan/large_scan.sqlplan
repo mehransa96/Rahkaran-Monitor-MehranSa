@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ShowPlanXML xmlns="http://schemas.microsoft.com/sqlserver/2004/07/showplan" Version="1.564" Build="16.0.4305.5">
+  <BatchSequence>
+    <Batch>
+      <Statements>
+        <StmtSimple StatementText="SELECT ... (fixture)" StatementId="1" StatementCompId="1" StatementType="SELECT" StatementSubTreeCost="45.1" StatementEstRows="10" QueryHash="0x1" QueryPlanHash="0x2">
+          <QueryPlan DegreeOfParallelism="1" CachedPlanSize="40" CompileTime="2" CompileCPU="2" CompileMemory="300">
+            <RelOp NodeId="0" PhysicalOp="Clustered Index Scan" LogicalOp="Clustered Index Scan" EstimateRows="2500000" EstimatedRowsRead="2500000" TableCardinality="2500000" EstimatedTotalSubtreeCost="45.1">
+              <IndexScan Ordered="0" ForcedIndex="0" NoExpandHint="0"><Object Database="[Rahkaran]" Schema="[dbo]" Table="[VoucherItem]" Index="[PK_VoucherItem]" IndexKind="Clustered" /></IndexScan>
+            </RelOp>
+          </QueryPlan>
+        </StmtSimple>
+      </Statements>
+    </Batch>
+  </BatchSequence>
+</ShowPlanXML>

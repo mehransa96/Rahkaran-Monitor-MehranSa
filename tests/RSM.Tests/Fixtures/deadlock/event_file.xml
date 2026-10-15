@@ -1,0 +1,44 @@
+<event name="xml_deadlock_report" package="sqlserver" timestamp="2026-10-15T06:12:30.123Z">
+  <data name="xml_report">
+    <type name="xml" package="package0" />
+    <value>
+      <deadlock>
+        <victim-list>
+          <victimProcess id="process1f2a3b4c8" />
+        </victim-list>
+        <process-list>
+          <process id="process1f2a3b4c8" taskpriority="0" logused="232" waitresource="KEY: 5:72057594043236352 (8194443284a0)" waittime="2131" ownerId="12345" transactionname="user_transaction" lockMode="U" schedulerid="2" status="suspended" spid="61" trancount="2" clientapp="Rahkaran" hostname="APP01" hostpid="4321" loginname="rk_app" isolationlevel="read committed (2)" currentdb="5" currentdbname="Rahkaran">
+            <executionStack>
+              <frame procname="adhoc" line="1" stmtstart="38" sqlhandle="0x0200">UPDATE dbo.Accounts SET Balance = Balance - 10 WHERE Id = 1</frame>
+            </executionStack>
+            <inputbuf>BEGIN TRAN; UPDATE dbo.Accounts SET Balance = Balance - 10 WHERE Id = 2; UPDATE dbo.Accounts SET Balance = Balance - 10 WHERE Id = 1</inputbuf>
+          </process>
+          <process id="process1f2a3c088" taskpriority="0" logused="236" waitresource="KEY: 5:72057594043236352 (61a06abd401c)" waittime="2116" ownerId="12346" transactionname="user_transaction" lockMode="U" schedulerid="3" status="suspended" spid="62" trancount="2" clientapp="Rahkaran" hostname="APP02" hostpid="4322" loginname="rk_app" isolationlevel="read committed (2)" currentdb="5" currentdbname="Rahkaran">
+            <executionStack>
+              <frame procname="adhoc" line="1" stmtstart="38" sqlhandle="0x0201">UPDATE dbo.Accounts SET Balance = Balance + 10 WHERE Id = 2</frame>
+            </executionStack>
+            <inputbuf>BEGIN TRAN; UPDATE dbo.Accounts SET Balance = Balance + 10 WHERE Id = 1; UPDATE dbo.Accounts SET Balance = Balance + 10 WHERE Id = 2</inputbuf>
+          </process>
+        </process-list>
+        <resource-list>
+          <keylock hobtid="72057594043236352" dbid="5" objectname="Rahkaran.dbo.Accounts" indexname="PK_Accounts" id="lock1a" mode="X" associatedObjectId="72057594043236352">
+            <owner-list>
+              <owner id="process1f2a3c088" mode="X" />
+            </owner-list>
+            <waiter-list>
+              <waiter id="process1f2a3b4c8" mode="U" requestType="wait" />
+            </waiter-list>
+          </keylock>
+          <keylock hobtid="72057594043236352" dbid="5" objectname="Rahkaran.dbo.Accounts" indexname="PK_Accounts" id="lock1b" mode="X" associatedObjectId="72057594043236352">
+            <owner-list>
+              <owner id="process1f2a3b4c8" mode="X" />
+            </owner-list>
+            <waiter-list>
+              <waiter id="process1f2a3c088" mode="U" requestType="wait" />
+            </waiter-list>
+          </keylock>
+        </resource-list>
+      </deadlock>
+    </value>
+  </data>
+</event>

@@ -35,6 +35,36 @@ public class SqlCatalogTests
         verdict.IsAllowed.Should().BeTrue($"{resource}: {verdict}");
     }
 
+    private static readonly string[] SessionViews =
+        ["sys.dm_exec_sessions", "sys.dm_exec_requests", "sys.dm_exec_connections", "sys.dm_os_waiting_tasks", "sys.dm_tran_session_transactions", "sys.dm_tran_locks"];
+
+    /// <summary>
+    /// CLAUDE.md: RSM's own sessions are excluded from every session/request view. The single declared exception
+    /// (<c>own_sessions: true</c>) is the self-overhead query, which looks only AT our sessions.
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(CatalogResources))]
+    public void Session_views_exclude_rsm_own_sessions(string resource)
+    {
+        var assembly = CatalogAssemblies.Single(a => a.GetManifestResourceNames().Contains(resource));
+        var text = QueryCatalog.ReadResource(assembly, resource);
+        var body = string.Join('\n', text.Split('\n').Where(l => !l.TrimStart().StartsWith("--", StringComparison.Ordinal)));
+        if (!SessionViews.Any(v => body.Contains(v, StringComparison.OrdinalIgnoreCase)))
+        {
+            return;
+        }
+
+        var key = QueryCatalog.ParseHeader(text, resource).Key.Value;
+        if (System.Text.RegularExpressions.Regex.IsMatch(text, @"^--\s*own_sessions:\s*true\s*$", System.Text.RegularExpressions.RegexOptions.Multiline))
+        {
+            key.Should().Be("cap.self_overhead", "only the self-overhead query may look at RSM's own sessions");
+            body.Should().Contain($"= N'{HardenedBatch.ApplicationName}'");
+            return;
+        }
+
+        body.Should().Contain($"<> N'{HardenedBatch.ApplicationName}'", $"{resource} reads a session/request view and must exclude RSM's own sessions");
+    }
+
     [Fact]
     public void Whole_catalog_loads_and_keys_are_unique_per_version()
     {

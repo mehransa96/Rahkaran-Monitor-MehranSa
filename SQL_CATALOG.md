@@ -42,7 +42,7 @@ and every session/request view filters `s.program_name <> N'RSM-ReadOnlyMonitor'
 | `cap.object_perms` | SELECT on msdb history tables, EXECUTE on xp_readerrorlog, ERRORLOG path (fixed object list) | `HAS_PERMS_BY_NAME(N'msdb.dbo.…','OBJECT','SELECT')`, `SERVERPROPERTY('ErrorLogFileName')` | 13 | public | C | master | 0 |
 | `cap.agent_role` | SQLAgentReaderRole membership, job-table access | `IS_ROLEMEMBER(N'SQLAgentReaderRole')`, `HAS_PERMS_BY_NAME(N'dbo.sysjobs',…)` | 13 | user in msdb | C | msdb | 0 |
 | `cap.ssrs_access` | ReportServer DB exposes `ExecutionLog3` and the login can read it | `OBJECT_ID(N'dbo.ExecutionLog3')`, `HAS_PERMS_BY_NAME` | 13 | user in ReportServer | C | rs | 0 |
-| `cap.self_overhead` | RSM's own CPU/reads on the server | `sys.dm_exec_sessions` **where** `program_name = N'RSM-ReadOnlyMonitor'` | 13 | VSS | C | master | 2 |
+| `cap.self_overhead` | RSM's own CPU/reads/memory on the server — the only query that looks *at* RSM's sessions (header `own_sessions: true`, pinned by a test) | `sys.dm_exec_sessions` **where** `program_name = N'RSM-ReadOnlyMonitor'`, `sys.dm_os_sys_info` | 13 | VSS | C | master | 2 |
 | `cap.rtt` | Round-trip latency probe | `SELECT 1` | 13 | public | C | master | 2 |
 
 ## 1. Inventory (§7.1) — P1
@@ -128,7 +128,7 @@ Locking, Latch, TempDB (PAGELATCH on db 2), Memory, Network/client (ASYNC_NETWOR
 |---|---|---|---|---|---|---|
 | `sql.req.active` | Running requests with statement text (offset extraction), waits, blocking, CPU, reads, writes, grant, DOP, % complete, open tran count | `sys.dm_exec_requests`, `sys.dm_exec_sessions`, `sys.dm_exec_connections`, `sys.dm_exec_sql_text`, `sys.dm_exec_query_memory_grants` | 13 | VSS | C | master |
 | `sql.req.input_buffer` | Last batch of a session (on click / head blocker) | `sys.dm_exec_input_buffer(@session_id, NULL)` | 13 | VSS | C | master |
-| `sql.req.plan` | Actual-ish cached plan for a running statement (on click) | `sys.dm_exec_text_query_plan(@plan_handle, @stmt_start, @stmt_end)` | 13 | VSS | M | master |
+| `sql.req.plan` | *(served by `sql.qs.plan_text` with the request's plan handle and offsets)* | — | — | — | — | — |
 | `sql.req.sessions_summary` | Sessions by host/program/login/DB (topology, ARR balance) | `sys.dm_exec_sessions`, `sys.dm_exec_connections` | 13 | VSS | C | master |
 | `sql.req.idle_open_tran` | Sleeping sessions holding open transactions | `sys.dm_exec_sessions` (`open_transaction_count > 0`), `sys.dm_tran_session_transactions` | 13 | VSS | C | master |
 
@@ -144,8 +144,8 @@ Locking, Latch, TempDB (PAGELATCH on db 2), Memory, Network/client (ASYNC_NETWOR
 | Key | Purpose | Objects | Ver | Perm | Cost | DB |
 |---|---|---|---|---|---|---|
 | `sql.dl.xel_path` | Locate `system_health` files | `sys.dm_os_server_diagnostics_log_configurations`, `sys.dm_xe_session_targets` / `sys.dm_xe_sessions` | 13 | VSS | C | master |
-| `sql.dl.from_file` | `xml_deadlock_report` events since @since | `sys.fn_xe_file_target_read_file(@path_pattern, NULL, NULL, NULL)` (path restricted to `…system_health*.xel` by SqlGuard parameter rule) | 13 | VSS | M | master |
-| `sql.dl.from_file.v14` | Same with `timestamp_utc` filter pushed down | as above | 14 | VSS | M | master |
+| `sql.dl.from_file` | `xml_deadlock_report` events (filtered by time client-side) | `sys.fn_xe_file_target_read_file(<log dir> + 'system_health*.xel', …)` — the directory comes from `sys.dm_os_server_diagnostics_log_configurations` **inside the query**; the client never passes a path | 13 | VSS | M | master |
+| `sql.dl.from_file` (`.v14` variant) | Same with `timestamp_utc >= @Since` pushed down | as above | 14 | VSS | M | master |
 | `sql.dl.from_ring` | Fallback: ring_buffer target | `sys.dm_xe_session_targets` + `sys.dm_xe_sessions` (`system_health`, `ring_buffer`) | 13 | VSS | M | master |
 
 Graph parsing (victim, processes, statements, objects/indexes, lock modes) is client-side in
@@ -166,7 +166,7 @@ Graph parsing (victim, processes, statements, objects/indexes, lock modes) is cl
 | `sql.qs.top_queries.v13sp2` | + spills, grant columns | as above (`total_spills`, `max_grant_kb`, `max_used_grant_kb`) | 13 SP2 | VSS | M | master |
 | `sql.qs.top_procs` | Top-N procedures | `sys.dm_exec_procedure_stats` | 13 | VSS | M | master |
 | `sql.qs.plan_cache_health` | Plan cache size by objtype, single-use plan count/bytes | `sys.dm_exec_cached_plans` (grouped) | 13 | VSS | M | master |
-| `sql.qs.plan_xml` | Showplan XML for a `plan_handle` (on click or top-N for analysis) | `sys.dm_exec_query_plan(@plan_handle)` | 13 | VSS | M | master |
+| `sql.qs.plan_text` | Showplan XML (text form, no nesting limit) of one statement — top-N analysis or on click; also serves the running request's plan | `sys.dm_exec_text_query_plan(@PlanHandle, @StatementStart, @StatementEnd)` | 13 | VSS | M | master |
 | `sql.qds.options` | Query Store state per DB | `sys.database_query_store_options` | 13 | VDS | C | each |
 | `sql.qds.top` | Top consumers last @hours | `sys.query_store_query`, `query_store_query_text`, `query_store_plan`, `query_store_runtime_stats`, `query_store_runtime_stats_interval` | 13 | VDS | M | rk |
 | `sql.qds.regressed` | Recent window vs baseline window (duration/CPU ratio, plan change) | same | 13 | VDS | M | rk |
@@ -184,7 +184,7 @@ only as on-demand `sql.qs.plan_xml` over the top-N handles).
 | `sql.idx.missing` | Missing index suggestions + improvement measure | `sys.dm_db_missing_index_details`, `_groups`, `_group_stats` | 13 | VSS | C | master |
 | `sql.idx.usage` | Seeks/scans/lookups/updates per index since restart | `sys.dm_db_index_usage_stats`, `sys.indexes`, `sys.objects` | 13 | VDS | M | rk |
 
-Displayed only, with the fixed caution text (rule `DB-IDX-000`).
+Displayed only, with the fixed caution text (rule `DB-IDX-000`). `sql.idx.usage` runs in the Rahkaran database(s).
 
 ## 12. Memory (§7.12) — P1/P2
 
@@ -324,6 +324,17 @@ team once confirmed.
 | `sp_MSforeachdb` / dynamic SQL | banned | executor opens one connection per DB |
 | Creating XE sessions / traces / Query Store changes | write | read `system_health` only |
 | `sys.dm_db_index_physical_stats` SAMPLED/DETAILED | too heavy | LIMITED, top-N, on demand |
+
+## Phase 2 implementation notes
+
+- Every query that reads a session/request view (`dm_exec_sessions`, `dm_exec_requests`, `dm_exec_connections`,
+  `dm_os_waiting_tasks`, `dm_tran_session_transactions`, `dm_tran_locks`) excludes `program_name = 'RSM-ReadOnlyMonitor'`;
+  `SqlCatalogTests.Session_views_exclude_rsm_own_sessions` enforces it (it found `sql.tempdb.contention` from P1 missing
+  the filter — fixed). The only exception is `cap.self_overhead`, declared with `own_sessions: true`.
+- `sql.qs.top_queries` also drops RSM's own batches (their text starts with the fixed hardening prefix).
+- No `OPTION (MAXRECURSION …)`: SqlGuard allows only RECOMPILE/MAXDOP hints, so the blocking tree caps its depth with
+  `chain_level < 32` instead.
+- `sql.waits.session_waits` is not needed by the P2 pages and was not written.
 
 ## Phase 1 implementation notes
 
