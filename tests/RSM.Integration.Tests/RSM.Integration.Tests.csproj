@@ -2,5 +2,6 @@
   <!-- Runs only when RSM_IT_SQL / RSM_IT_REDIS are set (see tests/integration/README.md); otherwise every test is skipped. -->
   <ItemGroup>
     <ProjectReference Include="..\..\src\RSM.Hosting\RSM.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Collectors.Iis\RSM.Collectors.Iis.csproj" />
   </ItemGroup>
 </Project>

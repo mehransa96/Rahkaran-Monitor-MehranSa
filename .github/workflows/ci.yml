@@ -108,3 +108,45 @@ jobs:
           name: RSM-win-x64
           path: publish/
           retention-days: 3
+
+  iis:
+    name: IIS live requests, logs, services and events (Windows, read-only proof)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      # CI setup plays the customer server: it installs IIS and a slow test page. RSM itself never changes IIS.
+      - name: Install IIS with Request Monitor and ASP.NET 4.x
+        shell: powershell
+        run: |
+          Install-WindowsFeature Web-Server, Web-Request-Monitor, Web-Asp-Net45, Web-Http-Logging | Out-Null
+          Get-WindowsFeature Web-Request-Monitor, Web-Asp-Net45 | Format-Table Name, InstallState
+      - name: Create AuxWebsite1 (port 8081, pool RsmItPool) with a page that sleeps 40 s
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          New-Item -ItemType Directory -Force C:\rsmit\site | Out-Null
+          Set-Content -Path C:\rsmit\site\slow.aspx -Value '<%@ Page Language="C#" %><% System.Threading.Thread.Sleep(40000); %>done'
+          Set-Content -Path C:\rsmit\site\index.html -Value 'ok'
+          New-WebAppPool -Name RsmItPool | Out-Null
+          New-Website -Name AuxWebsite1 -Port 8081 -PhysicalPath C:\rsmit\site -ApplicationPool RsmItPool | Out-Null
+          Invoke-WebRequest http://localhost:8081/index.html -UseBasicParsing | Select-Object StatusCode
+      - name: Fingerprint IIS configuration before RSM connects
+        shell: powershell
+        run: |
+          (Get-FileHash $env:windir\System32\inetsrv\config\applicationHost.config).Hash | Out-File iis-before.txt
+          Get-WebAppPoolState -Name RsmItPool | Out-File -Append iis-before.txt
+          Get-Content iis-before.txt
+      - name: IIS integration tests (elevated, local)
+        env:
+          RSM_IT_IIS: "1"
+        run: dotnet test tests/RSM.Integration.Tests -c Release --filter "FullyQualifiedName~IisLiveTests" --logger "console;verbosity=detailed"
+      - name: Read-only proof — IIS configuration and pool state unchanged
+        shell: powershell
+        run: |
+          (Get-FileHash $env:windir\System32\inetsrv\config\applicationHost.config).Hash | Out-File iis-after.txt
+          Get-WebAppPoolState -Name RsmItPool | Out-File -Append iis-after.txt
+          if (Compare-Object (Get-Content iis-before.txt) (Get-Content iis-after.txt)) { throw "IIS state changed" }
+          Write-Host "read-only proof: applicationHost.config and pool state unchanged"
