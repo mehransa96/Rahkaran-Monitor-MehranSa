@@ -68,7 +68,12 @@ public sealed class FullDiagnosisTests(ITestOutputHelper output) : IDisposable
             output.WriteLine($"indeterminate {i.RuleId} [{i.Instance}] missing {i.MissingFact}");
         }
 
-        result.Collectors.Should().HaveCount(7);
+        // P1 snapshot collectors + P2 live SQL collectors (Windows collectors need a Windows host and are skipped here).
+        result.Collectors.Select(c => c.CollectorId).Should().BeEquivalentTo(
+        [
+            "sql.inventory", "sql.configuration", "sql.storage", "sql.errorlog", "sql.agent", "sql.security", "sql.databases",
+            "sql.perf", "sql.cpu", "sql.activity", "sql.deadlocks", "sql.querystats", "sql.ha", "rsm.overhead.sql", "sql.querystore",
+        ]);
         result.Collectors.Should().NotContain(c => c.Status.Kind == CollectorStatusKind.Error, "missing permissions must degrade, never fail");
         result.RuleErrors.Should().BeEmpty();
         result.Facts["rk.detected_by"].Should().Be("setting");
