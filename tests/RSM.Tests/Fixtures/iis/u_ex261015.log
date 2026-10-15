@@ -1,0 +1,41 @@
+#Software: Microsoft Internet Information Services 10.0
+#Version: 1.0
+#Date: 2026-10-15 06:00:00
+#Fields: date time s-ip cs-method cs-uri-stem cs-uri-query s-port cs-username c-ip cs(User-Agent) sc-status sc-substatus sc-win32-status time-taken
+2026-10-15 06:00:10 10.0.0.5 POST /api/voucher - 8081 - 10.0.0.21 Mozilla/5.0 200 0 0 120
+2026-10-15 06:01:11 10.0.0.5 POST /api/voucher - 8081 - 10.0.0.21 Mozilla/5.0 200 0 0 80
+2026-10-15 06:02:12 10.0.0.5 POST /api/voucher - 8081 - 10.0.0.21 Mozilla/5.0 200 0 0 300
+2026-10-15 06:00:13 10.0.0.5 POST /api/voucher - 8081 - 10.0.0.21 Mozilla/5.0 200 0 0 95
+2026-10-15 06:01:14 10.0.0.5 POST /api/voucher - 8081 - 10.0.0.21 Mozilla/5.0 200 0 0 2000
+2026-10-15 06:02:15 10.0.0.5 POST /api/voucher - 8081 - 10.0.0.21 Mozilla/5.0 200 0 0 150
+2026-10-15 06:00:16 10.0.0.5 POST /api/voucher - 8081 - 10.0.0.21 Mozilla/5.0 200 0 0 110
+2026-10-15 06:01:17 10.0.0.5 POST /api/voucher - 8081 - 10.0.0.21 Mozilla/5.0 200 0 0 90
+2026-10-15 06:02:18 10.0.0.5 POST /api/voucher - 8081 - 10.0.0.21 Mozilla/5.0 200 0 0 5000
+2026-10-15 06:00:19 10.0.0.5 POST /api/voucher - 8081 - 10.0.0.21 Mozilla/5.0 200 0 0 100
+2026-10-15 06:01:20 10.0.0.5 GET /login - 8081 - 10.0.0.22 Mozilla/5.0 200 0 0 30
+2026-10-15 06:01:21 10.0.0.5 GET /login - 8081 - 10.0.0.22 Mozilla/5.0 200 0 0 40
+2026-10-15 06:01:22 10.0.0.5 GET /login - 8081 - 10.0.0.22 Mozilla/5.0 200 0 0 50
+2026-10-15 06:01:23 10.0.0.5 GET /login - 8081 - 10.0.0.22 Mozilla/5.0 200 0 0 60
+2026-10-15 06:01:24 10.0.0.5 GET /login - 8081 - 10.0.0.22 Mozilla/5.0 200 0 0 70
+2026-10-15 06:05:00 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:05:01 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:05:02 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:05:03 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:05:04 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:05:05 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:05:06 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:05:07 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:05:08 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:05:09 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:05:10 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:05:11 10.0.0.5 GET /health - 8081 - 10.0.0.30 Mozilla/5.0 503 0 0 1
+2026-10-15 06:06:00 10.0.0.5 GET /api/report - 8081 - 10.0.0.21 Mozilla/5.0 502 5 0 15
+2026-10-15 06:06:01 10.0.0.5 GET /api/report - 8081 - 10.0.0.21 Mozilla/5.0 500 30 0 12
+2026-10-15 06:06:02 10.0.0.5 GET /api/report - 8081 - 10.0.0.21 Mozilla/5.0 200 0 64 40000
+2026-10-15 06:06:03 10.0.0.5 GET /missing - 8081 - 10.0.0.21 Mozilla/5.0 404 0 2 3
+2026-10-15 06:06:04 malformed line
+#Software: Microsoft Internet Information Services 10.0
+#Date: 2026-10-15 06:10:00
+#Fields: date time cs-method cs-uri-stem sc-status sc-substatus sc-win32-status time-taken c-ip X-Forwarded-For
+2026-10-15 06:10:05 GET /login 200 0 0 60 10.0.0.2 192.168.5.40
+2026-10-15 06:10:06 GET /login 200 0 0 70 10.0.0.2 192.168.5.40,10.0.0.9

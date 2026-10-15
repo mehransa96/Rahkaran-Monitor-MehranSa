@@ -1,0 +1,12 @@
+#Software: Microsoft HTTP API 2.0
+#Version: 1.0
+#Date: 2026-10-15 06:00:00
+#Fields: date time c-ip c-port s-ip s-port cs-version cs-method cs-uri streamid sc-status s-siteid s-reason s-queuename
+2026-10-15 06:05:00 10.0.0.30 51000 10.0.0.5 8081 HTTP/1.1 GET /health - 503 2 QueueFull AuxPool1
+2026-10-15 06:05:01 10.0.0.30 51001 10.0.0.5 8081 HTTP/1.1 GET /health - 503 2 QueueFull AuxPool1
+2026-10-15 06:05:02 10.0.0.30 51002 10.0.0.5 8081 HTTP/1.1 GET /health - 503 2 QueueFull AuxPool1
+2026-10-15 06:05:03 10.0.0.30 51003 10.0.0.5 8081 HTTP/1.1 GET /health - 503 2 QueueFull AuxPool1
+2026-10-15 07:00:00 10.0.0.31 52000 10.0.0.5 8081 - - - - - - Timer_ConnectionIdle -
+2026-10-15 07:01:00 10.0.0.31 52001 10.0.0.5 8081 - - - - - - Timer_ConnectionIdle -
+2026-10-15 07:02:00 10.0.0.31 52002 10.0.0.5 8081 - - - - - - Timer_ConnectionIdle -
+2026-10-15 07:30:00 10.0.0.30 53000 10.0.0.5 8081 HTTP/1.1 GET /x - 503 2 AppOffline AuxPool1

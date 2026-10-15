@@ -3,3 +3,4 @@
 *.verified.json text eol=lf working-tree-encoding=UTF-8
 *.sbn text eol=lf
 src/RSM.Reporting/Html/*.css text eol=lf
+tests/RSM.Tests/Fixtures/iis/*.log -text

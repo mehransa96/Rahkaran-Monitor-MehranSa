@@ -487,3 +487,6 @@ $RECYCLE.BIN/
 
 # Verify
 *.received.*
+
+# Hand-built IIS log fixtures are test data, not logs.
+!tests/RSM.Tests/Fixtures/**/*.log
