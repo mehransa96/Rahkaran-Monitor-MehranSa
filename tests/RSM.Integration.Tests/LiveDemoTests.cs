@@ -211,7 +211,9 @@ public sealed class LiveDemoTests(ITestOutputHelper output) : IDisposable
         var session = await live.StartAsync(site, null, CancellationToken.None);
         try
         {
-            await Task.Delay(TimeSpan.FromSeconds(75));
+            await Task.Delay(TimeSpan.FromSeconds(70));
+            session.Stats(); // the client CPU meter needs two samples
+            await Task.Delay(TimeSpan.FromSeconds(5));
             var stats = session.Stats();
             var load = stats.Nodes[node.Id];
             output.WriteLine($"client CPU {stats.ClientCpuPercent:0.0} %, working set {stats.ClientWorkingSetMb:0} MB, heap {stats.ManagedHeapMb:0} MB, series {stats.Series}, points {stats.Points}");
@@ -228,8 +230,15 @@ public sealed class LiveDemoTests(ITestOutputHelper output) : IDisposable
 
             session.LatestResults(node.Id).Select(r => r.CollectorId).Should().Contain(["sql.perf", "sql.cpu", "sql.activity", "sql.deadlocks", "sql.querystats", "rsm.overhead.sql"]);
             session.LatestResults(node.Id).Should().NotContain(r => r.Status.Kind == CollectorStatusKind.Error);
+            // Two views of RSM's server load. cpu_time of RSM's sessions is a lower bound (SQL Server counts whole
+            // milliseconds per request and most DMV queries take less). The wall time of all RSM queries is an upper
+            // bound on server CPU (it includes network and waiting); as a share of ONE core it must stay < 2 %.
             load.SqlCpuPercent.Should().NotBeNull("RSM measures its own SQL Server CPU");
             load.SqlCpuPercent!.Value.Should().BeLessThan(2, "P2 acceptance: RSM overhead < 2 % CPU");
+            var upperBoundPercentOfOneCore = 100 * load.CollectorSecondsPerMinute / 60;
+            output.WriteLine($"upper bound of RSM server time: {upperBoundPercentOfOneCore:0.00} % of one core");
+            upperBoundPercentOfOneCore.Should().BeLessThan(2, "even counting all query wall time as server CPU on a single core");
+            stats.ClientCpuPercent.Should().NotBeNull("the client meter has two samples");
             stats.ClientWorkingSetMb.Should().BeLessThan(500, "P2 acceptance: process < 500 MB");
             session.Engine.Rules.Should().NotBeEmpty();
             session.Facts(node.Id).Should().ContainKeys("sql.perf.batch_requests_sec", "sql.waits.ms_per_sec", "sql.cpu.sql_pct", "rsm.sql_cpu_pct");
