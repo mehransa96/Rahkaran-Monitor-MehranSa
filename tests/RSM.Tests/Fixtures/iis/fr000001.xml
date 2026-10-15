@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<failedRequest url="http://rk.example.local:8081/api/voucher" siteId="2" appPoolId="AuxPool1" processId="4120" verb="POST" authenticationType="anonymous" activityId="{00000000-0000-0000-0000-000000000000}" failureReason="TIME_TAKEN" statusCode="200" triggerStatusCode="200" timeTaken="15032" xmlns:freb="http://schemas.microsoft.com/win/2006/06/iis/freb">
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System><Provider Name="WWW Server" /><TimeCreated SystemTime="2026-10-15T06:20:01.123Z" /></System>
+  </Event>
+</failedRequest>
