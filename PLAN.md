@@ -84,10 +84,12 @@ estimate, adaptive back-off; rules `RULES.md` §1, §2 live, §3.5.
 **Acceptance**
 - [ ] Live view stable for 1 h against a loaded lab server; RSM overhead < 2 % CPU (measured by
       `cap.self_overhead` + server-side perf counters) and RSM process < 500 MB.
-- [ ] Blocking demo (two sessions) shows correct head blocker, chain, statement, open-tran age.
-- [ ] Deadlock demo is read from `system_health` and parsed (victim, statements, objects, modes).
-- [ ] Showplan parser flags each warning type on fixture plans.
-- [ ] Remote CIM and local PDH return the same metric keys for the same counters (contract test).
+      *Partly verified:* CI soak (75 s, idle container) — ≤ 0.8 % of one core upper bound, 176 MB; the 1-hour run on
+      a loaded Windows lab is still open (`docs/phase-notes/P2.md`).
+- [x] Blocking demo (two sessions) shows correct head blocker, chain, statement, open-tran age. *(CI run 14)*
+- [x] Deadlock demo is read from `system_health` and parsed (victim, statements, objects, modes). *(CI run 14)*
+- [x] Showplan parser flags each warning type on fixture plans. *(`LiveParserTests`)*
+- [x] Remote CIM and local PDH return the same metric keys for the same counters (contract test). *(`WindowsCollectorTests`)*
 
 ## Phase 3 — IIS / ARR / services / events
 
