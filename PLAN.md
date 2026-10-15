@@ -63,11 +63,11 @@ open owner decision before P5).
 **Acceptance** (status after P1 — evidence in `docs/phase-notes/P1.md`)
 - [x] Seeded deviations produce exactly the expected findings — fixture-verified (`ReportTests` pins the exact 15
       findings of the lab fact set, no indeterminate rule); the CI integration job seeds a real SQL Server 2022
-      the same way and asserts the findings with the least-privilege login (result: see P1 notes / CI run).
+      the same way; with the least-privilege login every seeded deviation is reported (CI run 5).
 - [x] Compliance table vs ستاد فنی baseline renders with item/expected/actual/status/rule/source per row
       (33 baseline rules; Deviation / Compliant / Unknown / Not applicable tested).
-- [ ] Least-privilege login: all P1 collectors OK or `Unavailable` with a correct reason → asserted by the CI
-      integration test (no collector `Error`), plus a before/after server fingerprint diff as `sa`.
+- [x] Least-privilege login: all P1 collectors OK or `Unavailable`/`Partial` with a correct reason — CI run 5: six Ok,
+      error log Partial (PermissionDenied); before/after `sa` fingerprint diff empty.
 - [x] HTML report renders in fa (RTL, Jalali + Gregorian) and en; Verify snapshot tests pass; masked HTML and
       bundle contain none of 16 sensitive lab tokens (names, hosts, logins, IPs, job names, payload-only data).
       (Query literals: P1 reports contain no query text; literal masking arrives with query text in P2.)
