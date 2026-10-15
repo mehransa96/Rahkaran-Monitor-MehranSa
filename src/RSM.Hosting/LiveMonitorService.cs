@@ -14,6 +14,7 @@ public sealed class LiveMonitorService(
     ConnectionTester tester,
     NodeTransportOpener transportOpener,
     IEnumerable<ICollector> collectors,
+    IEnumerable<ISiteAnalyzer> analyzers,
     RuleRepository ruleRepository,
     ILogger<LiveMonitorService> logger) : IAsyncDisposable
 {
@@ -47,7 +48,7 @@ public sealed class LiveMonitorService(
         }
 
         Site = site;
-        Current = new LiveSession(nodes, engine);
+        Current = new LiveSession(nodes, engine, analyzers: analyzers.ToList());
         Current.Start();
         return Current;
     }

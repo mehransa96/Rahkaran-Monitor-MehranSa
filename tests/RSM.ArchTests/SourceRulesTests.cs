@@ -24,6 +24,28 @@ public partial class SourceRulesTests
     }
 
     [Fact]
+    public void Certificate_stores_are_opened_read_only_and_chains_are_built_offline()
+    {
+        foreach (var file in Repo.SourceFiles("*.cs"))
+        {
+            var text = File.ReadAllText(file);
+            foreach (Match m in OpenFlagsUse().Matches(text))
+            {
+                m.Value.Should().BeOneOf(["OpenFlags.ReadOnly", "OpenFlags.OpenExistingOnly"], $"{Repo.Relative(file)} opens a certificate store");
+            }
+
+            if (text.Contains("new X509Chain(", StringComparison.Ordinal))
+            {
+                text.Should().Contain("DisableCertificateDownloads = true", $"{Repo.Relative(file)}: no internet access while building a chain");
+                text.Should().Contain("X509RevocationMode.NoCheck", $"{Repo.Relative(file)}: no online revocation checks");
+            }
+        }
+    }
+
+    [GeneratedRegex(@"OpenFlags\.\w+")]
+    private static partial Regex OpenFlagsUse();
+
+    [Fact]
     public void RS0030_is_never_disabled_in_build_files()
     {
         var buildFiles = Directory.EnumerateFiles(Repo.Root, "*.*", SearchOption.AllDirectories)

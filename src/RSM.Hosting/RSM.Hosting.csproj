@@ -12,6 +12,7 @@
     <ProjectReference Include="..\RSM.Collectors.Redis\RSM.Collectors.Redis.csproj" />
     <ProjectReference Include="..\RSM.Collectors.Database\RSM.Collectors.Database.csproj" />
     <ProjectReference Include="..\RSM.Collectors.Windows\RSM.Collectors.Windows.csproj" />
+    <ProjectReference Include="..\RSM.Collectors.Iis\RSM.Collectors.Iis.csproj" />
     <ProjectReference Include="..\RSM.Reporting\RSM.Reporting.csproj" />
   </ItemGroup>
   <ItemGroup>

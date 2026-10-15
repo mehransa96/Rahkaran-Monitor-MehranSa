@@ -163,7 +163,73 @@ public sealed class WindowsPerfCollector : WindowsCollectorBase<WindowsPerfState
                     output.Fact($"{key}.errors_increasing", errors > prev);
                 }
             }
+
+            ApplyIis(state, readings, at, output);
         }
+    }
+
+    public static readonly TimeSpan QueueWindow = TimeSpan.FromSeconds(30);
+
+    /// <summary>
+    /// IIS counters (§10.4) as pool-scoped facts: HTTP.sys queue (sustained ≥ 30 s), rejected requests increasing,
+    /// active requests/threads of the pool's worker processes, WAS pool state and failures.
+    /// </summary>
+    private static void ApplyIis(WindowsPerfState state, IReadOnlyList<MetricReading> readings, DateTimeOffset at, LiveOutput output)
+    {
+        foreach (var q in readings.Where(r => r.Key == "win.iis.queue.size" && r.Instance is not null))
+        {
+            var pool = $"pool[{q.Instance}]";
+            Push(state, $"queue|{q.Instance}", q.Value, at);
+            output.Fact($"{pool}.queue_size", q.Value);
+            output.Fact($"{pool}.queue_size_min30", SustainedOver(state, $"queue|{q.Instance}", at, QueueWindow));
+        }
+
+        foreach (var r in readings.Where(r => r.Key == "win.iis.queue.rejected" && r.Instance is not null))
+        {
+            var previous = Last(state, $"rejected|{r.Instance}");
+            Push(state, $"rejected|{r.Instance}", r.Value, at);
+            if (previous is { } prev)
+            {
+                output.Fact($"pool[{r.Instance}].rejected_increasing", r.Value > prev);
+            }
+        }
+
+        foreach (var g in readings.Where(r => r.Key is "win.iis.w3wp.active_requests" or "win.iis.w3wp.active_threads" && r.Instance is not null)
+                     .GroupBy(r => (r.Key, Pool: WindowsMetricCatalog.PoolOfW3wpInstance(r.Instance!))))
+        {
+            output.Fact($"pool[{g.Key.Pool}].{(g.Key.Key.EndsWith("requests", StringComparison.Ordinal) ? "active_requests" : "active_threads")}", g.Sum(r => r.Value));
+        }
+
+        foreach (var r in readings.Where(r => r.Key.StartsWith("win.iis.pool.", StringComparison.Ordinal) && r.Instance is not null))
+        {
+            var pool = $"pool[{r.Instance}]";
+            switch (r.Key)
+            {
+                case "win.iis.pool.state":
+                    // APP_POOL_WAS: 1 uninitialised, 2 initialised, 3 running, 4 disabling, 5 disabled, 6 shutdown pending, 7 delete pending.
+                    output.Fact($"{pool}.was_state", r.Value);
+                    output.Fact($"{pool}.running", r.Value == 3);
+                    break;
+                case "win.iis.pool.recent_failures":
+                    output.Fact($"{pool}.recent_wp_failures", r.Value);
+                    break;
+                case "win.iis.pool.uptime_s":
+                    output.Fact($"{pool}.uptime_s", r.Value);
+                    break;
+            }
+        }
+    }
+
+    /// <summary>Min over <paramref name="window"/>, or null until the samples cover at least 75 % of it.</summary>
+    private static double? SustainedOver(WindowsPerfState state, string key, DateTimeOffset at, TimeSpan window)
+    {
+        if (!state.History.TryGetValue(key, out var list))
+        {
+            return null;
+        }
+
+        var recent = list.Where(v => v.At >= at - window - TimeSpan.FromSeconds(5)).ToList();
+        return recent.Count < 2 || at - recent[0].At < window * 0.75 ? null : recent.Min(v => v.Value);
     }
 
     private static void Push(WindowsPerfState state, string key, double value, DateTimeOffset at)

@@ -53,6 +53,12 @@ public static class WindowsMetricCatalog
     private const string NetClass = "Win32_PerfFormattedData_Tcpip_NetworkInterface";
     private const string TcpClass = "Win32_PerfFormattedData_Tcpip_TCPv4";
 
+    // IIS (§10.4). Absent on nodes without IIS: PDH skips the missing category, CIM skips the missing class.
+    private const string WebServiceClass = "Win32_PerfFormattedData_W3SVC_WebService";
+    private const string W3wpClass = "Win32_PerfFormattedData_W3SVCW3WPCounterProvider_W3SVCW3WP";
+    private const string QueueClass = "Win32_PerfFormattedData_Counters_HTTPServiceRequestQueues";
+    private const string WasClass = "Win32_PerfFormattedData_APPPOOLCountersProvider_APPPOOLWAS";
+
     public static IReadOnlyList<WinMetric> All { get; } =
     [
         new("win.cpu.total_pct", "%", "Processor Information", "% Processor Time", CounterInstances.Total, ProcessorInfo, "PercentProcessorTime"),
@@ -76,6 +82,21 @@ public static class WindowsMetricCatalog
         new("win.net.errors_outbound", "", "Network Interface", "Packets Outbound Errors", CounterInstances.Each, NetClass, "PacketsOutboundErrors"),
         new("win.net.discards_received", "", "Network Interface", "Packets Received Discarded", CounterInstances.Each, NetClass, "PacketsReceivedDiscarded"),
         new("win.tcp.connections_established", "", "TCPv4", "Connections Established", CounterInstances.Single, TcpClass, "ConnectionsEstablished"),
+        new("win.iis.site.connections", "", "Web Service", "Current Connections", CounterInstances.Each, WebServiceClass, "CurrentConnections"),
+        new("win.iis.site.requests_sec", "/s", "Web Service", "Total Method Requests/sec", CounterInstances.Each, WebServiceClass, "TotalMethodRequestsPersec"),
+        new("win.iis.site.get_sec", "/s", "Web Service", "Get Requests/sec", CounterInstances.Each, WebServiceClass, "GetRequestsPersec"),
+        new("win.iis.site.post_sec", "/s", "Web Service", "Post Requests/sec", CounterInstances.Each, WebServiceClass, "PostRequestsPersec"),
+        new("win.iis.site.bytes_sec", "B/s", "Web Service", "Bytes Total/sec", CounterInstances.Each, WebServiceClass, "BytesTotalPersec"),
+        new("win.iis.w3wp.active_requests", "", "W3SVC_W3WP", "Active Requests", CounterInstances.Each, W3wpClass, "ActiveRequests"),
+        new("win.iis.w3wp.requests_sec", "/s", "W3SVC_W3WP", "Requests / Sec", CounterInstances.Each, W3wpClass, "RequestsPerSec"),
+        new("win.iis.w3wp.active_threads", "", "W3SVC_W3WP", "Active Threads Count", CounterInstances.Each, W3wpClass, "ActiveThreadsCount"),
+        new("win.iis.queue.size", "", "HTTP Service Request Queues", "CurrentQueueSize", CounterInstances.Each, QueueClass, "CurrentQueueSize"),
+        new("win.iis.queue.rejected", "", "HTTP Service Request Queues", "RejectedRequests", CounterInstances.Each, QueueClass, "RejectedRequests"),
+        new("win.iis.queue.arrival_sec", "/s", "HTTP Service Request Queues", "ArrivalRate", CounterInstances.Each, QueueClass, "ArrivalRate"),
+        new("win.iis.pool.state", "", "APP_POOL_WAS", "Current Application Pool State", CounterInstances.Each, WasClass, "CurrentApplicationPoolState"),
+        new("win.iis.pool.wp_failures", "", "APP_POOL_WAS", "Total Worker Process Failures", CounterInstances.Each, WasClass, "TotalWorkerProcessFailures"),
+        new("win.iis.pool.recent_failures", "", "APP_POOL_WAS", "Recent Worker Process Failures", CounterInstances.Each, WasClass, "RecentWorkerProcessFailures"),
+        new("win.iis.pool.uptime_s", "s", "APP_POOL_WAS", "Current Application Pool Uptime", CounterInstances.Each, WasClass, "CurrentApplicationPoolUptime"),
     ];
 
     public static IReadOnlyCollection<string> Keys { get; } = All.Select(m => m.Key).ToList();
@@ -85,6 +106,13 @@ public static class WindowsMetricCatalog
         metric.Instances != CounterInstances.Each
         || (!string.Equals(instance, "_Total", StringComparison.OrdinalIgnoreCase)
             && !instance.StartsWith("HarddiskVolume", StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>W3SVC_W3WP instances are "&lt;pid&gt;_&lt;pool&gt;": the pool name.</summary>
+    public static string PoolOfW3wpInstance(string instance)
+    {
+        var i = instance.IndexOf('_', StringComparison.Ordinal);
+        return i > 0 && instance[..i].All(char.IsAsciiDigit) ? instance[(i + 1)..] : instance;
+    }
 
     /// <summary>"D:" (counter instance) → "D:\" (the mount point SQL Server and Win32_Volume report).</summary>
     public static string VolumeKey(string instance) => instance.EndsWith('\\') ? instance : instance + "\\";

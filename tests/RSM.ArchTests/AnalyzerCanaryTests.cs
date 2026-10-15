@@ -40,6 +40,16 @@ public class AnalyzerCanaryTests
         { "new System.Diagnostics.Eventing.Reader.EventLogSession().ExportLog(\"System\", System.Diagnostics.Eventing.Reader.PathType.LogName, \"*\", \"x.evtx\");", "ExportLog" },
         { "System.Diagnostics.EventLog.WriteEntry(\"a\", \"b\");", "EventLog" },
         { "new System.Diagnostics.Eventing.Reader.EventLogConfiguration(\"System\").MaximumSizeInBytes = 1;", "EventLogConfiguration" },
+        { "new Microsoft.Web.Administration.ServerManager();", "ServerManager" },
+        { "new Microsoft.Web.Administration.ServerManager(\"applicationHost.config\");", "ServerManager" },
+        { "Microsoft.Web.Administration.ServerManager.OpenRemote(\"srv\");", "OpenRemote" },
+        { "new Microsoft.Web.Administration.ServerManager(true, \"a\").CommitChanges();", "CommitChanges" },
+        { "new Microsoft.Web.Administration.ServerManager(true, \"a\").ApplicationPools[0].Recycle();", "Recycle" },
+        { "new Microsoft.Web.Administration.ServerManager(true, \"a\").Sites[0].Stop();", "Stop" },
+        { "new System.Security.Cryptography.X509Certificates.X509Store().Add(null!);", "Add" },
+        { "new System.Security.Cryptography.X509Certificates.X509Store().Remove(null!);", "Remove" },
+        { "System.Security.Cryptography.X509Certificates.RSACertificateExtensions.GetRSAPrivateKey(null!);", "GetRSAPrivateKey" },
+        { "_ = new System.Security.Cryptography.X509Certificates.X509Certificate2(new byte[0]).PrivateKey;", "PrivateKey" },
     };
 
     public static TheoryData<string, string> BannedOutsideSafety => new()
@@ -170,7 +180,8 @@ public class AnalyzerCanaryTests
         var references = trusted
             .Concat([typeof(Microsoft.Data.SqlClient.SqlConnection).Assembly.Location, LocateDapper(),
                 Path.Combine(AppContext.BaseDirectory, "System.Diagnostics.PerformanceCounter.dll"),
-                Path.Combine(AppContext.BaseDirectory, "System.Diagnostics.EventLog.dll")])
+                Path.Combine(AppContext.BaseDirectory, "System.Diagnostics.EventLog.dll"),
+                Path.Combine(AppContext.BaseDirectory, "Microsoft.Web.Administration.dll")])
             .Where(p => !string.IsNullOrEmpty(p))
             .Distinct()
             .Select(p => MetadataReference.CreateFromFile(p));

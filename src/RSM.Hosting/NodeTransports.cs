@@ -1,3 +1,4 @@
+using RSM.Collectors.Iis;
 using RSM.Collectors.Windows;
 using RSM.Core.Capabilities;
 using RSM.Core.Model;
@@ -50,6 +51,15 @@ public sealed class NodeTransportOpener(SecretStore secrets)
             if (WindowsTransportFactory.TryOpen(node, password).Transport is { } windows)
             {
                 list.Add(windows);
+            }
+        }
+
+        if ((node.Roles & (NodeRoles.App | NodeRoles.Arr)) != 0 && (matrix.Has(CapabilityIds.IisConfig) || matrix.Has(CapabilityIds.IisLogs)))
+        {
+            var (iis, _) = await IisTransportFactory.TryOpenAsync(node, list.OfType<WindowsNodeTransport>().FirstOrDefault(), Elevation.IsElevated(), cancellationToken).ConfigureAwait(false);
+            if (iis is not null)
+            {
+                list.Add(iis);
             }
         }
 

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RSM.Collectors.Iis;
 using RSM.Collectors.Redis;
 using RSM.Collectors.Database;
 using RSM.Collectors.Sql.Capabilities;
@@ -79,6 +80,10 @@ public static class RsmHost
         // Phase 3: services, event logs.
         services.AddSingleton<ICollector, WindowsServicesCollector>();
         services.AddSingleton<ICollector, WindowsEventLogCollector>();
+        services.AddSingleton<ICollector, IisConfigCollector>();
+        services.AddSingleton<ICollector, IisRuntimeCollector>();
+        services.AddSingleton<ICollector, IisLogCollector>();
+        services.AddSingleton<RSM.Core.Rules.ISiteAnalyzer, IisSiteAnalyzer>();
         services.AddSingleton<RuleRepository>();
         services.AddSingleton<SnapshotStore>();
         services.AddSingleton<SnapshotService>();

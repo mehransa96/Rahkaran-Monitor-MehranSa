@@ -1,6 +1,7 @@
 using System.Runtime.Versioning;
 using System.Security.Principal;
 using Microsoft.Extensions.Logging;
+using RSM.Collectors.Iis;
 using RSM.Collectors.Redis;
 using RSM.Collectors.Sql.Capabilities;
 using RSM.Collectors.Windows;
@@ -62,23 +63,43 @@ public sealed class ConnectionTester(
         using (windows)
         {
             await WindowsCapabilityProbe.ProbeAsync(windows, windowsFailure, matrix, cancellationToken).ConfigureAwait(false);
-        }
 
-        foreach (var id in new[] { CapabilityIds.IisConfig, CapabilityIds.IisRequests, CapabilityIds.IisLogs })
-        {
-            matrix.Set(id, (node.Roles & (NodeRoles.App | NodeRoles.Arr)) != 0 ? CapabilityState.NotImplemented : CapabilityState.NotApplicable, "Phase 3");
+            // IIS (App and ARR nodes): configuration and logs from files, live requests locally.
+            if ((node.Roles & (NodeRoles.App | NodeRoles.Arr)) != 0)
+            {
+                var elevated = Elevation.IsElevated();
+                var (iis, iisFailure) = await IisTransportFactory.TryOpenAsync(node, windows, elevated, cancellationToken).ConfigureAwait(false);
+                using (iis)
+                {
+                    await IisCapabilityProbe.ProbeAsync(iis, iisFailure, elevated, matrix, cancellationToken).ConfigureAwait(false);
+                }
+            }
+            else
+            {
+                foreach (var id in new[] { CapabilityIds.IisConfig, CapabilityIds.IisRequests, CapabilityIds.IisLogs })
+                {
+                    matrix.Set(id, CapabilityState.NotApplicable);
+                }
+            }
         }
 
         matrix.Set(CapabilityIds.RabbitApi, node.RabbitMq is null ? CapabilityState.NotConfigured : CapabilityState.NotImplemented, "Phase 4");
         matrix.Set(CapabilityIds.DotNetEventPipe, CapabilityState.NotImplemented, "Phase 4 (optional, off by default)");
-        matrix.Set(CapabilityIds.RsmElevated, OperatingSystem.IsWindows() && IsElevated() ? CapabilityState.Available : CapabilityState.NeedsElevation);
+        matrix.Set(CapabilityIds.RsmElevated, Elevation.IsElevated() ? CapabilityState.Available : CapabilityState.NeedsElevation);
 
         logger.LogInformation("Node {NodeName}: {Available}/{Total} capabilities available", node.Name, matrix.Results.Count(r => r.IsAvailable), matrix.Results.Count);
         return matrix;
     }
 
+}
+
+/// <summary>Whether RSM itself runs elevated (it never elevates or restarts itself).</summary>
+public static class Elevation
+{
+    public static bool IsElevated() => OperatingSystem.IsWindows() && IsAdministrator();
+
     [SupportedOSPlatform("windows")]
-    private static bool IsElevated()
+    private static bool IsAdministrator()
     {
         using var identity = WindowsIdentity.GetCurrent();
         return new WindowsPrincipal(identity).IsInRole(WindowsBuiltInRole.Administrator);

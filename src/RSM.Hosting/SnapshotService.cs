@@ -19,6 +19,7 @@ public sealed class SnapshotService(
     ConnectionTester tester,
     NodeTransportOpener transportOpener,
     IEnumerable<ICollector> collectors,
+    IEnumerable<ISiteAnalyzer> analyzers,
     RuleRepository ruleRepository,
     SnapshotStore store,
     ILogger<SnapshotService> logger)
@@ -37,10 +38,27 @@ public sealed class SnapshotService(
         var nodes = new List<NodeSnapshot>();
         logger.LogInformation("Diagnosis of site {Site}: {Nodes} nodes, heavy={Heavy}", site.Name, site.Nodes.Count, options.IncludeHeavy);
 
+        var collected = new List<(NodeProfile Node, CapabilityMatrix Matrix, List<CollectorResult> Results, FactStore Facts)>();
         foreach (var node in site.Nodes)
         {
             progress?.Report(node.Name);
-            nodes.Add(await RunNodeAsync(site, node, options, engine, progress, cancellationToken).ConfigureAwait(false));
+            collected.Add(await CollectNodeAsync(site, node, options, progress, cancellationToken).ConfigureAwait(false));
+        }
+
+        // Cross-node passes (IIS drift, rewrite paths) need every node's facts before any rule is evaluated.
+        var byNode = collected.ToDictionary(c => c.Node.Id, c => c.Facts.Snapshot(), StringComparer.Ordinal);
+        foreach (var analyzer in analyzers)
+        {
+            foreach (var (nodeId, extra) in analyzer.Analyze(site, byNode))
+            {
+                collected.FirstOrDefault(c => c.Node.Id == nodeId).Facts?.SetAll(extra);
+            }
+        }
+
+        foreach (var (node, matrix, results, facts) in collected)
+        {
+            var evaluation = engine.Evaluate(node.Id, node.Roles, facts, DateTimeOffset.UtcNow);
+            nodes.Add(new NodeSnapshot(node, matrix, results, facts.Snapshot(), evaluation.Findings, evaluation.Indeterminate, evaluation.Errors));
         }
 
         var snapshot = new SiteSnapshot(Guid.NewGuid().ToString("N"), site, started, DateTimeOffset.UtcNow, options.IncludeHeavy, Version, ruleSet.Rules.Count, nodes);
@@ -49,7 +67,7 @@ public sealed class SnapshotService(
         return snapshot;
     }
 
-    private async Task<NodeSnapshot> RunNodeAsync(SiteProfile site, NodeProfile node, SnapshotOptions options, RulesEngine engine, IProgress<string>? progress, CancellationToken cancellationToken)
+    private async Task<(NodeProfile, CapabilityMatrix, List<CollectorResult>, FactStore)> CollectNodeAsync(SiteProfile site, NodeProfile node, SnapshotOptions options, IProgress<string>? progress, CancellationToken cancellationToken)
     {
         var matrix = await tester.TestAsync(site, node, cancellationToken).ConfigureAwait(false);
         var results = new List<CollectorResult>();
@@ -77,8 +95,7 @@ public sealed class SnapshotService(
             facts.SetAll(result.Facts);
         }
 
-        var evaluation = engine.Evaluate(node.Id, node.Roles, facts, DateTimeOffset.UtcNow);
-        return new NodeSnapshot(node, matrix, results, facts.Snapshot(), evaluation.Findings, evaluation.Indeterminate, evaluation.Errors);
+        return (node, matrix, results, facts);
     }
 
     /// <summary>Facts that come from the profile and RSM itself rather than from a collector.</summary>

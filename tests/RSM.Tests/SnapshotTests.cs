@@ -77,7 +77,7 @@ public sealed class SnapshotTests : IDisposable
         var executor = new SafeSqlExecutor(QueryCatalog.Load(RsmHost.CatalogAssemblies));
         var tester = new ConnectionTester(new SqlCapabilityProbe(executor), new RedisCapabilityProbe(), secrets, NullLogger<ConnectionTester>.Instance);
         var store = new SnapshotStore(folder);
-        var service = new SnapshotService(tester, new NodeTransportOpener(secrets), [], new RuleRepository(NullLogger<RuleRepository>.Instance), store, NullLogger<SnapshotService>.Instance)
+        var service = new SnapshotService(tester, new NodeTransportOpener(secrets), [], [], new RuleRepository(NullLogger<RuleRepository>.Instance), store, NullLogger<SnapshotService>.Instance)
         {
             RuleOverrideDirectory = null,
         };

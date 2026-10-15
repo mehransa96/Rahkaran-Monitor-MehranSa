@@ -45,9 +45,13 @@ public sealed class LiveSession : IAsyncDisposable
     private readonly object _gate = new();
     private bool _started;
 
-    public LiveSession(IReadOnlyList<LiveNode> nodes, RulesEngine engine, MetricStore? store = null, TimeProvider? time = null, int maxConcurrentPerNode = 2)
+    private readonly IReadOnlyList<ISiteAnalyzer> _analyzers;
+
+    public LiveSession(IReadOnlyList<LiveNode> nodes, RulesEngine engine, MetricStore? store = null, TimeProvider? time = null, int maxConcurrentPerNode = 2,
+        IReadOnlyList<ISiteAnalyzer>? analyzers = null)
     {
         _nodes = nodes;
+        _analyzers = analyzers ?? [];
         _engine = engine;
         _time = time ?? TimeProvider.System;
         _meter = new ClientOverheadMeter(_time);
@@ -184,6 +188,7 @@ public sealed class LiveSession : IAsyncDisposable
 
         Metrics.Add(result.NodeId, result.Samples);
         facts.SetAll(result.Facts);
+        RunSiteAnalyzers(result.CollectorId);
         var node = _nodes.First(n => n.Id == result.NodeId);
         var now = _time.GetUtcNow();
         lock (_gate)
@@ -225,6 +230,27 @@ public sealed class LiveSession : IAsyncDisposable
         }
 
         Updated?.Invoke(result.NodeId, result);
+    }
+
+    /// <summary>Cross-node facts (e.g. IIS drift) are recomputed when one of their input collectors produced a result.</summary>
+    private void RunSiteAnalyzers(string collectorId)
+    {
+        if (_nodes.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var analyzer in _analyzers.Where(a => a.InputCollectors.Contains(collectorId)))
+        {
+            var byNode = _facts.ToDictionary(p => p.Key, p => p.Value.Snapshot(), StringComparer.Ordinal);
+            foreach (var (nodeId, extra) in analyzer.Analyze(_nodes[0].Context.Site, byNode))
+            {
+                if (_facts.TryGetValue(nodeId, out var store))
+                {
+                    store.SetAll(extra);
+                }
+            }
+        }
     }
 
     private static double? AsDouble(FactStore facts, string key) =>

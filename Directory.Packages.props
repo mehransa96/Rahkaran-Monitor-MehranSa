@@ -19,6 +19,10 @@
     <PackageVersion Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
     <PackageVersion Include="System.Diagnostics.PerformanceCounter" Version="8.0.1" />
     <PackageVersion Include="System.Diagnostics.EventLog" Version="8.0.1" />
+    <!-- Microsoft .NET Library EULA (redistributable); used locally, read-only (ARCHITECTURE.md §2.1). -->
+    <PackageVersion Include="Microsoft.Web.Administration" Version="11.1.0" />
+    <!-- Lifts the netstandard1.x ServiceController that Microsoft.Web.Administration pulls in to the current one. -->
+    <PackageVersion Include="System.ServiceProcess.ServiceController" Version="8.0.1" />
     <PackageVersion Include="ScottPlot.WPF" Version="5.0.55" />
   </ItemGroup>
   <ItemGroup Label="Tests">

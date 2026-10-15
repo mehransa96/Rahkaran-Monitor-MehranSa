@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    IIS & web-server module (§10). applicationHost.config, web.config and logs are parsed from files (local or the
+    admin share) by RSM.Parsers; Microsoft.Web.Administration is used only locally, opened read-only, for runtime
+    state and live requests. Certificates come from the LocalMachine store opened read-only. net8.0 so the analysis
+    is unit-tested on Linux; Windows-only calls are platform-annotated.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>RSM.Collectors.Iis</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RSM.Core\RSM.Core.csproj" />
+    <ProjectReference Include="..\RSM.Safety\RSM.Safety.csproj" />
+    <ProjectReference Include="..\RSM.Parsers\RSM.Parsers.csproj" />
+    <ProjectReference Include="..\RSM.Collectors.Windows\RSM.Collectors.Windows.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.Administration" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="RSM.Tests" />
+  </ItemGroup>
+</Project>
