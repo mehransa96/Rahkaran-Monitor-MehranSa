@@ -38,9 +38,11 @@ public sealed class SqlDeadlockCollector(SafeSqlExecutor executor) : SqlLiveColl
         {
             graphs.AddRange(fromFile.SelectMany(r => DeadlockReport.Parse(r.EventXml ?? string.Empty)));
         }
-        else
+
+        if (graphs.Count == 0)
         {
-            // Event files unreadable (permission on the LOG folder, or Linux/containers): the ring buffer keeps fewer events.
+            // Event files unreadable or not flushed yet (system_health dispatches files lazily): the ring buffer keeps
+            // fewer, but more recent, events.
             source = "ring_buffer";
             var ring = await runner.QueryAsync<RingRow>("sql.dl.from_ring").ConfigureAwait(false);
             graphs.AddRange(ring?.SelectMany(r => DeadlockReport.Parse(r.TargetXml ?? string.Empty)) ?? []);

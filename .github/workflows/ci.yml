@@ -74,6 +74,8 @@ jobs:
           RSM_IT_SQL: Server=localhost,1433;User ID=rsm_monitor;Password=${{ env.RSM_IT_PASSWORD }};TrustServerCertificate=True;Encrypt=Optional
           RSM_IT_REDIS: 127.0.0.1:6379
           RSM_IT_SEEDED: "1"
+          # Admin connection used only by the test's demo "application" (blocking/deadlock, always rolled back).
+          RSM_IT_SQL_ADMIN: Server=localhost,1433;User ID=sa;Password=${{ env.SA_PASSWORD }};TrustServerCertificate=True;Encrypt=Optional
         run: dotnet test tests/RSM.Integration.Tests -c Release --logger "console;verbosity=detailed"
       - name: Read-only proof — server fingerprint unchanged
         run: |

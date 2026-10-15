@@ -19,6 +19,9 @@ GO
 USE Rahkaran;
 CREATE TABLE dbo.Sample (Id int IDENTITY PRIMARY KEY, Payload nvarchar(200) NOT NULL);
 INSERT INTO dbo.Sample (Payload) SELECT TOP (2000) N'row' FROM sys.all_objects;
+-- Rows the live blocking/deadlock demos lock (LiveDemoTests plays two app sessions; every demo transaction rolls back).
+CREATE TABLE dbo.RsmDemoAccounts (Id int PRIMARY KEY, Balance int NOT NULL);
+INSERT INTO dbo.RsmDemoAccounts (Id, Balance) VALUES (1, 100), (2, 200);
 GO
 USE msdb;
 EXEC dbo.sp_add_job @job_name = N'RSM-IT nightly shrink';
