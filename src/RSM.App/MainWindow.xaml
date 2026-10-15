@@ -20,6 +20,10 @@
     <DataTemplate DataType="{x:Type vm:SqlPageViewModel}"><views:SqlLiveView /></DataTemplate>
     <DataTemplate DataType="{x:Type vm:QueriesPageViewModel}"><views:QueriesView /></DataTemplate>
     <DataTemplate DataType="{x:Type vm:WindowsPageViewModel}"><views:WindowsView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:IisPageViewModel}"><views:IisView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:ArrPageViewModel}"><views:ArrView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:ServicesPageViewModel}"><views:ServicesView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:EventsPageViewModel}"><views:EventsView /></DataTemplate>
   </Window.Resources>
   <DockPanel>
     <!-- Status bar -->

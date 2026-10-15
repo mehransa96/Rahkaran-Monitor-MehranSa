@@ -292,4 +292,191 @@
   <data name="PlanWarning_ExcessiveMemoryGrant" xml:space="preserve"><value>Excessive memory grant</value></data>
   <data name="PlanWarning_Parallelism" xml:space="preserve"><value>Parallelism</value></data>
   <data name="PlanWarning_NoJoinPredicate" xml:space="preserve"><value>No join predicate</value></data>
+  <data name="Arr_Farms" xml:space="preserve"><value>Web farms (ARR)</value></data>
+  <data name="Arr_NoHealthUrl" xml:space="preserve"><value>(not set)</value></data>
+  <data name="Arr_Rules" xml:space="preserve"><value>URL Rewrite rules</value></data>
+  <data name="Arr_RulesExplain" xml:space="preserve"><value>"Deployed" says whether the rule's application path exists on any monitored server; after a Rahkaran update the path changes and the rule must follow.</value></data>
+  <data name="Arr_Servers" xml:space="preserve"><value>Farm servers</value></data>
+  <data name="Chart_Iis5xx" xml:space="preserve"><value>5xx errors (% of requests, 15 min)</value></data>
+  <data name="Chart_IisActive" xml:space="preserve"><value>Active requests per worker process</value></data>
+  <data name="Chart_IisQueue" xml:space="preserve"><value>HTTP.sys request queue per pool</value></data>
+  <data name="Chart_IisRequests" xml:space="preserve"><value>Requests/sec per site</value></data>
+  <data name="Col_503" xml:space="preserve"><value>503</value></data>
+  <data name="Col_Account" xml:space="preserve"><value>Account</value></data>
+  <data name="Col_Action" xml:space="preserve"><value>Action</value></data>
+  <data name="Col_Address" xml:space="preserve"><value>Address</value></data>
+  <data name="Col_Algorithm" xml:space="preserve"><value>Load balancing</value></data>
+  <data name="Col_Ancm" xml:space="preserve"><value>ANCM</value></data>
+  <data name="Col_AppPath" xml:space="preserve"><value>Application</value></data>
+  <data name="Col_Binding" xml:space="preserve"><value>Binding</value></data>
+  <data name="Col_Bindings" xml:space="preserve"><value>Bindings</value></data>
+  <data name="Col_Bitness" xml:space="preserve"><value>Bits</value></data>
+  <data name="Col_Chain" xml:space="preserve"><value>Chain</value></data>
+  <data name="Col_Client" xml:space="preserve"><value>Client</value></data>
+  <data name="Col_Code" xml:space="preserve"><value>Code</value></data>
+  <data name="Col_Conditions" xml:space="preserve"><value>Conditions</value></data>
+  <data name="Col_ConnectionTargets" xml:space="preserve"><value>Databases (server/database)</value></data>
+  <data name="Col_Count" xml:space="preserve"><value>Count</value></data>
+  <data name="Col_DaysLeft" xml:space="preserve"><value>Days left</value></data>
+  <data name="Col_Deployed" xml:space="preserve"><value>Deployed</value></data>
+  <data name="Col_Deviation" xml:space="preserve"><value>Deviation from weights</value></data>
+  <data name="Col_Disconnects" xml:space="preserve"><value>Client disconnects</value></data>
+  <data name="Col_DisplayName" xml:space="preserve"><value>Display name</value></data>
+  <data name="Col_Enabled" xml:space="preserve"><value>Enabled</value></data>
+  <data name="Col_EnabledServers" xml:space="preserve"><value>Enabled servers</value></data>
+  <data name="Col_Errors5xx" xml:space="preserve"><value>5xx</value></data>
+  <data name="Col_EventId" xml:space="preserve"><value>Event id</value></data>
+  <data name="Col_Expires" xml:space="preserve"><value>Expires</value></data>
+  <data name="Col_Farm" xml:space="preserve"><value>Farm</value></data>
+  <data name="Col_First" xml:space="preserve"><value>First</value></data>
+  <data name="Col_Freb" xml:space="preserve"><value>FREB files</value></data>
+  <data name="Col_HealthUrl" xml:space="preserve"><value>Health test URL</value></data>
+  <data name="Col_Hosting" xml:space="preserve"><value>Hosting model</value></data>
+  <data name="Col_Id" xml:space="preserve"><value>Id</value></data>
+  <data name="Col_Identity" xml:space="preserve"><value>Identity</value></data>
+  <data name="Col_IdleTimeoutMin" xml:space="preserve"><value>Idle timeout (min)</value></data>
+  <data name="Col_KbTitle" xml:space="preserve"><value>Knowledge base</value></data>
+  <data name="Col_Key" xml:space="preserve"><value>Key</value></data>
+  <data name="Col_Last" xml:space="preserve"><value>Last</value></data>
+  <data name="Col_Layer" xml:space="preserve"><value>Layer</value></data>
+  <data name="Col_Limits" xml:space="preserve"><value>Request limits</value></data>
+  <data name="Col_Log" xml:space="preserve"><value>Log</value></data>
+  <data name="Col_LogFolder" xml:space="preserve"><value>Log folder</value></data>
+  <data name="Col_Match" xml:space="preserve"><value>Match</value></data>
+  <data name="Col_MaxMs" xml:space="preserve"><value>Max (ms)</value></data>
+  <data name="Col_MaxProcesses" xml:space="preserve"><value>Processes</value></data>
+  <data name="Col_Meaning" xml:space="preserve"><value>Meaning</value></data>
+  <data name="Col_Message" xml:space="preserve"><value>Message</value></data>
+  <data name="Col_Module" xml:space="preserve"><value>Module</value></data>
+  <data name="Col_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Col_Node" xml:space="preserve"><value>Server</value></data>
+  <data name="Col_Note" xml:space="preserve"><value>Note</value></data>
+  <data name="Col_Numa" xml:space="preserve"><value>NUMA</value></data>
+  <data name="Col_P50" xml:space="preserve"><value>p50 (ms)</value></data>
+  <data name="Col_P95" xml:space="preserve"><value>p95 (ms)</value></data>
+  <data name="Col_P99" xml:space="preserve"><value>p99 (ms)</value></data>
+  <data name="Col_Pipeline" xml:space="preserve"><value>Pipeline</value></data>
+  <data name="Col_Pool" xml:space="preserve"><value>Application pool</value></data>
+  <data name="Col_Pools" xml:space="preserve"><value>Pools</value></data>
+  <data name="Col_Ports" xml:space="preserve"><value>Ports</value></data>
+  <data name="Col_ProcessPath" xml:space="preserve"><value>Process</value></data>
+  <data name="Col_Queue" xml:space="preserve"><value>Queue</value></data>
+  <data name="Col_QueueLength" xml:space="preserve"><value>Queue length</value></data>
+  <data name="Col_Reason" xml:space="preserve"><value>Reason</value></data>
+  <data name="Col_Recycle" xml:space="preserve"><value>Recycle</value></data>
+  <data name="Col_Redis" xml:space="preserve"><value>Redis</value></data>
+  <data name="Col_Regressions" xml:space="preserve"><value>Slower than usual (p95 / baseline)</value></data>
+  <data name="Col_Requests" xml:space="preserve"><value>Requests</value></data>
+  <data name="Col_Requests15m" xml:space="preserve"><value>Requests (15 min)</value></data>
+  <data name="Col_Role" xml:space="preserve"><value>Role</value></data>
+  <data name="Col_Runtime" xml:space="preserve"><value>.NET CLR</value></data>
+  <data name="Col_Scope" xml:space="preserve"><value>Scope</value></data>
+  <data name="Col_Segment" xml:space="preserve"><value>App path</value></data>
+  <data name="Col_Service" xml:space="preserve"><value>Service</value></data>
+  <data name="Col_Severity" xml:space="preserve"><value>Severity</value></data>
+  <data name="Col_Site" xml:space="preserve"><value>Site</value></data>
+  <data name="Col_SlowestStem" xml:space="preserve"><value>Slowest URL</value></data>
+  <data name="Col_Source" xml:space="preserve"><value>Source</value></data>
+  <data name="Col_Stage" xml:space="preserve"><value>Pipeline stage</value></data>
+  <data name="Col_StartMode" xml:space="preserve"><value>Start mode</value></data>
+  <data name="Col_Started" xml:space="preserve"><value>Started</value></data>
+  <data name="Col_Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Col_StdoutErrors" xml:space="preserve"><value>stdout errors</value></data>
+  <data name="Col_Subject" xml:space="preserve"><value>Subject</value></data>
+  <data name="Col_Target" xml:space="preserve"><value>Target</value></data>
+  <data name="Col_TimeTaken" xml:space="preserve"><value>time-taken logged</value></data>
+  <data name="Col_Unverified" xml:space="preserve"><value>Unverified</value></data>
+  <data name="Col_Uptime" xml:space="preserve"><value>Running for</value></data>
+  <data name="Col_Url" xml:space="preserve"><value>URL</value></data>
+  <data name="Col_UrlStem" xml:space="preserve"><value>URL stem</value></data>
+  <data name="Col_Verb" xml:space="preserve"><value>Verb</value></data>
+  <data name="Col_Weight" xml:space="preserve"><value>Weight</value></data>
+  <data name="Common_No" xml:space="preserve"><value>No</value></data>
+  <data name="Common_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="Common_Yes" xml:space="preserve"><value>Yes</value></data>
+  <data name="Duration_Days" xml:space="preserve"><value>{0} d</value></data>
+  <data name="Duration_Hours" xml:space="preserve"><value>{0} h</value></data>
+  <data name="Duration_Minutes" xml:space="preserve"><value>{0} min</value></data>
+  <data name="Events_AllLayers" xml:space="preserve"><value>All layers</value></data>
+  <data name="Events_AllNodes" xml:space="preserve"><value>All servers</value></data>
+  <data name="Events_AllSeverities" xml:space="preserve"><value>All</value></data>
+  <data name="Events_Correlated" xml:space="preserve"><value>Within ±5 minutes of the selected event (all servers, all layers)</value></data>
+  <data name="Events_Groups" xml:space="preserve"><value>Windows event logs of the selected server (last 24 h, grouped by source and id)</value></data>
+  <data name="Events_Kb" xml:space="preserve"><value>What it means and what to check</value></data>
+  <data name="Events_Layer" xml:space="preserve"><value>Layer</value></data>
+  <data name="Events_LogsFailed" xml:space="preserve"><value>Not readable: {0} (Event Log Readers membership / Remote Event Log Management).</value></data>
+  <data name="Events_LogsUnavailable" xml:space="preserve"><value>Event logs are not available for this server yet.</value></data>
+  <data name="Events_NoKb" xml:space="preserve"><value>No knowledge-base entry for this event.</value></data>
+  <data name="Events_Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Events_Severity" xml:space="preserve"><value>At least</value></data>
+  <data name="Events_Timeline" xml:space="preserve"><value>Errors &amp; events timeline</value></data>
+  <data name="Events_Truncated" xml:space="preserve"><value>Only the newest 2000 events per read were taken.</value></data>
+  <data name="Iis_AnalysisConfirm" xml:space="preserve"><value>This reads {0} log file(s), {1} MB, in about {2} s (read-only, shared access). Continue?</value></data>
+  <data name="Iis_AnalysisDone" xml:space="preserve"><value>{0} requests, {1} % 5xx over {2}.</value></data>
+  <data name="Iis_AnalysisExplain" xml:space="preserve"><value>The tables below cover the last 15 minutes. For a longer range RSM reads the site's W3C logs on demand — it shows the size and time first.</value></data>
+  <data name="Iis_AnalysisFailed" xml:space="preserve"><value>Log analysis failed ({0}).</value></data>
+  <data name="Iis_AnalysisNeedsLive" xml:space="preserve"><value>Connect the live view and choose a site first.</value></data>
+  <data name="Iis_AnalysisNoFiles" xml:space="preserve"><value>No W3C log files in that range.</value></data>
+  <data name="Iis_AnalysisProgress" xml:space="preserve"><value>Reading logs: {0} of {1} MB…</value></data>
+  <data name="Iis_AnalyzeLogs" xml:space="preserve"><value>Analyze logs</value></data>
+  <data name="Iis_CertLocalOnly" xml:space="preserve"><value>(certificate store is read on the IIS server itself)</value></data>
+  <data name="Iis_CertNotFound" xml:space="preserve"><value>(not found in the store)</value></data>
+  <data name="Iis_Certificates" xml:space="preserve"><value>TLS certificates bound to sites</value></data>
+  <data name="Iis_HttpErr" xml:space="preserve"><value>HTTP.sys errors (HTTPERR, last 60 min)</value></data>
+  <data name="Iis_LiveRequests" xml:space="preserve"><value>Requests executing right now</value></data>
+  <data name="Iis_Logs" xml:space="preserve"><value>IIS logs per site (last 15 min)</value></data>
+  <data name="Iis_NoManagedCode" xml:space="preserve"><value>No Managed Code</value></data>
+  <data name="Iis_Pools" xml:space="preserve"><value>Application pools</value></data>
+  <data name="Iis_Range" xml:space="preserve"><value>Range</value></data>
+  <data name="Iis_Range_1h" xml:space="preserve"><value>Last hour</value></data>
+  <data name="Iis_Range_24h" xml:space="preserve"><value>Last 24 hours</value></data>
+  <data name="Iis_Range_6h" xml:space="preserve"><value>Last 6 hours</value></data>
+  <data name="Iis_RequestMonitorMissing" xml:space="preserve"><value>Live requests need the IIS Request Monitor feature on this server.</value></data>
+  <data name="Iis_RequestsNote" xml:space="preserve"><value>Requests running for at least {0} s, slowest first.</value></data>
+  <data name="Iis_RuntimeUnavailable" xml:space="preserve"><value>Live requests and pool state are read on the IIS server itself with RSM running as Administrator.</value></data>
+  <data name="Iis_ShowLiveStems" xml:space="preserve"><value>Back to last 15 min</value></data>
+  <data name="Iis_Sites" xml:space="preserve"><value>Sites</value></data>
+  <data name="Iis_Statuses" xml:space="preserve"><value>Errors by status / substatus</value></data>
+  <data name="Iis_TimeTakenMissing" xml:space="preserve"><value>No — latency unknown</value></data>
+  <data name="Iis_UrlStems" xml:space="preserve"><value>Latency by URL (nearest-rank percentiles)</value></data>
+  <data name="Iis_WebConfig" xml:space="preserve"><value>web.config</value></data>
+  <data name="Iis_WebConfigMasked" xml:space="preserve"><value>Passwords, keys, tokens and secrets are never shown: connection strings are reduced to server and database.</value></data>
+  <data name="Iis_Workers" xml:space="preserve"><value>Worker processes</value></data>
+  <data name="Series_Pool" xml:space="preserve"><value>Pool</value></data>
+  <data name="Series_Site" xml:space="preserve"><value>Site</value></data>
+  <data name="Series_WorkerProcess" xml:space="preserve"><value>Worker process</value></data>
+  <data name="Svc_Explain" xml:space="preserve"><value>Watched services (SQL Server, IIS, Redis, CodeMeter, RabbitMQ, SSRS, antivirus …). RSM only shows them; starting or stopping a service is never possible from RSM. Red = Automatic but stopped.</value></data>
+  <data name="WasState_1" xml:space="preserve"><value>Uninitialized</value></data>
+  <data name="WasState_2" xml:space="preserve"><value>Initialized</value></data>
+  <data name="WasState_3" xml:space="preserve"><value>Started</value></data>
+  <data name="WasState_4" xml:space="preserve"><value>Disabling</value></data>
+  <data name="WasState_5" xml:space="preserve"><value>Disabled</value></data>
+  <data name="WasState_6" xml:space="preserve"><value>Shutdown pending</value></data>
+  <data name="WasState_7" xml:space="preserve"><value>Delete pending</value></data>
+  <data name="LayerName_Sql" xml:space="preserve"><value>SQL Server</value></data>
+  <data name="LayerName_Database" xml:space="preserve"><value>Databases</value></data>
+  <data name="LayerName_Os" xml:space="preserve"><value>Windows</value></data>
+  <data name="LayerName_Storage" xml:space="preserve"><value>Storage</value></data>
+  <data name="LayerName_Iis" xml:space="preserve"><value>IIS</value></data>
+  <data name="LayerName_Arr" xml:space="preserve"><value>ARR</value></data>
+  <data name="LayerName_Redis" xml:space="preserve"><value>Redis</value></data>
+  <data name="LayerName_Ssrs" xml:space="preserve"><value>SSRS</value></data>
+  <data name="LayerName_Services" xml:space="preserve"><value>Services</value></data>
+  <data name="LayerName_Events" xml:space="preserve"><value>Event logs</value></data>
+  <data name="LayerName_RabbitMq" xml:space="preserve"><value>RabbitMQ</value></data>
+  <data name="LayerName_DotNet" xml:space="preserve"><value>.NET</value></data>
+  <data name="LayerName_Rahkaran" xml:space="preserve"><value>Rahkaran</value></data>
+  <data name="LayerName_Rsm" xml:space="preserve"><value>RSM</value></data>
+  <data name="ServiceCategory_SqlServer" xml:space="preserve"><value>SQL Server</value></data>
+  <data name="ServiceCategory_SqlAgent" xml:space="preserve"><value>SQL Agent</value></data>
+  <data name="ServiceCategory_SqlBrowser" xml:space="preserve"><value>SQL Browser</value></data>
+  <data name="ServiceCategory_Ssrs" xml:space="preserve"><value>Reporting Services</value></data>
+  <data name="ServiceCategory_Iis" xml:space="preserve"><value>IIS</value></data>
+  <data name="ServiceCategory_Redis" xml:space="preserve"><value>Redis</value></data>
+  <data name="ServiceCategory_CodeMeter" xml:space="preserve"><value>CodeMeter (lock)</value></data>
+  <data name="ServiceCategory_RabbitMq" xml:space="preserve"><value>RabbitMQ (workflow)</value></data>
+  <data name="ServiceCategory_Attendance" xml:space="preserve"><value>Attendance ⚠ unverified</value></data>
+  <data name="ServiceCategory_ProactiveMonitor" xml:space="preserve"><value>Proactive monitor ⚠ unverified</value></data>
+  <data name="ServiceCategory_WindowsUpdate" xml:space="preserve"><value>Windows Update</value></data>
+  <data name="ServiceCategory_Antivirus" xml:space="preserve"><value>Antivirus</value></data>
 </root>

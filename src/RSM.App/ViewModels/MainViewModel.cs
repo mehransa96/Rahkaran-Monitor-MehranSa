@@ -20,7 +20,7 @@ public sealed partial class NavItem(string titleKey, Func<object> createPage) : 
 
 public sealed partial class MainViewModel : ObservableObject
 {
-    public MainViewModel(SitesViewModel sites, SettingsViewModel settings, DiagnosisViewModel diagnosis, LiveViewModel live, StatusBarViewModel status)
+    public MainViewModel(SitesViewModel sites, SettingsViewModel settings, DiagnosisViewModel diagnosis, LiveViewModel live, StatusBarViewModel status, IUserDialogs dialogs)
     {
         Status = status;
         Live = live;
@@ -31,12 +31,12 @@ public sealed partial class MainViewModel : ObservableObject
             new NavItem("Nav_Databases", () => new LayerFindingsViewModel("Nav_Databases", Core.Model.Layer.Database, diagnosis)),
             new NavItem("Nav_Queries", () => new QueriesPageViewModel(live)),
             new NavItem("Nav_Windows", () => new WindowsPageViewModel(live)),
-            new NavItem("Nav_Iis", () => new PlaceholderViewModel("Nav_Iis", 3)),
-            new NavItem("Nav_Arr", () => new PlaceholderViewModel("Nav_Arr", 3)),
+            new NavItem("Nav_Iis", () => new IisPageViewModel(live, dialogs)),
+            new NavItem("Nav_Arr", () => new ArrPageViewModel(live)),
             new NavItem("Nav_Redis", () => new PlaceholderViewModel("Nav_Redis", 4)),
             new NavItem("Nav_Ssrs", () => new PlaceholderViewModel("Nav_Ssrs", 4)),
-            new NavItem("Nav_Services", () => new PlaceholderViewModel("Nav_Services", 3)),
-            new NavItem("Nav_Events", () => new PlaceholderViewModel("Nav_Events", 3)),
+            new NavItem("Nav_Services", () => new ServicesPageViewModel(live)),
+            new NavItem("Nav_Events", () => new EventsPageViewModel(live)),
             new NavItem("Nav_Slowness", () => new PlaceholderViewModel("Nav_Slowness", 5)),
             new NavItem("Nav_Reports", () => diagnosis),
             new NavItem("Nav_History", () => new PlaceholderViewModel("Nav_History", 5)),

@@ -292,4 +292,191 @@
   <data name="PlanWarning_ExcessiveMemoryGrant" xml:space="preserve"><value>Memory Grant زیاد</value></data>
   <data name="PlanWarning_Parallelism" xml:space="preserve"><value>اجرای موازی</value></data>
   <data name="PlanWarning_NoJoinPredicate" xml:space="preserve"><value>Join بدون شرط</value></data>
+  <data name="Arr_Farms" xml:space="preserve"><value>فارم‌های وب (ARR)</value></data>
+  <data name="Arr_NoHealthUrl" xml:space="preserve"><value>(تنظیم نشده)</value></data>
+  <data name="Arr_Rules" xml:space="preserve"><value>قوانین URL Rewrite</value></data>
+  <data name="Arr_RulesExplain" xml:space="preserve"><value>ستون «موجود» نشان می‌دهد مسیر برنامهٔ مقصد قانون روی یکی از سرورهای پایش‌شده وجود دارد یا نه؛ پس از به‌روزرسانی راهکاران مسیر تغییر می‌کند و قانون باید به‌روز شود.</value></data>
+  <data name="Arr_Servers" xml:space="preserve"><value>سرورهای فارم</value></data>
+  <data name="Chart_Iis5xx" xml:space="preserve"><value>خطاهای 5xx (درصد درخواست‌ها، ۱۵ دقیقه)</value></data>
+  <data name="Chart_IisActive" xml:space="preserve"><value>درخواست‌های فعال هر Worker process</value></data>
+  <data name="Chart_IisQueue" xml:space="preserve"><value>صف درخواست HTTP.sys هر Pool</value></data>
+  <data name="Chart_IisRequests" xml:space="preserve"><value>درخواست در ثانیه هر سایت</value></data>
+  <data name="Col_503" xml:space="preserve"><value>503</value></data>
+  <data name="Col_Account" xml:space="preserve"><value>حساب کاربری</value></data>
+  <data name="Col_Action" xml:space="preserve"><value>عملیات</value></data>
+  <data name="Col_Address" xml:space="preserve"><value>آدرس</value></data>
+  <data name="Col_Algorithm" xml:space="preserve"><value>توزیع بار</value></data>
+  <data name="Col_Ancm" xml:space="preserve"><value>ANCM</value></data>
+  <data name="Col_AppPath" xml:space="preserve"><value>برنامه</value></data>
+  <data name="Col_Binding" xml:space="preserve"><value>Binding</value></data>
+  <data name="Col_Bindings" xml:space="preserve"><value>Bindingها</value></data>
+  <data name="Col_Bitness" xml:space="preserve"><value>بیت</value></data>
+  <data name="Col_Chain" xml:space="preserve"><value>زنجیره</value></data>
+  <data name="Col_Client" xml:space="preserve"><value>کلاینت</value></data>
+  <data name="Col_Code" xml:space="preserve"><value>کد</value></data>
+  <data name="Col_Conditions" xml:space="preserve"><value>شرط‌ها</value></data>
+  <data name="Col_ConnectionTargets" xml:space="preserve"><value>پایگاه‌های داده (سرور/پایگاه)</value></data>
+  <data name="Col_Count" xml:space="preserve"><value>تعداد</value></data>
+  <data name="Col_DaysLeft" xml:space="preserve"><value>روز باقی‌مانده</value></data>
+  <data name="Col_Deployed" xml:space="preserve"><value>موجود</value></data>
+  <data name="Col_Deviation" xml:space="preserve"><value>انحراف از وزن‌ها</value></data>
+  <data name="Col_Disconnects" xml:space="preserve"><value>قطع اتصال کلاینت</value></data>
+  <data name="Col_DisplayName" xml:space="preserve"><value>نام نمایشی</value></data>
+  <data name="Col_Enabled" xml:space="preserve"><value>فعال</value></data>
+  <data name="Col_EnabledServers" xml:space="preserve"><value>سرورهای فعال</value></data>
+  <data name="Col_Errors5xx" xml:space="preserve"><value>5xx</value></data>
+  <data name="Col_EventId" xml:space="preserve"><value>شناسه رخداد</value></data>
+  <data name="Col_Expires" xml:space="preserve"><value>انقضا</value></data>
+  <data name="Col_Farm" xml:space="preserve"><value>فارم</value></data>
+  <data name="Col_First" xml:space="preserve"><value>اولین</value></data>
+  <data name="Col_Freb" xml:space="preserve"><value>فایل‌های FREB</value></data>
+  <data name="Col_HealthUrl" xml:space="preserve"><value>آدرس Health test</value></data>
+  <data name="Col_Hosting" xml:space="preserve"><value>مدل میزبانی</value></data>
+  <data name="Col_Id" xml:space="preserve"><value>شناسه</value></data>
+  <data name="Col_Identity" xml:space="preserve"><value>هویت</value></data>
+  <data name="Col_IdleTimeoutMin" xml:space="preserve"><value>مهلت بیکاری (دقیقه)</value></data>
+  <data name="Col_KbTitle" xml:space="preserve"><value>پایگاه دانش</value></data>
+  <data name="Col_Key" xml:space="preserve"><value>کلید</value></data>
+  <data name="Col_Last" xml:space="preserve"><value>آخرین</value></data>
+  <data name="Col_Layer" xml:space="preserve"><value>لایه</value></data>
+  <data name="Col_Limits" xml:space="preserve"><value>محدودیت درخواست</value></data>
+  <data name="Col_Log" xml:space="preserve"><value>لاگ</value></data>
+  <data name="Col_LogFolder" xml:space="preserve"><value>پوشه لاگ</value></data>
+  <data name="Col_Match" xml:space="preserve"><value>الگو</value></data>
+  <data name="Col_MaxMs" xml:space="preserve"><value>بیشینه (ms)</value></data>
+  <data name="Col_MaxProcesses" xml:space="preserve"><value>تعداد فرایند</value></data>
+  <data name="Col_Meaning" xml:space="preserve"><value>معنی</value></data>
+  <data name="Col_Message" xml:space="preserve"><value>پیام</value></data>
+  <data name="Col_Module" xml:space="preserve"><value>ماژول</value></data>
+  <data name="Col_Name" xml:space="preserve"><value>نام</value></data>
+  <data name="Col_Node" xml:space="preserve"><value>سرور</value></data>
+  <data name="Col_Note" xml:space="preserve"><value>توضیح</value></data>
+  <data name="Col_Numa" xml:space="preserve"><value>NUMA</value></data>
+  <data name="Col_P50" xml:space="preserve"><value>p50 (ms)</value></data>
+  <data name="Col_P95" xml:space="preserve"><value>p95 (ms)</value></data>
+  <data name="Col_P99" xml:space="preserve"><value>p99 (ms)</value></data>
+  <data name="Col_Pipeline" xml:space="preserve"><value>Pipeline</value></data>
+  <data name="Col_Pool" xml:space="preserve"><value>Application pool</value></data>
+  <data name="Col_Pools" xml:space="preserve"><value>Poolها</value></data>
+  <data name="Col_Ports" xml:space="preserve"><value>پورت‌ها</value></data>
+  <data name="Col_ProcessPath" xml:space="preserve"><value>فرایند</value></data>
+  <data name="Col_Queue" xml:space="preserve"><value>صف</value></data>
+  <data name="Col_QueueLength" xml:space="preserve"><value>طول صف</value></data>
+  <data name="Col_Reason" xml:space="preserve"><value>علت</value></data>
+  <data name="Col_Recycle" xml:space="preserve"><value>Recycle</value></data>
+  <data name="Col_Redis" xml:space="preserve"><value>Redis</value></data>
+  <data name="Col_Regressions" xml:space="preserve"><value>کندتر از معمول (p95 / پایه)</value></data>
+  <data name="Col_Requests" xml:space="preserve"><value>درخواست‌ها</value></data>
+  <data name="Col_Requests15m" xml:space="preserve"><value>درخواست (۱۵ دقیقه)</value></data>
+  <data name="Col_Role" xml:space="preserve"><value>نقش</value></data>
+  <data name="Col_Runtime" xml:space="preserve"><value>.NET CLR</value></data>
+  <data name="Col_Scope" xml:space="preserve"><value>محدوده</value></data>
+  <data name="Col_Segment" xml:space="preserve"><value>مسیر برنامه</value></data>
+  <data name="Col_Service" xml:space="preserve"><value>سرویس</value></data>
+  <data name="Col_Severity" xml:space="preserve"><value>شدت</value></data>
+  <data name="Col_Site" xml:space="preserve"><value>سایت</value></data>
+  <data name="Col_SlowestStem" xml:space="preserve"><value>کندترین آدرس</value></data>
+  <data name="Col_Source" xml:space="preserve"><value>منبع</value></data>
+  <data name="Col_Stage" xml:space="preserve"><value>مرحله Pipeline</value></data>
+  <data name="Col_StartMode" xml:space="preserve"><value>نوع راه‌اندازی</value></data>
+  <data name="Col_Started" xml:space="preserve"><value>زمان شروع</value></data>
+  <data name="Col_Status" xml:space="preserve"><value>وضعیت</value></data>
+  <data name="Col_StdoutErrors" xml:space="preserve"><value>خطاهای stdout</value></data>
+  <data name="Col_Subject" xml:space="preserve"><value>Subject</value></data>
+  <data name="Col_Target" xml:space="preserve"><value>مقصد</value></data>
+  <data name="Col_TimeTaken" xml:space="preserve"><value>ثبت time-taken</value></data>
+  <data name="Col_Unverified" xml:space="preserve"><value>تأییدنشده</value></data>
+  <data name="Col_Uptime" xml:space="preserve"><value>مدت اجرا</value></data>
+  <data name="Col_Url" xml:space="preserve"><value>آدرس</value></data>
+  <data name="Col_UrlStem" xml:space="preserve"><value>آدرس (URL stem)</value></data>
+  <data name="Col_Verb" xml:space="preserve"><value>Verb</value></data>
+  <data name="Col_Weight" xml:space="preserve"><value>وزن</value></data>
+  <data name="Common_No" xml:space="preserve"><value>خیر</value></data>
+  <data name="Common_Ok" xml:space="preserve"><value>سالم</value></data>
+  <data name="Common_Yes" xml:space="preserve"><value>بله</value></data>
+  <data name="Duration_Days" xml:space="preserve"><value>{0} روز</value></data>
+  <data name="Duration_Hours" xml:space="preserve"><value>{0} ساعت</value></data>
+  <data name="Duration_Minutes" xml:space="preserve"><value>{0} دقیقه</value></data>
+  <data name="Events_AllLayers" xml:space="preserve"><value>همه لایه‌ها</value></data>
+  <data name="Events_AllNodes" xml:space="preserve"><value>همه سرورها</value></data>
+  <data name="Events_AllSeverities" xml:space="preserve"><value>همه</value></data>
+  <data name="Events_Correlated" xml:space="preserve"><value>در بازهٔ ±۵ دقیقه از رخداد انتخاب‌شده (همه سرورها و لایه‌ها)</value></data>
+  <data name="Events_Groups" xml:space="preserve"><value>Event Logهای ویندوز سرور انتخاب‌شده (۲۴ ساعت اخیر، گروه‌بندی بر اساس منبع و شناسه)</value></data>
+  <data name="Events_Kb" xml:space="preserve"><value>معنی و قدم بعدی</value></data>
+  <data name="Events_Layer" xml:space="preserve"><value>لایه</value></data>
+  <data name="Events_LogsFailed" xml:space="preserve"><value>قابل خواندن نیست: {0} (عضویت Event Log Readers / Remote Event Log Management).</value></data>
+  <data name="Events_LogsUnavailable" xml:space="preserve"><value>Event Logهای این سرور هنوز در دسترس نیست.</value></data>
+  <data name="Events_NoKb" xml:space="preserve"><value>برای این رخداد در پایگاه دانش توضیحی نیست.</value></data>
+  <data name="Events_Search" xml:space="preserve"><value>جستجو</value></data>
+  <data name="Events_Severity" xml:space="preserve"><value>حداقل شدت</value></data>
+  <data name="Events_Timeline" xml:space="preserve"><value>خط زمانی خطاها و رخدادها</value></data>
+  <data name="Events_Truncated" xml:space="preserve"><value>در هر خواندن فقط ۲۰۰۰ رخداد جدیدتر خوانده شد.</value></data>
+  <data name="Iis_AnalysisConfirm" xml:space="preserve"><value>این کار {0} فایل لاگ ({1} مگابایت) را در حدود {2} ثانیه می‌خواند (فقط‌خواندنی، بدون قفل فایل). ادامه می‌دهید؟</value></data>
+  <data name="Iis_AnalysisDone" xml:space="preserve"><value>{0} درخواست، {1}٪ خطای 5xx در {2}.</value></data>
+  <data name="Iis_AnalysisExplain" xml:space="preserve"><value>جدول‌های زیر ۱۵ دقیقهٔ اخیر را نشان می‌دهند. برای بازهٔ طولانی‌تر RSM لاگ‌های W3C سایت را فقط به درخواست شما می‌خواند و پیش از شروع، حجم و زمان را اعلام می‌کند.</value></data>
+  <data name="Iis_AnalysisFailed" xml:space="preserve"><value>تحلیل لاگ ناموفق بود ({0}).</value></data>
+  <data name="Iis_AnalysisNeedsLive" xml:space="preserve"><value>ابتدا نمای زنده را وصل و یک سایت انتخاب کنید.</value></data>
+  <data name="Iis_AnalysisNoFiles" xml:space="preserve"><value>در این بازه فایل لاگ W3C نیست.</value></data>
+  <data name="Iis_AnalysisProgress" xml:space="preserve"><value>در حال خواندن لاگ‌ها: {0} از {1} مگابایت…</value></data>
+  <data name="Iis_AnalyzeLogs" xml:space="preserve"><value>تحلیل لاگ‌ها</value></data>
+  <data name="Iis_CertLocalOnly" xml:space="preserve"><value>(مخزن گواهی فقط روی خود سرور IIS خوانده می‌شود)</value></data>
+  <data name="Iis_CertNotFound" xml:space="preserve"><value>(در مخزن پیدا نشد)</value></data>
+  <data name="Iis_Certificates" xml:space="preserve"><value>گواهی‌های TLS متصل به سایت‌ها</value></data>
+  <data name="Iis_HttpErr" xml:space="preserve"><value>خطاهای HTTP.sys ‏(HTTPERR، ۶۰ دقیقه اخیر)</value></data>
+  <data name="Iis_LiveRequests" xml:space="preserve"><value>درخواست‌های در حال اجرا در همین لحظه</value></data>
+  <data name="Iis_Logs" xml:space="preserve"><value>لاگ IIS هر سایت (۱۵ دقیقه اخیر)</value></data>
+  <data name="Iis_NoManagedCode" xml:space="preserve"><value>No Managed Code</value></data>
+  <data name="Iis_Pools" xml:space="preserve"><value>Application poolها</value></data>
+  <data name="Iis_Range" xml:space="preserve"><value>بازه</value></data>
+  <data name="Iis_Range_1h" xml:space="preserve"><value>یک ساعت اخیر</value></data>
+  <data name="Iis_Range_24h" xml:space="preserve"><value>۲۴ ساعت اخیر</value></data>
+  <data name="Iis_Range_6h" xml:space="preserve"><value>۶ ساعت اخیر</value></data>
+  <data name="Iis_RequestMonitorMissing" xml:space="preserve"><value>مشاهده درخواست‌های زنده به ویژگی Request Monitor در IIS این سرور نیاز دارد.</value></data>
+  <data name="Iis_RequestsNote" xml:space="preserve"><value>درخواست‌هایی که دست‌کم {0} ثانیه در حال اجرا هستند، کندترین اول.</value></data>
+  <data name="Iis_RuntimeUnavailable" xml:space="preserve"><value>درخواست‌های زنده و وضعیت Poolها فقط روی خود سرور IIS و با اجرای RSM به‌صورت Administrator خوانده می‌شوند.</value></data>
+  <data name="Iis_ShowLiveStems" xml:space="preserve"><value>بازگشت به ۱۵ دقیقه اخیر</value></data>
+  <data name="Iis_Sites" xml:space="preserve"><value>سایت‌ها</value></data>
+  <data name="Iis_Statuses" xml:space="preserve"><value>خطاها بر اساس Status / Substatus</value></data>
+  <data name="Iis_TimeTakenMissing" xml:space="preserve"><value>خیر — زمان پاسخ نامعلوم</value></data>
+  <data name="Iis_UrlStems" xml:space="preserve"><value>زمان پاسخ هر آدرس (صدک‌ها)</value></data>
+  <data name="Iis_WebConfig" xml:space="preserve"><value>web.config</value></data>
+  <data name="Iis_WebConfigMasked" xml:space="preserve"><value>رمزها، کلیدها، توکن‌ها و مقادیر محرمانه هرگز نمایش داده نمی‌شوند؛ از Connection stringها فقط سرور و پایگاه داده نشان داده می‌شود.</value></data>
+  <data name="Iis_Workers" xml:space="preserve"><value>Worker processها</value></data>
+  <data name="Series_Pool" xml:space="preserve"><value>Pool</value></data>
+  <data name="Series_Site" xml:space="preserve"><value>سایت</value></data>
+  <data name="Series_WorkerProcess" xml:space="preserve"><value>Worker process</value></data>
+  <data name="Svc_Explain" xml:space="preserve"><value>سرویس‌های پایش‌شده (SQL Server، IIS، Redis، CodeMeter، RabbitMQ، SSRS، آنتی‌ویروس و …). RSM فقط آن‌ها را نمایش می‌دهد و امکان اجرا یا توقف سرویس را ندارد. قرمز = Automatic ولی متوقف.</value></data>
+  <data name="WasState_1" xml:space="preserve"><value>مقداردهی‌نشده</value></data>
+  <data name="WasState_2" xml:space="preserve"><value>آماده</value></data>
+  <data name="WasState_3" xml:space="preserve"><value>در حال اجرا</value></data>
+  <data name="WasState_4" xml:space="preserve"><value>در حال غیرفعال شدن</value></data>
+  <data name="WasState_5" xml:space="preserve"><value>غیرفعال</value></data>
+  <data name="WasState_6" xml:space="preserve"><value>در حال خاموش شدن</value></data>
+  <data name="WasState_7" xml:space="preserve"><value>در حال حذف</value></data>
+  <data name="LayerName_Sql" xml:space="preserve"><value>SQL Server</value></data>
+  <data name="LayerName_Database" xml:space="preserve"><value>پایگاه‌های داده</value></data>
+  <data name="LayerName_Os" xml:space="preserve"><value>ویندوز</value></data>
+  <data name="LayerName_Storage" xml:space="preserve"><value>ذخیره‌سازی</value></data>
+  <data name="LayerName_Iis" xml:space="preserve"><value>IIS</value></data>
+  <data name="LayerName_Arr" xml:space="preserve"><value>ARR</value></data>
+  <data name="LayerName_Redis" xml:space="preserve"><value>Redis</value></data>
+  <data name="LayerName_Ssrs" xml:space="preserve"><value>SSRS</value></data>
+  <data name="LayerName_Services" xml:space="preserve"><value>سرویس‌ها</value></data>
+  <data name="LayerName_Events" xml:space="preserve"><value>Event Log</value></data>
+  <data name="LayerName_RabbitMq" xml:space="preserve"><value>RabbitMQ</value></data>
+  <data name="LayerName_DotNet" xml:space="preserve"><value>.NET</value></data>
+  <data name="LayerName_Rahkaran" xml:space="preserve"><value>راهکاران</value></data>
+  <data name="LayerName_Rsm" xml:space="preserve"><value>RSM</value></data>
+  <data name="ServiceCategory_SqlServer" xml:space="preserve"><value>SQL Server</value></data>
+  <data name="ServiceCategory_SqlAgent" xml:space="preserve"><value>SQL Agent</value></data>
+  <data name="ServiceCategory_SqlBrowser" xml:space="preserve"><value>SQL Browser</value></data>
+  <data name="ServiceCategory_Ssrs" xml:space="preserve"><value>Reporting Services</value></data>
+  <data name="ServiceCategory_Iis" xml:space="preserve"><value>IIS</value></data>
+  <data name="ServiceCategory_Redis" xml:space="preserve"><value>Redis</value></data>
+  <data name="ServiceCategory_CodeMeter" xml:space="preserve"><value>CodeMeter (قفل)</value></data>
+  <data name="ServiceCategory_RabbitMq" xml:space="preserve"><value>RabbitMQ (گردش کار)</value></data>
+  <data name="ServiceCategory_Attendance" xml:space="preserve"><value>تردد ⚠ تأییدنشده</value></data>
+  <data name="ServiceCategory_ProactiveMonitor" xml:space="preserve"><value>پایش پیشگیرانه ⚠ تأییدنشده</value></data>
+  <data name="ServiceCategory_WindowsUpdate" xml:space="preserve"><value>Windows Update</value></data>
+  <data name="ServiceCategory_Antivirus" xml:space="preserve"><value>آنتی‌ویروس</value></data>
 </root>

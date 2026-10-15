@@ -1,0 +1,181 @@
+<UserControl x:Class="RSM.App.Views.IisView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:views="clr-namespace:RSM.App.Views">
+  <!-- DataContext: IisPageViewModel. Read-only: no control starts, stops or recycles sites or pools. -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+      <TextBlock Style="{StaticResource Text.Title}" Text="{Binding Title}" />
+      <views:LiveToolbar DataContext="{Binding Live}" />
+      <UniformGrid Columns="2">
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding RequestsChart}" Margin="0,0,8,0" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding QueueChart}" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding ActiveChart}" Margin="0,0,8,0" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding ErrorsChart}" />
+      </UniformGrid>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Iis_LiveRequests], Source={x:Static loc:Loc.Instance}}" />
+      <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Margin="0,0,0,4" Text="{Binding RequestsNote}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Requests}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="320">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="90" Binding="{Binding Elapsed}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_ElapsedS]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding Verb}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Verb]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Url}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Url]}" />
+            <DataGridTextColumn Width="130" Binding="{Binding Client}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Client]}" />
+            <DataGridTextColumn Width="150" Binding="{Binding Pool}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Pool]}" />
+            <DataGridTextColumn Width="170" Binding="{Binding Stage}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Stage]}" />
+            <DataGridTextColumn Width="170" Binding="{Binding Module}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Module]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Iis_Sites], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Sites}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="260">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="170" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Site]}" />
+            <DataGridTextColumn Width="50" Binding="{Binding Id}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Id]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Role}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Role]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding State}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_State]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Bindings}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Bindings]}" />
+            <DataGridTextColumn Width="150" Binding="{Binding Pools}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Pools]}" />
+            <DataGridTextColumn Width="130" Binding="{Binding TimeTaken}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_TimeTaken]}" />
+            <DataGridTextColumn Width="100" Binding="{Binding Hosting}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Hosting]}" />
+            <DataGridTextColumn Width="200" Binding="{Binding LogFolder}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_LogFolder]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Iis_Pools], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Pools}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="260">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="150" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Pool]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding State}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_State]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding Runtime}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Runtime]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Pipeline}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Pipeline]}" />
+            <DataGridTextColumn Width="170" Binding="{Binding Identity}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Identity]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding StartMode}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_StartMode]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding IdleTimeout}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_IdleTimeoutMin]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Recycle}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Recycle]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding QueueLength}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_QueueLength]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding MaxProcesses}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_MaxProcesses]}" />
+            <DataGridTextColumn Width="60" Binding="{Binding Bitness}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Bitness]}" />
+            <DataGridTextColumn Width="200" Binding="{Binding Numa}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Numa]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Iis_Workers], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Workers}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="200">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="90" Binding="{Binding ProcessId}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_ProcessId]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Pool}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Pool]}" />
+            <DataGridTextColumn Width="120" Binding="{Binding State}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_State]}" />
+            <DataGridTextColumn Width="260" Binding="{Binding Started}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Started]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Iis_Logs], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding SiteLogs}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="220">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="150" Binding="{Binding Site}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Site]}" />
+            <DataGridTextColumn Width="100" Binding="{Binding Requests}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Requests15m]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding Errors5xx}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Errors5xx]}" />
+            <DataGridTextColumn Width="60" Binding="{Binding Status503}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_503]}" />
+            <DataGridTextColumn Width="60" Binding="{Binding Ancm}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Ancm]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Disconnects}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Disconnects]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Slowest}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_SlowestStem]}" />
+            <DataGridTextColumn Width="220" Binding="{Binding Regressions}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Regressions]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Stdout}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_StdoutErrors]}" />
+            <DataGridTextColumn Width="60" Binding="{Binding Freb}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Freb]}" />
+            <DataGridTextColumn Width="150" Binding="{Binding Note}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Note]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <Border Style="{StaticResource Card}">
+        <StackPanel>
+          <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Text="{Binding [Iis_AnalysisExplain], Source={x:Static loc:Loc.Instance}}" />
+          <WrapPanel Margin="0,6,0,0">
+            <TextBlock Style="{StaticResource Text.Label}" VerticalAlignment="Center" Margin="0,0,6,0" Text="{Binding [Col_Site], Source={x:Static loc:Loc.Instance}}" />
+            <ComboBox MinWidth="180" Margin="0,0,12,0" ItemsSource="{Binding SiteNames}" SelectedItem="{Binding SelectedSite}" />
+            <TextBlock Style="{StaticResource Text.Label}" VerticalAlignment="Center" Margin="0,0,6,0" Text="{Binding [Iis_Range], Source={x:Static loc:Loc.Instance}}" />
+            <ComboBox MinWidth="110" Margin="0,0,12,0" ItemsSource="{Binding RangeOptions}" SelectedItem="{Binding SelectedRange}" DisplayMemberPath="Label" />
+            <Button Style="{StaticResource Button.Primary}" Margin="0,0,6,0" Command="{Binding AnalyzeLogsCommand}" Content="{Binding [Iis_AnalyzeLogs], Source={x:Static loc:Loc.Instance}}" />
+            <Button Margin="0,0,12,0" Command="{Binding ShowLiveStemsCommand}" Content="{Binding [Iis_ShowLiveStems], Source={x:Static loc:Loc.Instance}}" />
+            <TextBlock Style="{StaticResource Text.Muted}" VerticalAlignment="Center" Text="{Binding AnalysisStatus}" />
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Iis_UrlStems], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Stems}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="320">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="150" Binding="{Binding Site}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Site]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Stem}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_UrlStem]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Requests}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Requests]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding P50}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_P50]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding P95}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_P95]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding P99}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_P99]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Max}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_MaxMs]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Errors5xx}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Errors5xx]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Iis_Statuses], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Statuses}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="220">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="150" Binding="{Binding Site}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Site]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Status}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Status]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Count}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Count]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Meaning}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Meaning]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Iis_HttpErr], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding HttpErr}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="200">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="220" Binding="{Binding Reason}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Reason]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding Count}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Count]}" />
+            <DataGridTextColumn Width="150" Binding="{Binding Queue}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Queue]}" />
+            <DataGridTextColumn Width="200" Binding="{Binding First}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_First]}" />
+            <DataGridTextColumn Width="200" Binding="{Binding Last}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Last]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Meaning}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Meaning]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Iis_WebConfig], Source={x:Static loc:Loc.Instance}}" />
+      <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Margin="0,0,0,4" Text="{Binding [Iis_WebConfigMasked], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding WebConfigs}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="240">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="150" Binding="{Binding Site}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Site]}" />
+            <DataGridTextColumn Width="120" Binding="{Binding Path}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_AppPath]}" />
+            <DataGridTextColumn Width="100" Binding="{Binding Hosting}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Hosting]}" />
+            <DataGridTextColumn Width="180" Binding="{Binding Process}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_ProcessPath]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Databases}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_ConnectionTargets]}" />
+            <DataGridTextColumn Width="140" Binding="{Binding Redis}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Redis]}" />
+            <DataGridTextColumn Width="220" Binding="{Binding Limits}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Limits]}" />
+            <DataGridTextColumn Width="130" Binding="{Binding Note}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Note]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Iis_Certificates], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Certificates}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="200">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="150" Binding="{Binding Site}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Site]}" />
+            <DataGridTextColumn Width="200" Binding="{Binding Binding}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Binding]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Subject}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Subject]}" />
+            <DataGridTextColumn Width="220" Binding="{Binding Expires}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Expires]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding DaysLeft}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_DaysLeft]}" />
+            <DataGridTextColumn Width="100" Binding="{Binding Key}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Key]}" />
+            <DataGridTextColumn Width="150" Binding="{Binding Chain}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Chain]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

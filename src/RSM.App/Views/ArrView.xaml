@@ -1,0 +1,55 @@
+<UserControl x:Class="RSM.App.Views.ArrView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:views="clr-namespace:RSM.App.Views">
+  <!-- DataContext: ArrPageViewModel. Farms and rules are shown; nothing is changed. -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+      <TextBlock Style="{StaticResource Text.Title}" Text="{Binding Title}" />
+      <views:LiveToolbar DataContext="{Binding Live}" />
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Arr_Farms], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Farms}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="240">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="180" Binding="{Binding Farm}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Farm]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Enabled}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Enabled]}" />
+            <DataGridTextColumn Width="160" Binding="{Binding Algorithm}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Algorithm]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding HealthUrl}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_HealthUrl]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding Servers}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_EnabledServers]}" />
+            <DataGridTextColumn Width="140" Binding="{Binding Deviation}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Deviation]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Arr_Servers], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Servers}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="260">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="180" Binding="{Binding Farm}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Farm]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Address}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Address]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Enabled}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Enabled]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Weight}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Weight]}" />
+            <DataGridTextColumn Width="120" Binding="{Binding Ports}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Ports]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Arr_Rules], Source={x:Static loc:Loc.Instance}}" />
+      <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Margin="0,0,0,4" Text="{Binding [Arr_RulesExplain], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Rules}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="360">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="150" Binding="{Binding Scope}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Scope]}" />
+            <DataGridTextColumn Width="160" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Name]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding Enabled}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Enabled]}" />
+            <DataGridTextColumn Width="160" Binding="{Binding Match}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Match]}" />
+            <DataGridTextColumn Width="180" Binding="{Binding Conditions}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Conditions]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Action}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Action]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Target}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Target]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding Segment}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Segment]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Deployed}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Deployed]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

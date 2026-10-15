@@ -1,0 +1,38 @@
+<UserControl x:Class="RSM.App.Views.ServicesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:views="clr-namespace:RSM.App.Views">
+  <!-- DataContext: ServicesPageViewModel. Display only: there is no start/stop control, not even a disabled one. -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+      <TextBlock Style="{StaticResource Text.Title}" Text="{Binding Title}" />
+      <views:LiveToolbar DataContext="{Binding Live}" />
+      <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Margin="0,0,0,4" Text="{Binding [Svc_Explain], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Services}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="640">
+          <DataGrid.RowStyle>
+            <Style TargetType="DataGridRow">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding Problem}" Value="True">
+                  <Setter Property="Foreground" Value="{DynamicResource Brush.Critical}" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </DataGrid.RowStyle>
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="180" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Service]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding DisplayName}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_DisplayName]}" />
+            <DataGridTextColumn Width="150" Binding="{Binding Category}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Category]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding State}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_State]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding StartMode}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_StartMode]}" />
+            <DataGridTextColumn Width="200" Binding="{Binding Account}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Account]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding ProcessId}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_ProcessId]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding Uptime}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Uptime]}" />
+            <DataGridCheckBoxColumn Width="90" Binding="{Binding Unverified, Mode=OneWay}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Unverified]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

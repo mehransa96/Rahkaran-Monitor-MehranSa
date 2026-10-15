@@ -79,7 +79,10 @@ public partial class RepositoryConsistencyTests
         var fa = ReadResx(Path.Combine(app, "Strings.fa.resx"));
         var keys = Enum.GetNames<RSM.Parsers.Sql.WaitCategory>().Select(n => "WaitCategory_" + n)
             .Concat(Enum.GetNames<RSM.Parsers.Showplan.PlanWarningKind>().Select(n => "PlanWarning_" + n))
-            .Concat(Enum.GetNames<RSM.Core.Model.Severity>().Select(n => "Severity_" + n));
+            .Concat(Enum.GetNames<RSM.Core.Model.Severity>().Select(n => "Severity_" + n))
+            .Concat(Enum.GetNames<RSM.Core.Model.Layer>().Select(n => "LayerName_" + n))
+            .Concat(Enum.GetNames<RSM.Collectors.Windows.ServiceCategory>().Select(n => "ServiceCategory_" + n))
+            .Concat(Enumerable.Range(1, 7).Select(n => "WasState_" + n));
         foreach (var key in keys)
         {
             en.Should().ContainKey(key);
