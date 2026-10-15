@@ -99,11 +99,11 @@ nodes); services panel (display only); event-log collection + KB; unified Errors
 ±5 min correlation; rules `RULES.md` §5–7.
 
 **Acceptance**
-- [ ] Live requests visible for a slow test endpoint (local, admin, Request Monitor installed).
-- [ ] IIS W3C percentile computation matches a hand-verified log sample (p50/p95/p99 per URL stem).
-- [ ] ARR farm + rewrite checks verified on a lab ARR (incl. "app path segment changed" case).
-- [ ] web.config viewer never shows a password/secret value (fixture with every secret key pattern).
-- [ ] Event KB covers every event id listed in spec §9.8.
+- [x] Live requests visible for a slow test endpoint (local, admin, Request Monitor installed). *(CI run 23, job "IIS live requests…": `/slow.aspx` seen in `RsmItPool` while running; applicationHost.config + pool state unchanged)*
+- [x] IIS W3C percentile computation matches a hand-verified log sample (p50/p95/p99 per URL stem). *(`IisLogParserTests`)*
+- [ ] ARR farm + rewrite checks verified on a lab ARR (incl. "app path segment changed" case). *(verified on fixtures — `IisConfigParserTests`, `IisCollectorTests`; lab ARR pending, see `docs/phase-notes/P3.md`)*
+- [x] web.config viewer never shows a password/secret value (fixture with every secret key pattern). *(`IisConfigParserTests`, `IisCollectorTests`)*
+- [x] Event KB covers every event id listed in spec §9.8. *(`EventsAndServicesTests`)*
 
 ## Phase 4 — Redis, SSRS, CodeMeter, RabbitMQ, topology, .NET counters
 
