@@ -1,0 +1,49 @@
+{
+  "id": "SVC-005",
+  "layer": "Services",
+  "appliesTo": [],
+  "when": "svc.attendance_present && svc.attendance_stopped",
+  "severity": "Warning",
+  "title": {
+    "fa": "سرویس تردد متوقف است",
+    "en": "Attendance service is stopped"
+  },
+  "explanation": {
+    "fa": "سرویسی که با الگوی تنظیم‌شده برای تردد مطابقت دارد در حال اجرا نیست. (الگوی نام سرویس یک تنظیم تأییدنشده است.)",
+    "en": "The service matching the configured attendance pattern is not running. (The service name pattern is an unverified setting.)"
+  },
+  "recommendation": {
+    "fa": "وضعیت سرویس را بررسی کنید.",
+    "en": "Check the service."
+  },
+  "source": {
+    "kind": "Architecture",
+    "citation": "Rahkaran architecture (spec §3)"
+  },
+  "verified": false,
+  "confidence": 0.6,
+  "examples": [
+    {
+      "facts": {
+        "svc.attendance_present": true,
+        "svc.attendance_stopped": true
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "svc.attendance_present": true,
+        "svc.attendance_stopped": false
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "svc.attendance_present": false,
+        "svc.attendance_stopped": false
+      },
+      "expect": null,
+      "note": "pattern not configured"
+    }
+  ]
+}

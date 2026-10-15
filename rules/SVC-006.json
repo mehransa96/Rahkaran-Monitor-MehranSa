@@ -1,0 +1,46 @@
+{
+  "id": "SVC-006",
+  "layer": "Services",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "svc.sqlbrowser_running && svc.sql_instance_count == 1 && svc.sql_named_instance_count == 0",
+  "severity": "Info",
+  "title": {
+    "fa": "SQL Browser بدون نیاز در حال اجراست",
+    "en": "SQL Browser is running without a need"
+  },
+  "explanation": {
+    "fa": "فقط یک Instance پیش‌فرض SQL Server روی این سرور است؛ SQL Browser برای Instanceهای نام‌دار لازم است.",
+    "en": "This server has only a default SQL Server instance; SQL Browser is needed for named instances."
+  },
+  "recommendation": {
+    "fa": "RSM هیچ تنظیمی را تغییر نمی‌دهد؛ تغییر را با ستاد فنی هماهنگ کنید.",
+    "en": "RSM changes nothing; coordinate the change with ستاد فنی."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "svc.sqlbrowser_running": true,
+        "svc.sql_instance_count": 1,
+        "svc.sql_named_instance_count": 0
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "svc.sqlbrowser_running": true,
+        "svc.sql_instance_count": 2,
+        "svc.sql_named_instance_count": 1
+      },
+      "expect": null
+    }
+  ]
+}

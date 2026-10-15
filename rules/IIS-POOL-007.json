@@ -1,0 +1,54 @@
+{
+  "id": "IIS-POOL-007",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "forEach": "pool",
+  "when": "coalesce(pool.serves_rahkaran, false) && pool.periodic_restart_min == params.default_minutes",
+  "severity": "Info",
+  "title": {
+    "fa": "Recycle دوره‌ای پیش‌فرض (هر ۲۹ ساعت) روی Pool ‏{instance}",
+    "en": "Default periodic recycle (every 29 h) on pool {instance}"
+  },
+  "explanation": {
+    "fa": "Recycle هر ۱۷۴۰ دقیقه در ساعت‌های متغیر، از جمله ساعت کاری، رخ می‌دهد.",
+    "en": "A recycle every 1740 minutes drifts and lands at varying hours, including business hours."
+  },
+  "recommendation": {
+    "fa": "در صورت نیاز به Recycle، زمان ثابت خارج از ساعت کاری را با هماهنگی ستاد فنی تنظیم کنید.",
+    "en": "If a recycle is needed, schedule a fixed time outside business hours, coordinated with ستاد فنی."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "default_minutes": 1740
+  },
+  "examples": [
+    {
+      "facts": {
+        "pool[AuxPool1].serves_rahkaran": true,
+        "pool[AuxPool1].periodic_restart_min": 1740
+      },
+      "expect": "Info",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "pool[AuxPool1].serves_rahkaran": true,
+        "pool[AuxPool1].periodic_restart_min": 0
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "id": "IIS-ERR-004",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "when": "coalesce(iis.httperr.server_side_60m, 0) > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "HTTP.sys درخواست‌ها را به دلیل مشکل سمت سرور رد کرده است",
+    "en": "HTTP.sys dropped requests for server-side reasons"
+  },
+  "explanation": {
+    "fa": "در ۶۰ دقیقه گذشته: {iis.httperr.top_server_side} (QueueFull = صف پر، AppOffline = Pool غیرفعال، Connection_Abandoned_By_ReqQueue = Crash/Recycle).",
+    "en": "In the last 60 minutes: {iis.httperr.top_server_side} (QueueFull = queue full, AppOffline = pool disabled, Connection_Abandoned_By_ReqQueue = crash/recycle)."
+  },
+  "recommendation": {
+    "fa": "وضعیت Pool و رخدادهای WAS را در همان زمان بررسی کنید.",
+    "en": "Check the pool state and WAS events at the same time."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "iis.httperr.server_side_60m": 4,
+        "iis.httperr.top_server_side": "QueueFull ×4"
+      },
+      "expect": "Critical",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "iis.httperr.server_side_60m": 0,
+        "iis.httperr.top_server_side": ""
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

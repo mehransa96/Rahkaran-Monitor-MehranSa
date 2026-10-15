@@ -1,0 +1,53 @@
+{
+  "id": "IIS-POOL-004",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "forEach": "pool",
+  "when": "coalesce(pool.serves_aspnetcore, false) && !pool.no_managed_code",
+  "severity": "Info",
+  "title": {
+    "fa": "Pool برنامه ASP.NET Core ({instance}) روی «No Managed Code» نیست",
+    "en": "ASP.NET Core pool {instance} is not \"No Managed Code\""
+  },
+  "explanation": {
+    "fa": "برنامه ASP.NET Core از CLR داخل IIS استفاده نمی‌کند؛ نسخه .NET CLR این Pool: {pool.managed_runtime}.",
+    "en": "An ASP.NET Core app does not use the IIS-hosted CLR; this pool's .NET CLR version: {pool.managed_runtime}."
+  },
+  "recommendation": {
+    "fa": "RSM هیچ تنظیمی را تغییر نمی‌دهد؛ تغییر را با ستاد فنی هماهنگ کنید.",
+    "en": "RSM changes nothing; coordinate the change with ستاد فنی."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "pool[AuxPool1].serves_aspnetcore": true,
+        "pool[AuxPool1].no_managed_code": false,
+        "pool[AuxPool1].managed_runtime": "v4.0"
+      },
+      "expect": "Info",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "pool[AuxPool1].serves_aspnetcore": true,
+        "pool[AuxPool1].no_managed_code": true,
+        "pool[AuxPool1].managed_runtime": ""
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

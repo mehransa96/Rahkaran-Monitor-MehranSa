@@ -1,0 +1,71 @@
+{
+  "id": "IIS-CERT-001",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "forEach": "cert",
+  "when": "cert.days_left < params.warn",
+  "severity": "Warning",
+  "escalate": [
+    {
+      "when": "cert.days_left < params.crit",
+      "severity": "Critical"
+    }
+  ],
+  "title": {
+    "fa": "گواهی {instance} تا {cert.days_left} روز دیگر منقضی می‌شود",
+    "en": "Certificate of {instance} expires in {cert.days_left} days"
+  },
+  "explanation": {
+    "fa": "گواهی {cert.subject} به Binding این سایت متصل است.",
+    "en": "Certificate {cert.subject} is bound to this site."
+  },
+  "recommendation": {
+    "fa": "گواهی جدید را پیش از انقضا تهیه و جایگزین کنید (RSM هیچ گواهی‌ای را تغییر نمی‌دهد).",
+    "en": "Obtain and bind a new certificate before expiry (RSM never changes certificates)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "warn": 30,
+    "crit": 7
+  },
+  "examples": [
+    {
+      "facts": {
+        "cert[AppRouterWebsite|10.0.0.5:443:rk].days_left": 20,
+        "cert[AppRouterWebsite|10.0.0.5:443:rk].subject": "CN=rk"
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "cert[AppRouterWebsite|10.0.0.5:443:rk].days_left": -2,
+        "cert[AppRouterWebsite|10.0.0.5:443:rk].subject": "CN=rk"
+      },
+      "expect": "Critical",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "cert[AppRouterWebsite|10.0.0.5:443:rk].days_left": 200,
+        "cert[AppRouterWebsite|10.0.0.5:443:rk].subject": "CN=rk"
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

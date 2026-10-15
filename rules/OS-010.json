@@ -1,0 +1,43 @@
+{
+  "id": "OS-010",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "coalesce(evt.unexpected_shutdowns_7d, 0) > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "خاموشی ناگهانی سرور در ۷ روز گذشته",
+    "en": "Unexpected shutdown in the last 7 days"
+  },
+  "explanation": {
+    "fa": "{evt.unexpected_shutdowns_7d} راه‌اندازی مجدد بدون خاموشی عادی (Kernel-Power 41: {evt.kernel_power_41_7d}، EventLog 6008: {evt.eventlog_6008_7d}).",
+    "en": "{evt.unexpected_shutdowns_7d} restarts without a clean shutdown (Kernel-Power 41: {evt.kernel_power_41_7d}, EventLog 6008: {evt.eventlog_6008_7d})."
+  },
+  "recommendation": {
+    "fa": "منبع تغذیه، لاگ iLO/IPMI و BugCheck را بررسی کنید.",
+    "en": "Check the power supply, the iLO/IPMI log and any BugCheck."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "evt.unexpected_shutdowns_7d": 1,
+        "evt.kernel_power_41_7d": 1,
+        "evt.eventlog_6008_7d": 1
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "evt.unexpected_shutdowns_7d": 0,
+        "evt.kernel_power_41_7d": 0,
+        "evt.eventlog_6008_7d": 0
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "ARR-002",
+  "layer": "Arr",
+  "appliesTo": [
+    "Arr",
+    "App"
+  ],
+  "forEach": "farm",
+  "when": "farm.enabled && farm.enabled_servers > 0 && farm.enabled_servers < farm.servers",
+  "severity": "Warning",
+  "title": {
+    "fa": "فقط بخشی از سرورهای فارم {instance} فعال است",
+    "en": "Only part of farm {instance} is available"
+  },
+  "explanation": {
+    "fa": "{farm.enabled_servers} از {farm.servers} سرور فعال است؛ بار روی سرورهای باقی‌مانده بیشتر می‌شود.",
+    "en": "{farm.enabled_servers} of {farm.servers} servers are enabled; the rest carry more load."
+  },
+  "recommendation": {
+    "fa": "علت غیرفعال بودن سرورها را بررسی کنید.",
+    "en": "Find out why the servers are disabled."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — ARR / URL Rewrite after an update"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "farm[RahkaranFarm].enabled": true,
+        "farm[RahkaranFarm].enabled_servers": 2,
+        "farm[RahkaranFarm].servers": 3
+      },
+      "expect": "Warning",
+      "roles": [
+        "Arr"
+      ]
+    },
+    {
+      "facts": {
+        "farm[RahkaranFarm].enabled": true,
+        "farm[RahkaranFarm].enabled_servers": 3,
+        "farm[RahkaranFarm].servers": 3
+      },
+      "expect": null,
+      "roles": [
+        "Arr"
+      ]
+    }
+  ]
+}

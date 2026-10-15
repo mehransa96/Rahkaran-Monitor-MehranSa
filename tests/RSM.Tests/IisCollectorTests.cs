@@ -348,4 +348,46 @@ public class IisCollectorTests
         FactValue(output, "pool[AuxPool2].running").Should().Be(false);
         WindowsMetricCatalog.PoolOfW3wpInstance("4100_Aux_Pool_1").Should().Be("Aux_Pool_1");
     }
+
+    [Fact]
+    public void Measured_farm_distribution_is_compared_with_the_weights()
+    {
+        var site = new SiteProfile
+        {
+            Id = "s", Name = "s",
+            Nodes = [new NodeProfile { Id = "arr", Name = "ARR", Host = "arr01", Roles = NodeRoles.Arr },
+                new NodeProfile { Id = "a", Name = "APP01", Host = "app01.corp.local", Roles = NodeRoles.App },
+                new NodeProfile { Id = "b", Name = "APP02", Host = "app02.corp.local", Roles = NodeRoles.App }],
+        };
+        Dictionary<string, IReadOnlyDictionary<string, object?>> Facts(long a, long b) => new()
+        {
+            ["arr"] = new Dictionary<string, object?> { ["farm[RahkaranFarm].weights"] = "app01=100|app02=100" },
+            ["a"] = new Dictionary<string, object?> { ["iis.requests_15m"] = a },
+            ["b"] = new Dictionary<string, object?> { ["iis.requests_15m"] = b },
+        };
+
+        new IisSiteAnalyzer().Analyze(site, Facts(900, 100))["arr"].Should().Contain(new Fact("farm[RahkaranFarm].distribution_deviation_pct", 80.0));
+        new IisSiteAnalyzer().Analyze(site, Facts(510, 490))["arr"].Should().Contain(new Fact("farm[RahkaranFarm].distribution_deviation_pct", 2.0));
+        new IisSiteAnalyzer().Analyze(site, Facts(50, 10))["arr"].Should().NotContain(f => f.Key.EndsWith("distribution_deviation_pct", StringComparison.Ordinal), "too few requests");
+    }
+
+    [Fact]
+    public void Sql_folders_are_matched_against_defender_path_exclusions()
+    {
+        WindowsNodeAnalyzer.UnexcludedFolders([@"D:\SQLData", @"E:\SQLLog\RK", @"T:\TempDB"], [@"D:\SQLData", @"E:\SQLLog", @"*.mdf"])
+            .Should().Equal(@"T:\TempDB");
+        WindowsNodeAnalyzer.UnexcludedFolders([@"D:\SQLData2"], [@"D:\SQLData"]).Should().Equal([@"D:\SQLData2"], "a sibling folder with a longer name is not covered");
+    }
+
+    [Fact]
+    public void Time_wait_share_of_the_ephemeral_ports_is_computed()
+    {
+        var output = new LiveOutput();
+        WindowsProcessCollector.ApplyTcp(8192, 16384, output);
+
+        FactValue(output, "win.tcp.timewait_pct").Should().Be(50.0);
+        var unknown = new LiveOutput();
+        WindowsProcessCollector.ApplyTcp(10, null, unknown);
+        FactValue(unknown, "win.tcp.timewait_pct").Should().BeNull();
+    }
 }

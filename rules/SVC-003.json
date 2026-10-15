@@ -1,0 +1,49 @@
+{
+  "id": "SVC-003",
+  "layer": "Services",
+  "appliesTo": [
+    "Lock"
+  ],
+  "when": "!svc.codemeter_running",
+  "severity": "Critical",
+  "title": {
+    "fa": "سرویس CodeMeter روی سرور قفل اجرا نمی‌شود",
+    "en": "CodeMeter is not running on the lock server"
+  },
+  "explanation": {
+    "fa": "این سرور نقش Lock (قفل نرم‌افزار) دارد ولی سرویس CodeMeter در حال اجرا نیست (نصب: {svc.codemeter_present}).",
+    "en": "This node has the Lock role but the CodeMeter service is not running (installed: {svc.codemeter_present})."
+  },
+  "recommendation": {
+    "fa": "وضعیت سرویس CodeMeter Runtime را بررسی کنید؛ بدون آن کاربران نمی‌توانند وارد شوند.",
+    "en": "Check the CodeMeter Runtime service; without it users cannot log in."
+  },
+  "source": {
+    "kind": "Architecture",
+    "citation": "Rahkaran architecture (spec §3)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "svc.codemeter_running": false,
+        "svc.codemeter_present": true
+      },
+      "expect": "Critical",
+      "roles": [
+        "Lock"
+      ]
+    },
+    {
+      "facts": {
+        "svc.codemeter_running": true,
+        "svc.codemeter_present": true
+      },
+      "expect": null,
+      "roles": [
+        "Lock"
+      ]
+    }
+  ]
+}

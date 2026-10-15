@@ -1,0 +1,51 @@
+{
+  "id": "IIS-ERR-002",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "forEach": "site",
+  "when": "coalesce(site.burst_503, false)",
+  "severity": "Critical",
+  "title": {
+    "fa": "رگبار خطای 503 در سایت {instance}",
+    "en": "Burst of HTTP 503 on site {instance}"
+  },
+  "explanation": {
+    "fa": "در یک دقیقه دست‌کم ۱۰ پاسخ 503 ثبت شده است ({site.status503_15m} مورد در ۱۵ دقیقه): صف پر یا Pool متوقف.",
+    "en": "At least 10 HTTP 503 responses in one minute ({site.status503_15m} in 15 minutes): queue full or pool stopped."
+  },
+  "recommendation": {
+    "fa": "وضعیت Pool، صف HTTP.sys و HTTPERR را در همان دقیقه بررسی کنید.",
+    "en": "Check the pool state, the HTTP.sys queue and HTTPERR for that minute."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "site[AuxWebsite1].burst_503": true,
+        "site[AuxWebsite1].status503_15m": 12
+      },
+      "expect": "Critical",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "site[AuxWebsite1].burst_503": false,
+        "site[AuxWebsite1].status503_15m": 1
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

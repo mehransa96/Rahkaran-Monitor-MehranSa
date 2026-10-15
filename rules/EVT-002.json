@@ -1,0 +1,39 @@
+{
+  "id": "EVT-002",
+  "layer": "Events",
+  "appliesTo": [],
+  "when": "coalesce(evt.web_worker_crash_24h, 0) > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "Crash فرایند w3wp/dotnet",
+    "en": "w3wp/dotnet process crashes"
+  },
+  "explanation": {
+    "fa": "{evt.web_worker_crash_24h} رخداد Application Error 1000 یا .NET Runtime 1026 برای w3wp/dotnet در ۲۴ ساعت گذشته.",
+    "en": "{evt.web_worker_crash_24h} Application Error 1000 or .NET Runtime 1026 events for w3wp/dotnet in the last 24 h."
+  },
+  "recommendation": {
+    "fa": "Stack trace را از صفحه رخدادها برای ستاد فنی ارسال کنید.",
+    "en": "Send the stack trace from the Events page to ستاد فنی."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — GC wait / worker process crashes"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "evt.web_worker_crash_24h": 3
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "evt.web_worker_crash_24h": 0
+      },
+      "expect": null
+    }
+  ]
+}

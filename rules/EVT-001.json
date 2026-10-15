@@ -1,0 +1,39 @@
+{
+  "id": "EVT-001",
+  "layer": "Events",
+  "appliesTo": [],
+  "when": "coalesce(evt.resource_exhaustion_24h, 0) > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "هشدار کمبود حافظه مجازی ویندوز",
+    "en": "Windows low virtual memory warning"
+  },
+  "explanation": {
+    "fa": "{evt.resource_exhaustion_24h} رخداد Resource-Exhaustion-Detector 2004 در ۲۴ ساعت گذشته.",
+    "en": "{evt.resource_exhaustion_24h} Resource-Exhaustion-Detector 2004 events in the last 24 h."
+  },
+  "recommendation": {
+    "fa": "فرایندهای پرمصرف نام‌برده در پیام، max server memory و Pagefile را بررسی کنید.",
+    "en": "Check the processes named in the message, max server memory and the pagefile."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "evt.resource_exhaustion_24h": 3
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "evt.resource_exhaustion_24h": 0
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "ARR-001",
+  "layer": "Arr",
+  "appliesTo": [
+    "Arr",
+    "App"
+  ],
+  "forEach": "farm",
+  "when": "farm.enabled && farm.enabled_servers == 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "فارم ARR ‏{instance} هیچ سرور فعالی ندارد",
+    "en": "ARR farm {instance} has no available server"
+  },
+  "explanation": {
+    "fa": "{farm.servers} سرور تعریف شده و هیچ‌کدام فعال نیست؛ درخواست‌های این فارم پاسخ نمی‌گیرند.",
+    "en": "{farm.servers} servers are defined and none is enabled; requests routed to this farm fail."
+  },
+  "recommendation": {
+    "fa": "وضعیت سرورهای فارم را در IIS Manager بررسی کنید (RSM آن را تغییر نمی‌دهد).",
+    "en": "Check the farm's servers in IIS Manager (RSM never changes them)."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — ARR / URL Rewrite after an update"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "farm[RahkaranFarm].enabled": true,
+        "farm[RahkaranFarm].enabled_servers": 0,
+        "farm[RahkaranFarm].servers": 2
+      },
+      "expect": "Critical",
+      "roles": [
+        "Arr"
+      ]
+    },
+    {
+      "facts": {
+        "farm[RahkaranFarm].enabled": true,
+        "farm[RahkaranFarm].enabled_servers": 2,
+        "farm[RahkaranFarm].servers": 2
+      },
+      "expect": null,
+      "roles": [
+        "Arr"
+      ]
+    }
+  ]
+}

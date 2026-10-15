@@ -1,0 +1,39 @@
+{
+  "id": "EVT-007",
+  "layer": "Events",
+  "appliesTo": [],
+  "when": "coalesce(evt.time_service_24h, 0) > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "خطای همگام‌سازی زمان ویندوز",
+    "en": "Windows time synchronisation errors"
+  },
+  "explanation": {
+    "fa": "{evt.time_service_24h} رخداد خطا/هشدار Time-Service در ۲۴ ساعت گذشته.",
+    "en": "{evt.time_service_24h} Time-Service errors/warnings in the last 24 h."
+  },
+  "recommendation": {
+    "fa": "منبع زمان (Domain controller / NTP) را بررسی کنید.",
+    "en": "Check the time source (domain controller / NTP)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "evt.time_service_24h": 3
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "evt.time_service_24h": 0
+      },
+      "expect": null
+    }
+  ]
+}

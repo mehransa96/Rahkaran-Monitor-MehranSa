@@ -4,15 +4,15 @@
   "appliesTo": [
     "Data"
   ],
-  "when": "os.defender_realtime && os.defender_exclusions_readable && !os.defender_excludes_sqlservr",
+  "when": "os.defender_realtime && os.defender_exclusions_readable && (!os.defender_excludes_sqlservr || !coalesce(os.defender_sql_dirs_excluded, true))",
   "severity": "Warning",
   "title": {
-    "fa": "sqlservr.exe در استثناهای آنتی‌ویروس Defender نیست",
-    "en": "sqlservr.exe is not excluded from Defender real-time scanning"
+    "fa": "فرایند یا مسیرهای SQL Server از اسکن لحظه‌ای Defender مستثنا نشده‌اند",
+    "en": "SQL Server process or folders are not excluded from Defender real-time scanning"
   },
   "explanation": {
-    "fa": "پایش لحظه‌ای Defender فعال است و فرایند SQL Server استثنا نشده است؛ اسکن فایل‌های داده و لاگ I/O را کند می‌کند. (مسیرهای استثنا: {os.defender_excluded_paths})",
-    "en": "Defender real-time protection is on and the SQL Server process is not excluded; scanning data and log files slows I/O. (Excluded paths: {os.defender_excluded_paths})"
+    "fa": "پایش لحظه‌ای Defender فعال است؛ استثنای sqlservr.exe: {os.defender_excludes_sqlservr}، پوشه‌های داده/لاگ بدون استثنا: {os.defender_unexcluded_sql_dirs}. اسکن فایل‌های داده و لاگ I/O را کند می‌کند.",
+    "en": "Defender real-time protection is on; sqlservr.exe excluded: {os.defender_excludes_sqlservr}, data/log folders not excluded: {os.defender_unexcluded_sql_dirs}. Scanning data and log files slows I/O."
   },
   "recommendation": {
     "fa": "استثناهای آنتی‌ویروس را طبق مستند ستاد فنی تنظیم کنید (فرایند sqlservr.exe و مسیر فایل‌های داده/لاگ).",
@@ -30,7 +30,7 @@
         "os.defender_realtime": true,
         "os.defender_exclusions_readable": true,
         "os.defender_excludes_sqlservr": false,
-        "os.defender_excluded_paths": []
+        "os.defender_unexcluded_sql_dirs": []
       },
       "expect": "Warning"
     },
@@ -39,19 +39,33 @@
         "os.defender_realtime": true,
         "os.defender_exclusions_readable": true,
         "os.defender_excludes_sqlservr": true,
-        "os.defender_excluded_paths": [
-          "D:\\SQLData"
+        "os.defender_sql_dirs_excluded": false,
+        "os.defender_unexcluded_sql_dirs": [
+          "E:\\SQLLog"
         ]
+      },
+      "expect": "Warning",
+      "note": "process excluded but the log folder is not"
+    },
+    {
+      "facts": {
+        "os.defender_realtime": true,
+        "os.defender_exclusions_readable": true,
+        "os.defender_excludes_sqlservr": true,
+        "os.defender_sql_dirs_excluded": true,
+        "os.defender_unexcluded_sql_dirs": []
       },
       "expect": null
     },
     {
       "facts": {
-        "os.defender_realtime": true,
-        "os.defender_exclusions_readable": false
+        "os.defender_realtime": false,
+        "os.defender_exclusions_readable": true,
+        "os.defender_excludes_sqlservr": false,
+        "os.defender_unexcluded_sql_dirs": []
       },
       "expect": null,
-      "note": "exclusions not readable: no finding (the Capability Matrix says why)"
+      "note": "real-time protection off"
     }
   ]
 }

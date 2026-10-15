@@ -1,0 +1,52 @@
+{
+  "id": "ARR-003",
+  "layer": "Arr",
+  "appliesTo": [
+    "Arr",
+    "App"
+  ],
+  "forEach": "farm",
+  "when": "coalesce(farm.distribution_deviation_pct, 0) > params.max",
+  "severity": "Warning",
+  "title": {
+    "fa": "توزیع درخواست‌های فارم {instance} با وزن‌ها همخوانی ندارد",
+    "en": "Farm {instance} request distribution does not match its weights"
+  },
+  "explanation": {
+    "fa": "بیشترین انحراف سهم یک سرور از وزن تنظیم‌شده: {farm.distribution_deviation_pct}٪ (از لاگ IIS سرورهای برنامه در ۱۵ دقیقه گذشته).",
+    "en": "Largest deviation of a server's share from its configured weight: {farm.distribution_deviation_pct} % (IIS logs of the App servers, last 15 minutes)."
+  },
+  "recommendation": {
+    "fa": "Affinity (Client affinity)، سلامت سرورها و الگوریتم Load balancing را بررسی کنید.",
+    "en": "Check client affinity, server health and the load-balancing algorithm."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max": 25
+  },
+  "examples": [
+    {
+      "facts": {
+        "farm[RahkaranFarm].distribution_deviation_pct": 60
+      },
+      "expect": "Warning",
+      "roles": [
+        "Arr"
+      ]
+    },
+    {
+      "facts": {
+        "farm[RahkaranFarm].distribution_deviation_pct": 8
+      },
+      "expect": null,
+      "roles": [
+        "Arr"
+      ]
+    }
+  ]
+}

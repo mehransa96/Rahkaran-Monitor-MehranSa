@@ -306,7 +306,8 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 Rules marked P1 above live in [`rules/`](rules/) — one JSON file per rule, named after its id, with fa/en title,
 explanation and recommendation, source, parameters and **built-in examples** (at least one that fires with the expected
 severity and one that stays quiet). `RSM.Tests.RuleCatalogTests` runs every example and checks that each rule id has a
-row in this file. Instance-scoped rules use `"forEach": "db"` / `"volume"` / `"net"` (network adapter) / `"ag"` (availability replica).
+row in this file. Instance-scoped rules use `"forEach": "db"` / `"volume"` / `"net"` (network adapter) / `"ag"` (availability replica)
+and, from Phase 3, `"site"` / `"pool"` (IIS application pool) / `"farm"` (ARR) / `"rewrite"` (URL Rewrite rule) / `"cert"` (https binding).
 
 ### Compliance baseline (Phase 1)
 
@@ -338,19 +339,50 @@ diagnosis takes a 5 s baseline for interval values (waits, counters, file latenc
 samples stay *unknown* there and are decided in the live view.
 
 Deferred, with the reason:
-- **OS-010** (unexpected shutdowns) needs the event logs → P3 with the event-log collector.
-- **OS-016** (TCP TimeWait / ephemeral ports) has no performance counter for TimeWait; needs a netstat-equivalent
-  CIM class (`MSFT_NetTCPConnection`) → P3 with the IIS/network work.
+- **OS-010** (unexpected shutdowns) needs the event logs → done in P3.
+- **OS-016** (TCP TimeWait / ephemeral ports) has no performance counter for TimeWait → done in P3 with
+  `MSFT_NetTCPConnection`.
 - **SQL-MEM-007** uses the absolute fallback (PLE < 300 s per 4 GB of buffer pool, three samples); the
   hour-of-week baseline arrives with history in P5.
 - **OS-011** checks the `sqlservr.exe` process exclusion and lists excluded paths; matching every data/log path
-  against the exclusions is left for P3 (needs the file paths from the SQL layer on the same node).
+  against the exclusions → done in P3 (site analyzer on the same node).
 - **SQL-TDB-003** counts PAGELATCH waiters on tempdb allocation pages (PFS/GAM/SGAM by page number) at the moment
   of sampling (≥ 3); it is a point-in-time signal, not a rate.
 
 Phase 1 noise removed (seen in CI run 5): `DB-IDX-001` now requires `db.is_rahkaran` (fragmentation is only
 scanned on demand in the Rahkaran DB), `DB-FILE-004` and `DB-LOG-003` skip tempdb (`db.database_id != 2`; tempdb is
 recreated at startup and has its own rules).
+
+### Phase 3 (IIS, ARR, services, events)
+
+42 rules added: §5 IIS-LOG-001, IIS-POOL-001…009, IIS-NUMA-001, IIS-Q-001, IIS-REQ-001, IIS-ERR-001…004, IIS-LAT-001,
+IIS-CERT-001, IIS-CFG-001/002; §6 ARR-001…006; §7 SVC-001…006, EVT-001…007; and the P2 deferrals OS-010, OS-016.
+OS-011 now also fires when a SQL Server data/log folder is not under a Defender path exclusion.
+
+Cross-node and cross-layer facts come from *site analyzers* that run after every node is collected (and, live, after
+`iis.config` / `iis.runtime` / `iis.logs` / `win.inventory` / `sql.storage` results): pool and web.config drift between
+App nodes (`pool.drift_keys`, `site.config_drift_keys`; secrets are masked before comparison so they never differ),
+rewrite path segments deployed on any node (`rewrite.segment_deployed`), worker starts outside the recycle schedule
+(`pool.recent_unplanned_start`), the ARR measured distribution (`farm.distribution_deviation_pct`, from the App
+nodes' IIS logs; only when every enabled farm server maps to a monitored node and ≥ 200 requests were logged) and
+the Defender folder match for OS-011.
+
+Behaviour notes (sources and thresholds as in the tables above):
+- **ARR-001 / ARR-002** are configuration-based: ARR's runtime health is exposed only through IIS configuration
+  *methods*, which RSM may not execute (spec §2), so "unavailable" means disabled or no server in the farm; unhealthy
+  servers show up in ARR-003 (distribution) and in the App nodes' own findings.
+- **ARR-005** judges only bare host names (no dot, not an IP, not `localhost`) in a rewrite target, because that is how
+  ARR names a farm; targets with a domain or IP are real servers and are not judged.
+- **IIS-LAT-001** compares each URL stem's p95 of the last 15 minutes with the median of its own earlier 15-minute p95
+  values (up to 24 h, at least three windows, ≥ 20 requests, and at least 200 ms slower) — a per-stem baseline that
+  needs the live view; a one-shot diagnosis leaves it quiet.
+- **IIS-ERR-001** needs ≥ 50 requests in the 15-minute window. **IIS-Q-001** escalates to critical when HTTP.sys is
+  rejecting requests. **IIS-POOL-001** reads the pool state from IIS (local, elevated) or from the WAS counters (remote).
+- **EVT-005** (Schannel) fires from 10 events per 24 h: single TLS alerts from scanners and old clients are normal.
+- **SVC-001** ignores Windows Update (trigger-started) and the attendance service, which has its own rule (SVC-005,
+  unverified pattern).
+- **OS-016** counts `MSFT_NetTCPConnection` rows in TimeWait against `MSFT_NetTCPSetting.DynamicPortRangeNumberOfPorts`
+  every minute; older systems without the NetTCPIP provider leave it *unknown*.
 
 ## Rule hygiene
 

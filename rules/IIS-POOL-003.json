@@ -1,0 +1,51 @@
+{
+  "id": "IIS-POOL-003",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "forEach": "pool",
+  "when": "coalesce(pool.recent_unplanned_start, false)",
+  "severity": "Info",
+  "title": {
+    "fa": "Worker process ‏{instance} کمتر از یک ساعت پیش شروع شده است",
+    "en": "Worker process of {instance} started less than an hour ago"
+  },
+  "explanation": {
+    "fa": "فرایند w3wp این Pool در {pool.wp_youngest_age_s} ثانیه پیش شروع شده و با زمان‌بندی Recycle ({pool.restart_schedule}) منطبق نیست؛ ممکن است Crash یا Recycle ناخواسته باشد.",
+    "en": "The pool's w3wp started {pool.wp_youngest_age_s} s ago, outside its recycle schedule ({pool.restart_schedule}); it may have crashed or recycled unexpectedly."
+  },
+  "recommendation": {
+    "fa": "رخدادهای WAS و Application Error همان زمان را بررسی کنید.",
+    "en": "Check WAS and Application Error events around that time."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "pool[AuxPool1].recent_unplanned_start": true,
+        "pool[AuxPool1].wp_youngest_age_s": 600,
+        "pool[AuxPool1].restart_schedule": ""
+      },
+      "expect": "Info",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "pool[AuxPool1].recent_unplanned_start": false
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

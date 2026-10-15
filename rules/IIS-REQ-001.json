@@ -1,0 +1,52 @@
+{
+  "id": "IIS-REQ-001",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "when": "iis.requests.over30s > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "{iis.requests.over30s} درخواست بیش از ۳۰ ثانیه در حال اجراست",
+    "en": "{iis.requests.over30s} requests have been running for over 30 s"
+  },
+  "explanation": {
+    "fa": "طولانی‌ترین درخواست: {iis.requests.slowest_url} ({iis.requests.max_elapsed_s} ثانیه).",
+    "en": "Longest request: {iis.requests.slowest_url} ({iis.requests.max_elapsed_s} s)."
+  },
+  "recommendation": {
+    "fa": "Blocking و کوئری‌های در حال اجرا در SQL را در همین لحظه ببینید (صفحه Queries & Blocking).",
+    "en": "Look at SQL blocking and running queries right now (Queries & Blocking page)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "iis.requests.over30s": 2,
+        "iis.requests.slowest_url": "/api/voucher",
+        "iis.requests.max_elapsed_s": 42
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "iis.requests.over30s": 0,
+        "iis.requests.slowest_url": "",
+        "iis.requests.max_elapsed_s": 3
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

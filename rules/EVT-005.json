@@ -1,0 +1,42 @@
+{
+  "id": "EVT-005",
+  "layer": "Events",
+  "appliesTo": [],
+  "when": "coalesce(evt.schannel_24h, 0) >= params.min",
+  "severity": "Info",
+  "title": {
+    "fa": "خطاهای TLS (Schannel)",
+    "en": "TLS errors (Schannel)"
+  },
+  "explanation": {
+    "fa": "{evt.schannel_24h} رخداد Schannel 36887/36874 در ۲۴ ساعت گذشته.",
+    "en": "{evt.schannel_24h} Schannel 36887/36874 events in the last 24 h."
+  },
+  "recommendation": {
+    "fa": "فقط اگر کاربران خطای اتصال دارند، نسخه‌های TLS و Cipherها را بررسی کنید.",
+    "en": "Only if users see connection errors, check TLS versions and ciphers."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "min": 10
+  },
+  "examples": [
+    {
+      "facts": {
+        "evt.schannel_24h": 12
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "evt.schannel_24h": 0
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": "IIS-ERR-003",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "when": "coalesce(iis.ancm_errors_15m, 0) > 0 || coalesce(evt.ancm_errors_24h, 0) > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "خطای ASP.NET Core Module (ANCM)",
+    "en": "ASP.NET Core Module (ANCM) failures"
+  },
+  "explanation": {
+    "fa": "پاسخ‌های 502.3/502.5/500.30–500.37 در ۱۵ دقیقه: {iis.ancm_errors_15m}؛ رخدادهای ANCM در ۲۴ ساعت: {evt.ancm_errors_24h}. برنامه اجرا نشده یا پاسخ نمی‌دهد.",
+    "en": "502.3/502.5/500.30–500.37 responses in 15 minutes: {iis.ancm_errors_15m}; ANCM events in 24 h: {evt.ancm_errors_24h}. The app failed to start or stopped responding."
+  },
+  "recommendation": {
+    "fa": "لاگ stdout برنامه، نسخه Hosting Bundle و processPath را در web.config بررسی کنید.",
+    "en": "Check the app's stdout log, the Hosting Bundle version and processPath in web.config."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "iis.ancm_errors_15m": 3,
+        "evt.ancm_errors_24h": 0
+      },
+      "expect": "Critical",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "iis.ancm_errors_15m": 0,
+        "evt.ancm_errors_24h": 1
+      },
+      "expect": "Critical",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "iis.ancm_errors_15m": 0,
+        "evt.ancm_errors_24h": 0
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

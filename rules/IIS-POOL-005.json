@@ -1,0 +1,50 @@
+{
+  "id": "IIS-POOL-005",
+  "layer": "Iis",
+  "appliesTo": [
+    "App"
+  ],
+  "forEach": "pool",
+  "when": "coalesce(pool.drift_keys, '') != ''",
+  "severity": "Warning",
+  "title": {
+    "fa": "تنظیمات Pool ‏{instance} بین سرورهای برنامه یکسان نیست",
+    "en": "Pool {instance} settings differ between the App servers"
+  },
+  "explanation": {
+    "fa": "تنظیمات متفاوت در {pool.drift_nodes} سرور: {pool.drift_keys}.",
+    "en": "Settings that differ across {pool.drift_nodes} servers: {pool.drift_keys}."
+  },
+  "recommendation": {
+    "fa": "تنظیمات Poolها را در همه سرورهای فارم یکسان کنید (با هماهنگی ستاد فنی).",
+    "en": "Align the pool settings on every farm server (coordinated with ستاد فنی)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "pool[AuxPool1].drift_keys": "identityType, restartSchedule",
+        "pool[AuxPool1].drift_nodes": 2
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "pool[AuxPool1].drift_keys": "",
+        "pool[AuxPool1].drift_nodes": 2
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": "EVT-006",
+  "layer": "Events",
+  "appliesTo": [],
+  "when": "coalesce(evt.low_disk_24h, 0) > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "هشدار پر شدن دیسک (srv 2013)",
+    "en": "Disk near capacity (srv 2013)"
+  },
+  "explanation": {
+    "fa": "{evt.low_disk_24h} رخداد srv 2013 در ۲۴ ساعت گذشته.",
+    "en": "{evt.low_disk_24h} srv 2013 events in the last 24 h."
+  },
+  "recommendation": {
+    "fa": "فضای آزاد درایوها را در صفحه Storage بررسی کنید.",
+    "en": "Check free space on the Storage page."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "evt.low_disk_24h": 3
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "evt.low_disk_24h": 0
+      },
+      "expect": null
+    }
+  ]
+}

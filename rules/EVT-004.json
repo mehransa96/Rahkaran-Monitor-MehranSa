@@ -1,0 +1,39 @@
+{
+  "id": "EVT-004",
+  "layer": "Events",
+  "appliesTo": [],
+  "when": "coalesce(evt.aspnet_1309_24h, 0) > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "Exception مدیریت‌نشده ASP.NET (1309)",
+    "en": "Unhandled ASP.NET exceptions (1309)"
+  },
+  "explanation": {
+    "fa": "{evt.aspnet_1309_24h} رخداد ASP.NET 1309 در ۲۴ ساعت گذشته.",
+    "en": "{evt.aspnet_1309_24h} ASP.NET 1309 events in the last 24 h."
+  },
+  "recommendation": {
+    "fa": "آدرس‌ها و نوع خطا را در صفحه رخدادها ببینید.",
+    "en": "See URLs and exception types on the Events page."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "evt.aspnet_1309_24h": 3
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "evt.aspnet_1309_24h": 0
+      },
+      "expect": null
+    }
+  ]
+}

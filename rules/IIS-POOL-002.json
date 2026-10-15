@@ -1,0 +1,50 @@
+{
+  "id": "IIS-POOL-002",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "when": "coalesce(evt.was_failures_24h, 0) > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "Crash یا غیرفعال شدن Application Pool در ۲۴ ساعت گذشته",
+    "en": "Application pool crashes or rapid-fail in the last 24 h"
+  },
+  "explanation": {
+    "fa": "{evt.was_failures_24h} رخداد WAS (5002/5009/5010/5011/5013) ثبت شده است؛ {evt.was_rapid_fail_24h} مورد غیرفعال‌سازی Rapid-fail.",
+    "en": "{evt.was_failures_24h} WAS events (5002/5009/5010/5011/5013) were logged; {evt.was_rapid_fail_24h} rapid-fail shutdowns."
+  },
+  "recommendation": {
+    "fa": "جزئیات را در صفحه رخدادها ببینید و با Application Error 1000 / .NET Runtime 1026 در همان زمان مقایسه کنید.",
+    "en": "See the Events page and correlate with Application Error 1000 / .NET Runtime 1026 at the same time."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — GC wait / worker process crashes"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "evt.was_failures_24h": 3,
+        "evt.was_rapid_fail_24h": 1
+      },
+      "expect": "Critical",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "evt.was_failures_24h": 0,
+        "evt.was_rapid_fail_24h": 0
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

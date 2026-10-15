@@ -1,0 +1,50 @@
+{
+  "id": "IIS-CFG-001",
+  "layer": "Iis",
+  "appliesTo": [
+    "App"
+  ],
+  "forEach": "site",
+  "when": "coalesce(site.config_drift_keys, '') != ''",
+  "severity": "Warning",
+  "title": {
+    "fa": "web.config سایت {instance} بین سرورهای برنامه یکسان نیست",
+    "en": "web.config of site {instance} differs between the App servers"
+  },
+  "explanation": {
+    "fa": "تفاوت در {site.config_drift_nodes} سرور: {site.config_drift_keys} (مقادیر محرمانه مقایسه نمی‌شوند).",
+    "en": "Differences across {site.config_drift_nodes} servers: {site.config_drift_keys} (secret values are not compared)."
+  },
+  "recommendation": {
+    "fa": "پس از به‌روزرسانی، web.config همه سرورها را یکسان کنید.",
+    "en": "After an update, make web.config the same on every server."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "site[AuxWebsite1].config_drift_keys": "hostingModel",
+        "site[AuxWebsite1].config_drift_nodes": 2
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "site[AuxWebsite1].config_drift_keys": "",
+        "site[AuxWebsite1].config_drift_nodes": 2
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

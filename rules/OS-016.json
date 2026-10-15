@@ -1,0 +1,46 @@
+{
+  "id": "OS-016",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "win.tcp.timewait_pct > params.max",
+  "severity": "Warning",
+  "title": {
+    "fa": "اتصال‌های TIME_WAIT ‏{win.tcp.timewait_pct}٪ پورت‌های موقت را گرفته‌اند",
+    "en": "TIME_WAIT connections hold {win.tcp.timewait_pct} % of the ephemeral ports"
+  },
+  "explanation": {
+    "fa": "{win.tcp.timewait} اتصال در حالت TIME_WAIT از {win.tcp.dynamic_ports} پورت دینامیک؛ با تمام شدن پورت‌ها اتصال جدید (مثلاً به SQL یا Redis) برقرار نمی‌شود.",
+    "en": "{win.tcp.timewait} connections in TIME_WAIT out of {win.tcp.dynamic_ports} dynamic ports; when ports run out, new connections (e.g. to SQL or Redis) fail."
+  },
+  "recommendation": {
+    "fa": "Connection pooling برنامه و تعداد اتصال‌های کوتاه‌مدت را بررسی کنید.",
+    "en": "Check the application's connection pooling and short-lived connections."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max": 50
+  },
+  "examples": [
+    {
+      "facts": {
+        "win.tcp.timewait_pct": 72,
+        "win.tcp.timewait": 11800,
+        "win.tcp.dynamic_ports": 16384
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "win.tcp.timewait_pct": 3,
+        "win.tcp.timewait": 500,
+        "win.tcp.dynamic_ports": 16384
+      },
+      "expect": null
+    }
+  ]
+}

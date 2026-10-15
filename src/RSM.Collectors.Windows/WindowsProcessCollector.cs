@@ -12,6 +12,9 @@ public sealed class ProcessState
     public double? LogicalCpus { get; internal set; }
 
     public List<(DateTimeOffset At, double Value)> W3wpPrivateMb { get; } = [];
+
+    /// <summary>Size of the TCP dynamic (ephemeral) port range; read once.</summary>
+    public double? DynamicPorts { get; internal set; }
 }
 
 /// <summary>
@@ -53,6 +56,30 @@ public sealed class WindowsProcessCollector : WindowsCollectorBase<ProcessState>
         if (rows is not null)
         {
             Apply(state, rows, Clock.GetUtcNow(), output);
+        }
+
+        // OS-016: TIME_WAIT connections vs the ephemeral port range (no counter exists for TIME_WAIT). Older systems
+        // without the NetTCPIP provider simply leave the facts unknown.
+        state.DynamicPorts ??= (await TryQueryAsync(transport.Cim, TcpSettings, [], cancellationToken).ConfigureAwait(false))?
+            .Select(r => r.Number("DynamicPortRangeNumberOfPorts")).Where(v => v is > 0).Max();
+        if (await TryQueryAsync(transport.Cim, TimeWait, [], cancellationToken).ConfigureAwait(false) is { } timeWait)
+        {
+            ApplyTcp(timeWait.Count, state.DynamicPorts, output);
+        }
+    }
+
+    private static readonly CimQuery TcpSettings = new("MSFT_NetTCPSetting", ["SettingName", "DynamicPortRangeNumberOfPorts"], null, @"root\StandardCimv2");
+
+    /// <summary>MSFT_NetTCPConnection.State 11 = TimeWait.</summary>
+    private static readonly CimQuery TimeWait = new("MSFT_NetTCPConnection", ["State"], "State = 11", @"root\StandardCimv2");
+
+    internal static void ApplyTcp(int timeWait, double? dynamicPorts, LiveOutput output)
+    {
+        output.Fact("win.tcp.timewait", timeWait);
+        output.Fact("win.tcp.dynamic_ports", dynamicPorts);
+        if (dynamicPorts is > 0)
+        {
+            output.Fact("win.tcp.timewait_pct", 100.0 * timeWait / dynamicPorts.Value);
         }
     }
 

@@ -1,0 +1,58 @@
+{
+  "id": "IIS-NUMA-001",
+  "layer": "Iis",
+  "appliesTo": [
+    "App"
+  ],
+  "when": "iis.aux_site_count > 0 && exists(os.numa_nodes) && os.numa_nodes > 1 && iis.aux_site_count != os.numa_nodes",
+  "severity": "Info",
+  "title": {
+    "fa": "تعداد سایت‌های AuxWebsite ({iis.aux_site_count}) با تعداد NUMA nodeها ({os.numa_nodes}) برابر نیست",
+    "en": "AuxWebsite count ({iis.aux_site_count}) differs from the NUMA node count ({os.numa_nodes})"
+  },
+  "explanation": {
+    "fa": "در چیدمان «یک سایت برای هر NUMA node» تعداد سایت‌های Aux باید با تعداد NUMA nodeها برابر باشد. (الگوی نام سایت قابل تنظیم و تأییدنشده است.)",
+    "en": "With the \"one site per NUMA node\" layout, the number of Aux sites should equal the NUMA node count. (The site name pattern is a setting and unverified.)"
+  },
+  "recommendation": {
+    "fa": "چیدمان سایت‌ها و NUMA را با ستاد فنی بررسی کنید.",
+    "en": "Review the site/NUMA layout with ستاد فنی."
+  },
+  "source": {
+    "kind": "Architecture",
+    "citation": "Rahkaran architecture (spec §3)"
+  },
+  "verified": false,
+  "confidence": 0.6,
+  "examples": [
+    {
+      "facts": {
+        "iis.aux_site_count": 2,
+        "os.numa_nodes": 4
+      },
+      "expect": "Info",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "iis.aux_site_count": 4,
+        "os.numa_nodes": 4
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "iis.aux_site_count": 0
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

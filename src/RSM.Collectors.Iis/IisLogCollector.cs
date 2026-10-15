@@ -372,6 +372,12 @@ public sealed class IisLogCollector : IisCollectorBase<IisLogState>
             output.Fact("iis.httperr.top_server_side", string.Join(", ", reasons.Where(r => HttpErrAnalyzer.IsServerSide(r.Reason)).Take(3).Select(r => $"{r.Reason} ×{r.Count}")));
         }
 
+        if (sites.Any(s => s.Summary is not null))
+        {
+            output.Fact("iis.ancm_errors_15m", sites.Where(s => s.Summary is not null).Sum(s => s.Summary!.Statuses.Where(c => IsAncmStatus(c.Status)).Sum(c => c.Count)));
+            output.Fact("iis.requests_15m", sites.Where(s => s.Summary is not null).Sum(s => s.Summary!.Requests));
+        }
+
         foreach (var site in sites)
         {
             var key = $"site[{IisConfigCollector.Instance(site.Site)}]";

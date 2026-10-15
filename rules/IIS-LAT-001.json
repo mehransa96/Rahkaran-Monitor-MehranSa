@@ -1,0 +1,51 @@
+{
+  "id": "IIS-LAT-001",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "forEach": "site",
+  "when": "coalesce(site.lat_regressed_stems, 0) > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "زمان پاسخ برخی صفحات سایت {instance} بیش از ۱٫۵ برابر عادی است",
+    "en": "Some pages of site {instance} are 1.5× slower than usual"
+  },
+  "explanation": {
+    "fa": "{site.lat_regressed_stems} آدرس با p95 بیش از ۱٫۵ برابر پایه خودش (میانه ۲۴ ساعت اخیر): {site.lat_regressed_top}.",
+    "en": "{site.lat_regressed_stems} URLs with p95 above 1.5× their own baseline (median of the last 24 h): {site.lat_regressed_top}."
+  },
+  "recommendation": {
+    "fa": "درخواست‌های زنده و کوئری‌های سنگین همان بازه را بررسی کنید.",
+    "en": "Check live requests and heavy queries in the same window."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "site[AuxWebsite1].lat_regressed_stems": 1,
+        "site[AuxWebsite1].lat_regressed_top": "/api/voucher p95 900 ms (baseline 210 ms)"
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "site[AuxWebsite1].lat_regressed_stems": 0,
+        "site[AuxWebsite1].lat_regressed_top": ""
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "id": "SVC-001",
+  "layer": "Services",
+  "appliesTo": [],
+  "when": "svc.auto_stopped_count > 0",
+  "severity": "Critical",
+  "title": {
+    "fa": "سرویس(های) خودکار متوقف: {svc.auto_stopped_names}",
+    "en": "Automatic service(s) stopped: {svc.auto_stopped_names}"
+  },
+  "explanation": {
+    "fa": "{svc.auto_stopped_count} سرویس پایش‌شده با نوع راه‌اندازی Automatic در حال اجرا نیست.",
+    "en": "{svc.auto_stopped_count} watched services with startup type Automatic are not running."
+  },
+  "recommendation": {
+    "fa": "علت توقف را در رخدادهای SCM (7031/7034/7000) ببینید؛ RSM هیچ سرویسی را اجرا یا متوقف نمی‌کند.",
+    "en": "Find the reason in SCM events (7031/7034/7000); RSM never starts or stops services."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "svc.auto_stopped_count": 1,
+        "svc.auto_stopped_names": "SQLSERVERAGENT"
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "svc.auto_stopped_count": 0,
+        "svc.auto_stopped_names": ""
+      },
+      "expect": null
+    }
+  ]
+}

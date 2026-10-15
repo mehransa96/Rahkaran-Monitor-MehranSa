@@ -1,0 +1,67 @@
+{
+  "id": "IIS-Q-001",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "forEach": "pool",
+  "when": "coalesce(pool.queue_size_min30, 0) > 0 || coalesce(pool.rejected_increasing, false)",
+  "severity": "Warning",
+  "escalate": [
+    {
+      "when": "coalesce(pool.rejected_increasing, false)",
+      "severity": "Critical"
+    }
+  ],
+  "title": {
+    "fa": "صف درخواست HTTP.sys برای Pool ‏{instance} پر می‌شود",
+    "en": "HTTP.sys request queue of pool {instance} is backing up"
+  },
+  "explanation": {
+    "fa": "حداقل طول صف در ۳۰ ثانیه گذشته: {pool.queue_size_min30}؛ درخواست‌های ردشده در حال افزایش: {pool.rejected_increasing}. برنامه کندتر از رسیدن درخواست‌ها پاسخ می‌دهد.",
+    "en": "Minimum queue length over the last 30 s: {pool.queue_size_min30}; rejected requests increasing: {pool.rejected_increasing}. The application answers slower than requests arrive."
+  },
+  "recommendation": {
+    "fa": "درخواست‌های زنده (صفحه IIS)، CPU و Blocking در SQL را در همین بازه بررسی کنید.",
+    "en": "Check live requests (IIS page), CPU and SQL blocking in the same window."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "pool[AuxPool1].queue_size_min30": 12,
+        "pool[AuxPool1].rejected_increasing": false
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "pool[AuxPool1].queue_size_min30": 40,
+        "pool[AuxPool1].rejected_increasing": true
+      },
+      "expect": "Critical",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "pool[AuxPool1].queue_size_min30": 0,
+        "pool[AuxPool1].rejected_increasing": false
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

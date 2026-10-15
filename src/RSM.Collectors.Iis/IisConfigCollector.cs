@@ -189,6 +189,9 @@ public sealed class IisConfigCollector : IisCollectorBase<NoIisState>
             output.Fact($"{key}.enabled_servers", farm.Servers.Count(s => s.Enabled));
             output.Fact($"{key}.health_url_set", !string.IsNullOrWhiteSpace(farm.HealthCheckUrl));
             output.Fact($"{key}.load_balancing", farm.LoadBalancing);
+            // "address=weight|…" of the enabled servers, for the measured-distribution check across nodes (ARR-003).
+            output.Fact($"{key}.weights", string.Join("|", farm.Servers.Where(s => s.Enabled)
+                .Select(s => $"{s.Address}={s.Weight.ToString(CultureInfo.InvariantCulture)}")));
         }
 
         var farmNames = config.WebFarms.Select(f => f.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);

@@ -1,0 +1,49 @@
+{
+  "id": "SVC-004",
+  "layer": "Services",
+  "appliesTo": [
+    "Workflow"
+  ],
+  "when": "!svc.rabbitmq_running",
+  "severity": "Critical",
+  "title": {
+    "fa": "RabbitMQ روی سرور گردش کار اجرا نمی‌شود",
+    "en": "RabbitMQ is not running on the workflow server"
+  },
+  "explanation": {
+    "fa": "نقش Workflow تنظیم شده ولی سرویس RabbitMQ در حال اجرا نیست (نصب: {svc.rabbitmq_present}).",
+    "en": "The Workflow role is set but the RabbitMQ service is not running (installed: {svc.rabbitmq_present})."
+  },
+  "recommendation": {
+    "fa": "سرویس RabbitMQ و فرایند epmd را بررسی کنید.",
+    "en": "Check the RabbitMQ service and the epmd process."
+  },
+  "source": {
+    "kind": "Architecture",
+    "citation": "Rahkaran architecture (spec §3)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "svc.rabbitmq_running": false,
+        "svc.rabbitmq_present": true
+      },
+      "expect": "Critical",
+      "roles": [
+        "Workflow"
+      ]
+    },
+    {
+      "facts": {
+        "svc.rabbitmq_running": true,
+        "svc.rabbitmq_present": true
+      },
+      "expect": null,
+      "roles": [
+        "Workflow"
+      ]
+    }
+  ]
+}

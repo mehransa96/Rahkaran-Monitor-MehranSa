@@ -1,0 +1,65 @@
+{
+  "id": "IIS-LOG-001",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "forEach": "site",
+  "when": "site.is_rahkaran && site.log_enabled && site.log_w3c && !site.logs_time_taken",
+  "severity": "Warning",
+  "title": {
+    "fa": "لاگ IIS سایت {instance} فیلد time-taken را ثبت نمی‌کند",
+    "en": "IIS log of site {instance} does not record time-taken"
+  },
+  "explanation": {
+    "fa": "بدون time-taken زمان پاسخ صفحات (p95/p99) از روی لاگ قابل محاسبه نیست.",
+    "en": "Without time-taken, page latency (p95/p99) cannot be computed from the logs."
+  },
+  "recommendation": {
+    "fa": "فیلد time-taken را در تنظیمات Logging سایت فعال کنید (RSM آن را تغییر نمی‌دهد).",
+    "en": "Enable the time-taken field in the site's logging settings (RSM never changes it)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "site[AuxWebsite1].is_rahkaran": true,
+        "site[AuxWebsite1].log_enabled": true,
+        "site[AuxWebsite1].log_w3c": true,
+        "site[AuxWebsite1].logs_time_taken": false
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "site[AuxWebsite1].is_rahkaran": true,
+        "site[AuxWebsite1].log_enabled": true,
+        "site[AuxWebsite1].log_w3c": true,
+        "site[AuxWebsite1].logs_time_taken": true
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "site[Default Web Site].is_rahkaran": false
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ],
+      "note": "not a Rahkaran site"
+    }
+  ]
+}

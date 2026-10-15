@@ -1,0 +1,39 @@
+{
+  "id": "EVT-003",
+  "layer": "Events",
+  "appliesTo": [],
+  "when": "coalesce(evt.web_worker_wer_24h, 0) > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "گزارش خطای ویندوز برای w3wp",
+    "en": "Windows Error Reporting for w3wp"
+  },
+  "explanation": {
+    "fa": "{evt.web_worker_wer_24h} گزارش WER 1001 برای w3wp/dotnet در ۲۴ ساعت گذشته (Crash یا Hang).",
+    "en": "{evt.web_worker_wer_24h} WER 1001 reports for w3wp/dotnet in the last 24 h (crash or hang)."
+  },
+  "recommendation": {
+    "fa": "با WAS 5009/5010 در همان زمان مقایسه کنید.",
+    "en": "Correlate with WAS 5009/5010 at the same time."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — GC wait / worker process crashes"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "evt.web_worker_wer_24h": 3
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "evt.web_worker_wer_24h": 0
+      },
+      "expect": null
+    }
+  ]
+}

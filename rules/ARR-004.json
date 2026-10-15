@@ -1,0 +1,51 @@
+{
+  "id": "ARR-004",
+  "layer": "Arr",
+  "appliesTo": [
+    "Arr",
+    "App"
+  ],
+  "forEach": "rewrite",
+  "when": "!coalesce(rewrite.segment_deployed, true)",
+  "severity": "Critical",
+  "title": {
+    "fa": "قانون Rewrite ‏{instance} به مسیری اشاره می‌کند که روی هیچ سروری نیست ({rewrite.target_segment})",
+    "en": "Rewrite rule {instance} points to a path no server deploys ({rewrite.target_segment})"
+  },
+  "explanation": {
+    "fa": "بخش مسیر «{rewrite.target_segment}» در هیچ Application روی سرورهای پایش‌شده نیست؛ پس از به‌روزرسانی، نام مسیر برنامه تغییر می‌کند و قانون باید به‌روز شود.",
+    "en": "Path segment \"{rewrite.target_segment}\" matches no application on the monitored servers; after an update the application path changes and the rule must follow."
+  },
+  "recommendation": {
+    "fa": "قانون URL Rewrite را با مسیر جدید برنامه هماهنگ کنید (طبق مقاله پشتیبانی ARR).",
+    "en": "Update the URL Rewrite rule to the new application path (per the ARR KB article)."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — ARR / URL Rewrite after an update"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "rewrite[global/ToApp].segment_deployed": false,
+        "rewrite[global/ToApp].target_segment": "Rahkaran72"
+      },
+      "expect": "Critical",
+      "roles": [
+        "Arr"
+      ]
+    },
+    {
+      "facts": {
+        "rewrite[global/ToApp].segment_deployed": true,
+        "rewrite[global/ToApp].target_segment": "Rahkaran73"
+      },
+      "expect": null,
+      "roles": [
+        "Arr"
+      ]
+    }
+  ]
+}

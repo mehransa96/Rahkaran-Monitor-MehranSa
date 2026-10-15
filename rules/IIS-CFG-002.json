@@ -1,0 +1,51 @@
+{
+  "id": "IIS-CFG-002",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "forEach": "site",
+  "when": "coalesce(site.stdout_log_enabled, false)",
+  "severity": "Info",
+  "title": {
+    "fa": "لاگ stdout در سایت {instance} روشن مانده است",
+    "en": "stdout logging is left on for site {instance}"
+  },
+  "explanation": {
+    "fa": "stdoutLogEnabled برای عیب‌یابی است و فایل‌های لاگ بدون حذف خودکار رشد می‌کنند (خطاهای اخیر: {site.stdout_error_lines}).",
+    "en": "stdoutLogEnabled is meant for troubleshooting; its files grow without cleanup (recent error lines: {site.stdout_error_lines})."
+  },
+  "recommendation": {
+    "fa": "پس از پایان عیب‌یابی، آن را خاموش کنید (با هماهنگی).",
+    "en": "Turn it off once troubleshooting is done (coordinated)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "site[AuxWebsite1].stdout_log_enabled": true,
+        "site[AuxWebsite1].stdout_error_lines": 3
+      },
+      "expect": "Info",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "site[AuxWebsite1].stdout_log_enabled": false,
+        "site[AuxWebsite1].stdout_error_lines": 0
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

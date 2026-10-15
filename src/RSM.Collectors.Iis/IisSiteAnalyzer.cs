@@ -18,7 +18,10 @@ public sealed class IisSiteAnalyzer : ISiteAnalyzer
 
     public string Id => "iis.site";
 
-    public IReadOnlySet<string> InputCollectors { get; } = new HashSet<string>(StringComparer.Ordinal) { "iis.config", "iis.runtime" };
+    public IReadOnlySet<string> InputCollectors { get; } = new HashSet<string>(StringComparer.Ordinal) { "iis.config", "iis.runtime", "iis.logs" };
+
+    /// <summary>Below this many requests in the window the measured distribution is not judged.</summary>
+    public const long MinRequestsForDistribution = 200;
 
     public TimeProvider Clock { get; init; } = TimeProvider.System;
 
@@ -53,7 +56,52 @@ public sealed class IisSiteAnalyzer : ISiteAnalyzer
             }
         }
 
+        Distribution(site, factsByNode, result);
         return result.ToDictionary(p => p.Key, p => (IReadOnlyList<Fact>)p.Value, StringComparer.Ordinal);
+    }
+
+    /// <summary>
+    /// ARR-003: requests each farm server's node logged in the last window (IIS logs of the App nodes) against the
+    /// farm's configured weights. Judged only when every enabled server maps to a monitored node by host or name.
+    /// </summary>
+    private static void Distribution(SiteProfile site, IReadOnlyDictionary<string, IReadOnlyDictionary<string, object?>> factsByNode, Dictionary<string, List<Fact>> result)
+    {
+        foreach (var (node, facts) in factsByNode)
+        {
+            foreach (var (key, value) in facts)
+            {
+                if (!key.StartsWith("farm[", StringComparison.Ordinal) || !key.EndsWith("].weights", StringComparison.Ordinal) || value is not string weights || weights.Length == 0)
+                {
+                    continue;
+                }
+
+                var servers = weights.Split('|').Select(w => w.Split('=')).Where(p => p.Length == 2)
+                    .Select(p => (Address: p[0], Weight: double.TryParse(p[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var v) ? v : 0)).ToList();
+                var measured = new List<(double Weight, long Requests)>();
+                foreach (var (address, weight) in servers)
+                {
+                    var target = site.Nodes.FirstOrDefault(n => string.Equals(n.Host, address, StringComparison.OrdinalIgnoreCase) || string.Equals(n.Name, address, StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(n.Host.Split('.')[0], address.Split('.')[0], StringComparison.OrdinalIgnoreCase));
+                    if (target is null || !factsByNode.TryGetValue(target.Id, out var targetFacts) || targetFacts.GetValueOrDefault("iis.requests_15m") is not { } r)
+                    {
+                        measured.Clear();
+                        break;
+                    }
+
+                    measured.Add((weight, Convert.ToInt64(r, CultureInfo.InvariantCulture)));
+                }
+
+                var total = measured.Sum(m => m.Requests);
+                var totalWeight = measured.Sum(m => m.Weight);
+                if (measured.Count < 2 || total < MinRequestsForDistribution || totalWeight <= 0)
+                {
+                    continue;
+                }
+
+                var deviation = measured.Max(m => Math.Abs((double)m.Requests / total - m.Weight / totalWeight) / (m.Weight / totalWeight) * 100);
+                result[node].Add(new Fact(key[..^".weights".Length] + ".distribution_deviation_pct", Math.Round(deviation, 1)));
+            }
+        }
     }
 
     /// <summary>

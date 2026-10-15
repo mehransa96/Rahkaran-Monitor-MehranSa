@@ -57,6 +57,9 @@ public sealed class SqlStorageCollector(SafeSqlExecutor executor) : SqlCollector
 
         if (volumes is not null)
         {
+            // Folders of every data/log file (OS-011 compares them with the antivirus exclusions on the same node).
+            Add(facts, "sql.file_dirs", volumes.Select(v => v.PhysicalName is { } p && p.LastIndexOf('\\') > 0 ? p[..p.LastIndexOf('\\')] : null)
+                .OfType<string>().Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.OrdinalIgnoreCase).Cast<object?>().ToList());
             foreach (var volume in volumes.GroupBy(v => v.VolumeMountPoint ?? "?"))
             {
                 var v = volume.First();

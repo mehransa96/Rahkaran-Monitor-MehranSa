@@ -1,0 +1,63 @@
+{
+  "id": "IIS-POOL-001",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "forEach": "pool",
+  "when": "coalesce(pool.serves_rahkaran, false) && exists(pool.running) && !pool.running",
+  "severity": "Critical",
+  "title": {
+    "fa": "Application Pool راهکاران ({instance}) متوقف است",
+    "en": "Rahkaran application pool {instance} is stopped"
+  },
+  "explanation": {
+    "fa": "Pool سایت راهکاران در حال اجرا نیست (وضعیت: {pool.state}). کاربران خطای 503 دریافت می‌کنند.",
+    "en": "The pool of a Rahkaran site is not running (state: {pool.state}). Users get HTTP 503."
+  },
+  "recommendation": {
+    "fa": "علت توقف را در رخدادهای WAS (5002/5009) و Application Error ببینید؛ راه‌اندازی مجدد با مسئول سرور است (RSM کنترلی ندارد).",
+    "en": "Find why in WAS events (5002/5009) and Application Error; restarting is the server owner's call (RSM has no control)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "pool[AuxPool1].serves_rahkaran": true,
+        "pool[AuxPool1].running": false,
+        "pool[AuxPool1].state": "Stopped"
+      },
+      "expect": "Critical",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "pool[AuxPool1].serves_rahkaran": true,
+        "pool[AuxPool1].running": true,
+        "pool[AuxPool1].state": "Started"
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "pool[AuxPool1].queue_size": 0
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ],
+      "note": "pool known only from counters: state unknown"
+    }
+  ]
+}

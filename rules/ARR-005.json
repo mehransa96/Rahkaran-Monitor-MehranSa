@@ -1,0 +1,51 @@
+{
+  "id": "ARR-005",
+  "layer": "Arr",
+  "appliesTo": [
+    "Arr",
+    "App"
+  ],
+  "forEach": "rewrite",
+  "when": "coalesce(rewrite.target_unknown_farm, false)",
+  "severity": "Critical",
+  "title": {
+    "fa": "قانون Rewrite ‏{instance} به فارمی ارجاع می‌دهد که وجود ندارد ({rewrite.target_host})",
+    "en": "Rewrite rule {instance} routes to a farm that does not exist ({rewrite.target_host})"
+  },
+  "explanation": {
+    "fa": "مقصد «{rewrite.target_host}» نه فارم تعریف‌شده است و نه سرور یک فارم.",
+    "en": "Target \"{rewrite.target_host}\" is neither a defined farm nor a farm server."
+  },
+  "recommendation": {
+    "fa": "نام فارم در قانون Rewrite را اصلاح کنید.",
+    "en": "Correct the farm name in the rewrite rule."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — ARR / URL Rewrite after an update"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "rewrite[global/ToFarm].target_unknown_farm": true,
+        "rewrite[global/ToFarm].target_host": "OldFarm"
+      },
+      "expect": "Critical",
+      "roles": [
+        "Arr"
+      ]
+    },
+    {
+      "facts": {
+        "rewrite[global/ToFarm].target_unknown_farm": false,
+        "rewrite[global/ToFarm].target_host": "RahkaranFarm"
+      },
+      "expect": null,
+      "roles": [
+        "Arr"
+      ]
+    }
+  ]
+}

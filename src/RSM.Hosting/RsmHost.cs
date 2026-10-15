@@ -84,6 +84,7 @@ public static class RsmHost
         services.AddSingleton<ICollector, IisRuntimeCollector>();
         services.AddSingleton<ICollector, IisLogCollector>();
         services.AddSingleton<RSM.Core.Rules.ISiteAnalyzer, IisSiteAnalyzer>();
+        services.AddSingleton<RSM.Core.Rules.ISiteAnalyzer, WindowsNodeAnalyzer>();
         services.AddSingleton<RuleRepository>();
         services.AddSingleton<SnapshotStore>();
         services.AddSingleton<SnapshotService>();

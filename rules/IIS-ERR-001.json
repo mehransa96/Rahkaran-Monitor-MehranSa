@@ -1,0 +1,87 @@
+{
+  "id": "IIS-ERR-001",
+  "layer": "Iis",
+  "appliesTo": [
+    "App",
+    "Arr"
+  ],
+  "forEach": "site",
+  "when": "site.requests_15m >= params.min_requests && site.err5xx_pct_15m > params.warn",
+  "severity": "Warning",
+  "escalate": [
+    {
+      "when": "site.err5xx_pct_15m > params.crit",
+      "severity": "Critical"
+    }
+  ],
+  "title": {
+    "fa": "نرخ خطای 5xx سایت {instance}: {site.err5xx_pct_15m}٪",
+    "en": "5xx error rate of site {instance}: {site.err5xx_pct_15m} %"
+  },
+  "explanation": {
+    "fa": "{site.err5xx_15m} پاسخ 5xx از {site.requests_15m} درخواست در ۱۵ دقیقه گذشته.",
+    "en": "{site.err5xx_15m} 5xx responses out of {site.requests_15m} requests in the last 15 minutes."
+  },
+  "recommendation": {
+    "fa": "توزیع وضعیت‌ها و Substatusها را در صفحه IIS ببینید.",
+    "en": "See the status/substatus distribution on the IIS page."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "min_requests": 50,
+    "warn": 1,
+    "crit": 5
+  },
+  "examples": [
+    {
+      "facts": {
+        "site[AuxWebsite1].requests_15m": 1000,
+        "site[AuxWebsite1].err5xx_pct_15m": 2.5,
+        "site[AuxWebsite1].err5xx_15m": 25
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "site[AuxWebsite1].requests_15m": 1000,
+        "site[AuxWebsite1].err5xx_pct_15m": 8,
+        "site[AuxWebsite1].err5xx_15m": 80
+      },
+      "expect": "Critical",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "site[AuxWebsite1].requests_15m": 1000,
+        "site[AuxWebsite1].err5xx_pct_15m": 0.2,
+        "site[AuxWebsite1].err5xx_15m": 2
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "site[AuxWebsite1].requests_15m": 10,
+        "site[AuxWebsite1].err5xx_pct_15m": 50,
+        "site[AuxWebsite1].err5xx_15m": 5
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ],
+      "note": "too few requests to judge"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": "SVC-002",
+  "layer": "Services",
+  "appliesTo": [],
+  "when": "coalesce(evt.scm_unexpected_24h, 0) > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "توقف غیرمنتظره سرویس در ۲۴ ساعت گذشته",
+    "en": "Unexpected service terminations in the last 24 h"
+  },
+  "explanation": {
+    "fa": "{evt.scm_unexpected_24h} رخداد SCM 7031/7034 ثبت شده است.",
+    "en": "{evt.scm_unexpected_24h} SCM 7031/7034 events were logged."
+  },
+  "recommendation": {
+    "fa": "نام سرویس‌ها و زمان‌ها را در صفحه رخدادها ببینید.",
+    "en": "See the services and times on the Events page."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "evt.scm_unexpected_24h": 2
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "evt.scm_unexpected_24h": 0
+      },
+      "expect": null
+    }
+  ]
+}
