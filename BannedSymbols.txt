@@ -15,11 +15,11 @@ M:System.Diagnostics.Process.Start(System.String,System.String,System.String,Sys
 M:System.Diagnostics.Process.Kill;RSM is read-only: killing processes is forbidden
 M:System.Diagnostics.Process.Kill(System.Boolean);RSM is read-only: killing processes is forbidden
 M:System.Diagnostics.Process.CloseMainWindow;RSM is read-only
-M:System.Diagnostics.Process.set_PriorityClass(System.Diagnostics.ProcessPriorityClass);RSM is read-only
-M:System.Diagnostics.Process.set_ProcessorAffinity(System.IntPtr);RSM is read-only
-M:System.Diagnostics.Process.set_PriorityBoostEnabled(System.Boolean);RSM is read-only
-M:System.Diagnostics.Process.set_MaxWorkingSet(System.IntPtr);RSM is read-only
-M:System.Diagnostics.Process.set_MinWorkingSet(System.IntPtr);RSM is read-only
+P:System.Diagnostics.Process.PriorityClass;RSM is read-only (property bans cover the setter; M:set_X entries are ignored by the analyzer)
+P:System.Diagnostics.Process.ProcessorAffinity;RSM is read-only
+P:System.Diagnostics.Process.PriorityBoostEnabled;RSM is read-only
+P:System.Diagnostics.Process.MaxWorkingSet;RSM is read-only
+P:System.Diagnostics.Process.MinWorkingSet;RSM is read-only
 T:System.Diagnostics.ProcessStartInfo;RSM is read-only: starting processes is forbidden
 T:System.Management.Automation.PowerShell;RSM is read-only: PowerShell is forbidden
 T:System.Management.Automation.Runspaces.RunspaceFactory;RSM is read-only: PowerShell runspaces are forbidden
@@ -48,7 +48,8 @@ M:Microsoft.Web.Administration.ConfigurationMethodInstance.Execute;RSM is read-o
 M:Microsoft.Web.Administration.ConfigurationElement.SetAttributeValue(System.String,System.Object);RSM is read-only
 M:Microsoft.Web.Administration.ConfigurationElement.Delete;RSM is read-only
 M:Microsoft.Web.Administration.ConfigurationAttribute.Delete;RSM is read-only
-M:Microsoft.Web.Administration.ConfigurationAttribute.set_Value(System.Object);RSM is read-only
+P:Microsoft.Web.Administration.ConfigurationAttribute.Value;RSM is read-only: read with ConfigurationElement.GetAttributeValue(name)
+P:Microsoft.Web.Administration.ConfigurationElement.Item(System.String);RSM is read-only: read with ConfigurationElement.GetAttributeValue(name)
 
 // ---- WMI / CIM: queries only, never methods or instance changes ----
 M:Microsoft.Management.Infrastructure.CimSession.InvokeMethod(Microsoft.Management.Infrastructure.CimInstance,System.String,Microsoft.Management.Infrastructure.CimMethodParametersCollection);CIM is queries only
@@ -105,6 +106,19 @@ M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,System.Boolean);use OpenS
 M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,Microsoft.Win32.RegistryKeyPermissionCheck);use OpenSubKey(name): keys must be opened read-only
 M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,Microsoft.Win32.RegistryKeyPermissionCheck,System.Security.AccessControl.RegistryRights);use OpenSubKey(name): keys must be opened read-only
 M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,System.Security.AccessControl.RegistryRights);use OpenSubKey(name): keys must be opened read-only
+
+// ---- Performance counters: read with NextValue only; never create, delete or write counters ----
+M:System.Diagnostics.PerformanceCounter.Increment;RSM is read-only: counters are never written
+M:System.Diagnostics.PerformanceCounter.IncrementBy(System.Int64);RSM is read-only: counters are never written
+M:System.Diagnostics.PerformanceCounter.Decrement;RSM is read-only: counters are never written
+P:System.Diagnostics.PerformanceCounter.RawValue;RSM is read-only: counters are never written (read with NextValue)
+P:System.Diagnostics.PerformanceCounter.ReadOnly;counters stay read-only (opened with readOnly: true)
+M:System.Diagnostics.PerformanceCounter.RemoveInstance;RSM is read-only: counters are never written
+M:System.Diagnostics.PerformanceCounterCategory.Create(System.String,System.String,System.Diagnostics.PerformanceCounterCategoryType,System.Diagnostics.CounterCreationDataCollection);RSM never creates counter categories
+M:System.Diagnostics.PerformanceCounterCategory.Create(System.String,System.String,System.Diagnostics.PerformanceCounterCategoryType,System.String,System.String);RSM never creates counter categories
+M:System.Diagnostics.PerformanceCounterCategory.Create(System.String,System.String,System.Diagnostics.CounterCreationDataCollection);RSM never creates counter categories
+M:System.Diagnostics.PerformanceCounterCategory.Create(System.String,System.String,System.String,System.String);RSM never creates counter categories
+M:System.Diagnostics.PerformanceCounterCategory.Delete(System.String);RSM never deletes counter categories
 
 // ---- Event logs: read through System.Diagnostics.Eventing.Reader only ----
 T:System.Diagnostics.EventLog;use System.Diagnostics.Eventing.Reader.EventLogReader (the classic EventLog type can create sources and write entries)

@@ -5,6 +5,7 @@ using RSM.Collectors.Database;
 using RSM.Collectors.Sql.Capabilities;
 using RSM.Collectors.Sql.Instance;
 using RSM.Collectors.Sql.Live;
+using RSM.Collectors.Windows;
 using RSM.Core.Model;
 using RSM.Storage.Snapshots;
 using RSM.Safety.Files;
@@ -51,6 +52,7 @@ public static class RsmHost
         services.AddSingleton<SqlCapabilityProbe>();
         services.AddSingleton<RedisCapabilityProbe>();
         services.AddSingleton<ConnectionTester>();
+        services.AddSingleton<NodeTransportOpener>();
 
         // Phase 1 snapshot collectors (run once per diagnosis, sequentially per node).
         services.AddSingleton<ICollector, SqlInventoryCollector>();
@@ -70,6 +72,9 @@ public static class RsmHost
         services.AddSingleton<ICollector, SqlAvailabilityCollector>();
         services.AddSingleton<ICollector, SqlSelfOverheadCollector>();
         services.AddSingleton<ICollector, QueryStoreCollector>();
+        services.AddSingleton<ICollector, WindowsInventoryCollector>();
+        services.AddSingleton<ICollector, WindowsPerfCollector>();
+        services.AddSingleton<ICollector, WindowsProcessCollector>();
         services.AddSingleton<RuleRepository>();
         services.AddSingleton<SnapshotStore>();
         services.AddSingleton<SnapshotService>();

@@ -7,6 +7,7 @@
     <ProjectReference Include="..\..\src\RSM.Collectors.Sql\RSM.Collectors.Sql.csproj" />
     <ProjectReference Include="..\..\src\RSM.Parsers\RSM.Parsers.csproj" />
     <ProjectReference Include="..\..\src\RSM.Collectors.Database\RSM.Collectors.Database.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Collectors.Windows\RSM.Collectors.Windows.csproj" />
     <ProjectReference Include="..\..\src\RSM.Reporting\RSM.Reporting.csproj" />
   </ItemGroup>
   <ItemGroup>

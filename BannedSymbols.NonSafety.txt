@@ -48,11 +48,16 @@ M:System.IO.FileInfo.Open(System.IO.FileMode,System.IO.FileAccess,System.IO.File
 M:System.IO.FileInfo.Open(System.IO.FileStreamOptions);use RSM.Safety.Files.ReadOnlyFile
 M:System.IO.FileInfo.Encrypt;forbidden
 M:System.IO.FileInfo.Decrypt;forbidden
-M:System.IO.FileInfo.set_IsReadOnly(System.Boolean);forbidden
-M:System.IO.FileSystemInfo.set_Attributes(System.IO.FileAttributes);forbidden
-M:System.IO.FileSystemInfo.set_CreationTime(System.DateTime);forbidden
-M:System.IO.FileSystemInfo.set_LastWriteTime(System.DateTime);forbidden
-M:System.IO.FileSystemInfo.set_LastAccessTime(System.DateTime);forbidden
+// Property bans cover getter and setter (M:set_X entries are silently ignored by the analyzer, see AnalyzerCanaryTests).
+// File times/attributes, when a collector needs them, are read through RSM.Safety.Files.
+P:System.IO.FileInfo.IsReadOnly;forbidden: RSM never changes file attributes
+P:System.IO.FileSystemInfo.Attributes;forbidden: RSM never changes file attributes
+P:System.IO.FileSystemInfo.CreationTime;forbidden: RSM never changes file times
+P:System.IO.FileSystemInfo.CreationTimeUtc;forbidden: RSM never changes file times
+P:System.IO.FileSystemInfo.LastWriteTime;forbidden: RSM never changes file times
+P:System.IO.FileSystemInfo.LastWriteTimeUtc;forbidden: RSM never changes file times
+P:System.IO.FileSystemInfo.LastAccessTime;forbidden: RSM never changes file times
+P:System.IO.FileSystemInfo.LastAccessTimeUtc;forbidden: RSM never changes file times
 M:System.IO.FileSystemInfo.Delete;forbidden
 M:System.IO.DirectoryInfo.Create;use RSM.Safety.Files.IDataFolder
 M:System.IO.DirectoryInfo.CreateSubdirectory(System.String);use RSM.Safety.Files.IDataFolder

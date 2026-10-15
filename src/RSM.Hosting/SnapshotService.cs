@@ -17,9 +17,9 @@ namespace RSM.Hosting;
 /// </summary>
 public sealed class SnapshotService(
     ConnectionTester tester,
+    NodeTransportOpener transportOpener,
     IEnumerable<ICollector> collectors,
     RuleRepository ruleRepository,
-    SecretStore secrets,
     SnapshotStore store,
     ILogger<SnapshotService> logger)
 {
@@ -56,34 +56,25 @@ public sealed class SnapshotService(
         var facts = new FactStore();
         AddNodeFacts(site, node, matrix, facts, DateTime.Now);
 
-        if (node.Sql is { } sql && matrix.Has(CapabilityIds.SqlConnect))
+        using var transports = await transportOpener.OpenAsync(site, node, matrix, cancellationToken).ConfigureAwait(false);
+        var context = new NodeContext(site, node, transports.All);
+        foreach (var collector in collectors.Where(c => transports.CanRun(c) && ((c.AppliesTo & node.Roles) != 0 || node.Roles == NodeRoles.None)))
         {
-            var password = sql.Auth == SqlAuthKind.Sql ? await secrets.GetAsync(site.Id, node.Id, SecretKind.SqlPassword, cancellationToken).ConfigureAwait(false) : null;
-            using var session = new SqlNodeSession(node.Id, sql, password);
-            if (matrix.Facts.TryGetValue("sql.version", out var v) && SqlServerVersion.TryParse(v, out var version))
+            cancellationToken.ThrowIfCancellationRequested();
+            progress?.Report($"{node.Name}: {collector.Id}");
+            CollectorResult result;
+            try
             {
-                session.ServerVersion = version;
+                result = await collector.CollectAsync(context, new CollectContext(IncludeHeavy: options.IncludeHeavy), cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                logger.LogError(ex, "Collector {Collector} failed on {Node}", collector.Id, node.Name);
+                result = CollectorResult.FromStatus(collector.Id, node.Id, CollectorStatus.Error(ex.GetType().Name, ex.Message), TimeSpan.Zero);
             }
 
-            var context = new NodeContext(site, node, [session]);
-            foreach (var collector in collectors.Where(c => (c.AppliesTo & node.Roles) != 0 || node.Roles == NodeRoles.None))
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                progress?.Report($"{node.Name}: {collector.Id}");
-                CollectorResult result;
-                try
-                {
-                    result = await collector.CollectAsync(context, new CollectContext(IncludeHeavy: options.IncludeHeavy), cancellationToken).ConfigureAwait(false);
-                }
-                catch (Exception ex) when (ex is not OperationCanceledException)
-                {
-                    logger.LogError(ex, "Collector {Collector} failed on {Node}", collector.Id, node.Name);
-                    result = CollectorResult.FromStatus(collector.Id, node.Id, CollectorStatus.Error(ex.GetType().Name, ex.Message), TimeSpan.Zero);
-                }
-
-                results.Add(result);
-                facts.SetAll(result.Facts);
-            }
+            results.Add(result);
+            facts.SetAll(result.Facts);
         }
 
         var evaluation = engine.Evaluate(node.Id, node.Roles, facts, DateTimeOffset.UtcNow);

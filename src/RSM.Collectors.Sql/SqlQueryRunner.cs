@@ -78,8 +78,10 @@ public sealed class SqlQueryRunner(SafeSqlExecutor executor, SqlNodeSession sess
 }
 
 /// <summary>Base for SQL snapshot collectors: resolves the node's SQL session and builds the result.</summary>
-public abstract class SqlCollectorBase(SafeSqlExecutor executor) : ICollector
+public abstract class SqlCollectorBase(SafeSqlExecutor executor) : ICollector, IRequiresTransport
 {
+    public Type TransportType => typeof(SqlNodeSession);
+
     public abstract string Id { get; }
 
     public virtual Layer Layer => Layer.Sql;

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Windows OS module (§9): CIM queries (never methods), local PDH counters, read-only registry values from a fixed
+    whitelist. net8.0 so the analysis logic is unit-tested on Linux; Windows-only calls are platform-annotated.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>RSM.Collectors.Windows</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RSM.Core\RSM.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Management.Infrastructure" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="RSM.Tests" />
+  </ItemGroup>
+</Project>

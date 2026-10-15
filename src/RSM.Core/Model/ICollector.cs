@@ -39,3 +39,9 @@ public interface ICollector
 /// still runs once in a full diagnosis; snapshot-only collectors are not repeated by the live view.
 /// </summary>
 public interface ILiveCollector : ICollector;
+
+/// <summary>A collector that needs one specific transport on the node (the host skips it when that transport is absent).</summary>
+public interface IRequiresTransport
+{
+    Type TransportType { get; }
+}

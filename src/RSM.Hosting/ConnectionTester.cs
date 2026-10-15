@@ -3,6 +3,7 @@ using System.Security.Principal;
 using Microsoft.Extensions.Logging;
 using RSM.Collectors.Redis;
 using RSM.Collectors.Sql.Capabilities;
+using RSM.Collectors.Windows;
 using RSM.Core.Capabilities;
 using RSM.Core.Model;
 using RSM.Core.Profiles;
@@ -54,10 +55,19 @@ public sealed class ConnectionTester(
             }
         }
 
-        // Windows / IIS / RabbitMQ / .NET probes arrive with their collectors.
-        foreach (var id in new[] { CapabilityIds.WinCim, CapabilityIds.WinPerf, CapabilityIds.WinEventLog, CapabilityIds.WinServices, CapabilityIds.WinRegistry })
+        // Windows: CIM queries, counters (PDH locally, CIM remotely) and whitelisted registry values.
+        var windowsPassword = string.IsNullOrWhiteSpace(node.Windows.UserName) ? null
+            : await secrets.GetAsync(site.Id, node.Id, SecretKind.WindowsPassword, cancellationToken).ConfigureAwait(false);
+        var (windows, windowsFailure) = WindowsTransportFactory.TryOpen(node, windowsPassword);
+        using (windows)
         {
-            matrix.Set(id, CapabilityState.NotImplemented, "Phase 2");
+            await WindowsCapabilityProbe.ProbeAsync(windows, windowsFailure, matrix, cancellationToken).ConfigureAwait(false);
+        }
+
+        // Event logs and services arrive with their collectors.
+        foreach (var id in new[] { CapabilityIds.WinEventLog, CapabilityIds.WinServices })
+        {
+            matrix.Set(id, CapabilityState.NotImplemented, "Phase 3");
         }
 
         foreach (var id in new[] { CapabilityIds.IisConfig, CapabilityIds.IisRequests, CapabilityIds.IisLogs })

@@ -30,6 +30,12 @@ public class AnalyzerCanaryTests
         { "System.Xml.Linq.XDocument.Parse(\"<a/>\");", "Parse" },
         { "System.Xml.Linq.XElement.Parse(\"<a/>\");", "Parse" },
         { "new System.Xml.XmlDocument().LoadXml(\"<a/>\");", "LoadXml" },
+        { "Microsoft.Management.Infrastructure.CimSession.Create(null).InvokeMethod(\"root\", \"Win32_Process\", \"Create\", null);", "InvokeMethod" },
+        { "Microsoft.Management.Infrastructure.CimSession.Create(null).DeleteInstance(null!);", "DeleteInstance" },
+        { "new System.Diagnostics.PerformanceCounter(\"a\", \"b\", false).Increment();", "Increment" },
+        { "new System.Diagnostics.PerformanceCounter(\"a\", \"b\", false).RawValue = 1;", "RawValue" },
+        { "System.Diagnostics.PerformanceCounterCategory.Delete(\"a\");", "Delete" },
+        { "System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;", "PriorityClass" },
     };
 
     public static TheoryData<string, string> BannedOutsideSafety => new()
@@ -39,6 +45,8 @@ public class AnalyzerCanaryTests
         { "System.IO.Directory.Delete(\"x\", true);", "Directory" },
         { "new System.IO.FileStream(\"x\", System.IO.FileMode.Create);", "FileStream" },
         { "new System.IO.StreamWriter(\"x\");", "StreamWriter" },
+        { "new System.IO.FileInfo(\"x\").IsReadOnly = true;", "IsReadOnly" },
+        { "new System.IO.FileInfo(\"x\").LastWriteTime = System.DateTime.Now;", "LastWriteTime" },
         { "new System.IO.FileInfo(\"x\").Delete();", "Delete" },
         { "new System.Net.Http.HttpClient();", "HttpClient" },
         { "new System.Net.Sockets.TcpClient();", "TcpClient" },
@@ -60,6 +68,17 @@ public class AnalyzerCanaryTests
     [MemberData(nameof(BannedOutsideSafety))]
     public async Task Banned_in_every_project_except_the_safety_boundary(string statement, string symbol) =>
         (await Analyze(statement, includeNonSafety: true)).Should().Contain(d => d.Id == "RS0030" && d.GetMessage(null).Contains(symbol, StringComparison.Ordinal));
+
+    [Theory]
+    [MemberData(nameof(BannedEverywhere))]
+    [MemberData(nameof(BannedOutsideSafety))]
+    public void Canary_statements_compile(string statement, string symbol)
+    {
+        // A canary that does not compile could never produce RS0030; make such a mistake visible as such.
+        var errors = CreateCompilation($"static class Canary {{ static void Run() {{ {statement} }} }}").GetDiagnostics()
+            .Where(d => d.Severity == DiagnosticSeverity.Error).Select(d => d.ToString());
+        errors.Should().BeEmpty($"the canary for {symbol} must compile");
+    }
 
     [Fact]
     public async Task Read_only_apis_stay_allowed()
@@ -96,6 +115,13 @@ public class AnalyzerCanaryTests
 
         unresolved.Should().BeEmpty($"these {file} entries do not match any API (typo in the signature?)");
     }
+
+    [Theory]
+    [InlineData("BannedSymbols.txt")]
+    [InlineData("BannedSymbols.NonSafety.txt")]
+    public void Property_setters_are_banned_as_properties(string file) =>
+        ReadIds(file).Where(id => id.StartsWith("M:", StringComparison.Ordinal) && id.Contains(".set_", StringComparison.Ordinal))
+            .Should().BeEmpty("the analyzer ignores M:…set_X entries for property assignments; use P:Type.Property");
 
     private static IEnumerable<string> ReadIds(string file) =>
         File.ReadAllLines(Path.Combine(Repo.Root, file))
@@ -138,7 +164,8 @@ public class AnalyzerCanaryTests
     {
         var trusted = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!).Split(Path.PathSeparator);
         var references = trusted
-            .Concat([typeof(Microsoft.Data.SqlClient.SqlConnection).Assembly.Location, LocateDapper()])
+            .Concat([typeof(Microsoft.Data.SqlClient.SqlConnection).Assembly.Location, LocateDapper(),
+                Path.Combine(AppContext.BaseDirectory, "System.Diagnostics.PerformanceCounter.dll")])
             .Where(p => !string.IsNullOrEmpty(p))
             .Distinct()
             .Select(p => MetadataReference.CreateFromFile(p));
