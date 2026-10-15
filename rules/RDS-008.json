@@ -1,0 +1,53 @@
+{
+  "id": "RDS-008",
+  "layer": "Redis",
+  "appliesTo": [
+    "Redis"
+  ],
+  "when": "redis.reachable && redis.persistence_error",
+  "severity": "Warning",
+  "title": {
+    "fa": "ذخیره‌سازی Redis روی دیسک خطا دارد",
+    "en": "Redis persistence is failing"
+  },
+  "explanation": {
+    "fa": "وضعیت آخرین RDB: {redis.rdb_status}، وضعیت AOF: {redis.aof_status}.",
+    "en": "Last RDB save: {redis.rdb_status}, AOF: {redis.aof_status}."
+  },
+  "recommendation": {
+    "fa": "فضای دیسک و دسترسی پوشه داده Redis را بررسی کنید.",
+    "en": "Check disk space and the Redis data folder permissions."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.persistence_error": true,
+        "redis.rdb_status": "err",
+        "redis.aof_status": "off"
+      },
+      "expect": "Warning",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.persistence_error": false,
+        "redis.rdb_status": "ok",
+        "redis.aof_status": "off"
+      },
+      "expect": null,
+      "roles": [
+        "Redis"
+      ]
+    }
+  ]
+}

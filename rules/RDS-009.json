@@ -1,0 +1,51 @@
+{
+  "id": "RDS-009",
+  "layer": "Redis",
+  "appliesTo": [
+    "Redis"
+  ],
+  "when": "redis.reachable && coalesce(redis.app_nodes_without_connection, 0) > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "سرور برنامه‌ای که به Redis وصل نیست: {redis.app_nodes_without_connection_names}",
+    "en": "App server not connected to Redis: {redis.app_nodes_without_connection_names}"
+  },
+  "explanation": {
+    "fa": "در CLIENT LIST هیچ اتصالی از این سرور(ها) دیده نشد؛ احتمالاً آدرس Redis در تنظیمات آن سرور اشتباه است یا از Cache محلی استفاده می‌کند.",
+    "en": "CLIENT LIST shows no connection from these server(s); their Redis address may be wrong or they use a local cache."
+  },
+  "recommendation": {
+    "fa": "آدرس Redis را در web.config آن سرور (صفحه IIS) مقایسه کنید.",
+    "en": "Compare the Redis address in that server's web.config (IIS page)."
+  },
+  "source": {
+    "kind": "Architecture",
+    "citation": "Rahkaran architecture (spec §3)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.app_nodes_without_connection": 1,
+        "redis.app_nodes_without_connection_names": "APP02"
+      },
+      "expect": "Warning",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.app_nodes_without_connection": 0,
+        "redis.app_nodes_without_connection_names": ""
+      },
+      "expect": null,
+      "roles": [
+        "Redis"
+      ]
+    }
+  ]
+}

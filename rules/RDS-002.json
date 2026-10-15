@@ -1,0 +1,55 @@
+{
+  "id": "RDS-002",
+  "layer": "Redis",
+  "appliesTo": [
+    "Redis"
+  ],
+  "when": "redis.reachable && coalesce(redis.evicted_increasing, false)",
+  "severity": "Warning",
+  "title": {
+    "fa": "Redis کلیدها را به دلیل کمبود حافظه حذف می‌کند (Eviction)",
+    "en": "Redis is evicting keys (memory full)"
+  },
+  "explanation": {
+    "fa": "evicted_keys = {redis.evicted_keys} و در حال افزایش است؛ حافظه مصرفی {redis.used_memory_mb} MB از سقف {redis.maxmemory_mb} MB.",
+    "en": "evicted_keys = {redis.evicted_keys} and rising; memory used {redis.used_memory_mb} MB of {redis.maxmemory_mb} MB."
+  },
+  "recommendation": {
+    "fa": "maxmemory و رشد داده‌ها را با ستاد فنی بررسی کنید.",
+    "en": "Review maxmemory and data growth with ستاد فنی."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.evicted_increasing": true,
+        "redis.evicted_keys": 1200,
+        "redis.used_memory_mb": 1020,
+        "redis.maxmemory_mb": 1024
+      },
+      "expect": "Warning",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.evicted_increasing": false,
+        "redis.evicted_keys": 0,
+        "redis.used_memory_mb": 10,
+        "redis.maxmemory_mb": 1024
+      },
+      "expect": null,
+      "roles": [
+        "Redis"
+      ]
+    }
+  ]
+}

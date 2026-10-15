@@ -1,0 +1,69 @@
+{
+  "id": "RDS-006",
+  "layer": "Redis",
+  "appliesTo": [
+    "Redis"
+  ],
+  "when": "redis.reachable && (redis.slowlog_60m > params.slowlog || redis.latency_max_ms > params.latency_ms)",
+  "severity": "Info",
+  "title": {
+    "fa": "دستورهای کند یا تأخیر در Redis",
+    "en": "Slow commands or latency spikes in Redis"
+  },
+  "explanation": {
+    "fa": "{redis.slowlog_60m} دستور کند در ۶۰ دقیقه (بیشینه {redis.slowlog_max_ms} ms) و بیشینه رخداد LATENCY ‏{redis.latency_max_ms} ms.",
+    "en": "{redis.slowlog_60m} slow commands in 60 minutes (max {redis.slowlog_max_ms} ms) and LATENCY events up to {redis.latency_max_ms} ms."
+  },
+  "recommendation": {
+    "fa": "دستورهای کند را در صفحه Redis ببینید (فقط نام دستور و کلید نمایش داده می‌شود).",
+    "en": "See the slow commands on the Redis page (command and key only)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "slowlog": 10,
+    "latency_ms": 100
+  },
+  "examples": [
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.slowlog_60m": 25,
+        "redis.slowlog_max_ms": 40,
+        "redis.latency_max_ms": 0
+      },
+      "expect": "Info",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.slowlog_60m": 2,
+        "redis.slowlog_max_ms": 15,
+        "redis.latency_max_ms": 250
+      },
+      "expect": "Info",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.slowlog_60m": 2,
+        "redis.slowlog_max_ms": 15,
+        "redis.latency_max_ms": 20
+      },
+      "expect": null,
+      "roles": [
+        "Redis"
+      ]
+    }
+  ]
+}

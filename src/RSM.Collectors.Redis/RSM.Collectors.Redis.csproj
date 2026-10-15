@@ -8,4 +8,7 @@
     <ProjectReference Include="..\RSM.Core\RSM.Core.csproj" />
     <ProjectReference Include="..\RSM.Safety\RSM.Safety.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="RSM.Tests" />
+  </ItemGroup>
 </Project>

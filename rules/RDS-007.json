@@ -1,0 +1,51 @@
+{
+  "id": "RDS-007",
+  "layer": "Redis",
+  "appliesTo": [
+    "Redis"
+  ],
+  "when": "redis.reachable && coalesce(redis.rejected_increasing, false)",
+  "severity": "Warning",
+  "title": {
+    "fa": "Redis اتصال‌های جدید را رد می‌کند",
+    "en": "Redis is rejecting connections"
+  },
+  "explanation": {
+    "fa": "rejected_connections در حال افزایش است (maxclients پر شده)؛ کلاینت‌های متصل: {redis.connected_clients}.",
+    "en": "rejected_connections is rising (maxclients reached); connected clients: {redis.connected_clients}."
+  },
+  "recommendation": {
+    "fa": "تعداد اتصال‌های هر سرور برنامه را در صفحه Redis ببینید.",
+    "en": "See connections per app server on the Redis page."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.rejected_increasing": true,
+        "redis.connected_clients": 10000
+      },
+      "expect": "Warning",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.rejected_increasing": false,
+        "redis.connected_clients": 40
+      },
+      "expect": null,
+      "roles": [
+        "Redis"
+      ]
+    }
+  ]
+}

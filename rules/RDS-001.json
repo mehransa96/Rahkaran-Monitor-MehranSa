@@ -1,0 +1,48 @@
+{
+  "id": "RDS-001",
+  "layer": "Redis",
+  "appliesTo": [
+    "Redis"
+  ],
+  "when": "!redis.reachable",
+  "severity": "Critical",
+  "title": {
+    "fa": "Redis در دسترس نیست یا احراز هویت ناموفق است",
+    "en": "Redis is unreachable or AUTH failed"
+  },
+  "explanation": {
+    "fa": "RSM نتوانست به Redis وصل شود: {redis.unreachable_reason}. راهکاران برای Session و Cache به Redis وابسته است.",
+    "en": "RSM could not reach Redis: {redis.unreachable_reason}. Rahkaran depends on Redis for sessions and cache."
+  },
+  "recommendation": {
+    "fa": "سرویس Redis، فایروال، پورت و رمز را بررسی کنید.",
+    "en": "Check the Redis service, firewall, port and password."
+  },
+  "source": {
+    "kind": "Architecture",
+    "citation": "Rahkaran architecture (spec §3)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "redis.reachable": false,
+        "redis.unreachable_reason": "connection refused"
+      },
+      "expect": "Critical",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true
+      },
+      "expect": null,
+      "roles": [
+        "Redis"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "id": "RDS-003",
+  "layer": "Redis",
+  "appliesTo": [
+    "Redis"
+  ],
+  "when": "redis.reachable && (redis.maxmemory_zero || coalesce(redis.used_memory_pct, 0) > params.warn)",
+  "severity": "Info",
+  "escalate": [
+    {
+      "when": "coalesce(redis.used_memory_pct, 0) > params.warn",
+      "severity": "Warning"
+    }
+  ],
+  "title": {
+    "fa": "حافظه Redis: {redis.used_memory_mb} MB (سقف {redis.maxmemory_mb} MB)",
+    "en": "Redis memory: {redis.used_memory_mb} MB (limit {redis.maxmemory_mb} MB)"
+  },
+  "explanation": {
+    "fa": "یا سقف maxmemory تعیین نشده است (Redis می‌تواند کل حافظه سرور را بگیرد) یا مصرف از ۹۰٪ سقف گذشته است ({redis.used_memory_pct}٪).",
+    "en": "Either no maxmemory limit is set (Redis can take all server memory) or usage is above 90 % of the limit ({redis.used_memory_pct} %)."
+  },
+  "recommendation": {
+    "fa": "سقف و سیاست maxmemory را طبق توصیه ستاد فنی تنظیم کنید (RSM آن را تغییر نمی‌دهد).",
+    "en": "Set maxmemory and its policy per ستاد فنی (RSM never changes it)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "warn": 90
+  },
+  "examples": [
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.maxmemory_zero": true,
+        "redis.used_memory_mb": 300,
+        "redis.maxmemory_mb": 0,
+        "redis.used_memory_pct": null
+      },
+      "expect": "Info",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.maxmemory_zero": false,
+        "redis.used_memory_mb": 950,
+        "redis.maxmemory_mb": 1024,
+        "redis.used_memory_pct": 92.8
+      },
+      "expect": "Warning",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.maxmemory_zero": false,
+        "redis.used_memory_mb": 300,
+        "redis.maxmemory_mb": 1024,
+        "redis.used_memory_pct": 29.3
+      },
+      "expect": null,
+      "roles": [
+        "Redis"
+      ]
+    }
+  ]
+}

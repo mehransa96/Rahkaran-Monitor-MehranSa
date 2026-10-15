@@ -1,4 +1,5 @@
 using RSM.Collectors.Iis;
+using RSM.Collectors.Redis;
 using RSM.Collectors.Windows;
 using RSM.Core.Capabilities;
 using RSM.Core.Model;
@@ -42,6 +43,13 @@ public sealed class NodeTransportOpener(SecretStore secrets)
             }
 
             list.Add(session);
+        }
+
+        // Redis is opened whenever it is configured: "unreachable / AUTH failed" is itself a finding (RDS-001).
+        if (node.Redis is { } redis)
+        {
+            var password = redis.HasPassword ? await secrets.GetAsync(site.Id, node.Id, SecretKind.RedisPassword, cancellationToken).ConfigureAwait(false) : null;
+            list.Add(new RedisNodeTransport(redis, password));
         }
 
         if (matrix.Has(CapabilityIds.WinCim))

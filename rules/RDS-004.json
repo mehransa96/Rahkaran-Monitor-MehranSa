@@ -1,0 +1,85 @@
+{
+  "id": "RDS-004",
+  "layer": "Redis",
+  "appliesTo": [
+    "Redis"
+  ],
+  "when": "redis.reachable && redis.used_memory_mb >= params.min_mb && (redis.fragmentation_ratio > params.high || redis.fragmentation_ratio < params.low)",
+  "severity": "Info",
+  "escalate": [
+    {
+      "when": "redis.fragmentation_ratio < params.low",
+      "severity": "Warning"
+    }
+  ],
+  "title": {
+    "fa": "نسبت پراکندگی حافظه Redis: {redis.fragmentation_ratio}",
+    "en": "Redis memory fragmentation ratio: {redis.fragmentation_ratio}"
+  },
+  "explanation": {
+    "fa": "بیش از ۱٫۵ یعنی حافظه هدررفته؛ کمتر از ۱ یعنی بخشی از داده در Swap است و Redis کند می‌شود.",
+    "en": "Above 1.5 means wasted memory; below 1 means part of the data is swapped out and Redis slows down."
+  },
+  "recommendation": {
+    "fa": "برای نسبت کمتر از ۱ حافظه آزاد سرور را بررسی کنید.",
+    "en": "For a ratio below 1 check the server's free memory."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "high": 1.5,
+    "low": 1.0,
+    "min_mb": 100
+  },
+  "examples": [
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.used_memory_mb": 800,
+        "redis.fragmentation_ratio": 1.9
+      },
+      "expect": "Info",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.used_memory_mb": 800,
+        "redis.fragmentation_ratio": 0.7
+      },
+      "expect": "Warning",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.used_memory_mb": 800,
+        "redis.fragmentation_ratio": 1.1
+      },
+      "expect": null,
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.used_memory_mb": 2,
+        "redis.fragmentation_ratio": 6.0
+      },
+      "expect": null,
+      "roles": [
+        "Redis"
+      ],
+      "note": "tiny datasets have meaningless ratios"
+    }
+  ]
+}

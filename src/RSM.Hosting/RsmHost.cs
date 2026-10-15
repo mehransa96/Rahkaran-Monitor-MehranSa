@@ -83,6 +83,9 @@ public static class RsmHost
         services.AddSingleton<ICollector, IisConfigCollector>();
         services.AddSingleton<ICollector, IisRuntimeCollector>();
         services.AddSingleton<ICollector, IisLogCollector>();
+
+        // Phase 4: Redis, SSRS, RabbitMQ, query packs, .NET runtime.
+        services.AddSingleton<ICollector, RedisCollector>();
         services.AddSingleton<RSM.Core.Rules.ISiteAnalyzer, IisSiteAnalyzer>();
         services.AddSingleton<RSM.Core.Rules.ISiteAnalyzer, WindowsNodeAnalyzer>();
         services.AddSingleton<RuleRepository>();

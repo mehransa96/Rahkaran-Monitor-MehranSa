@@ -1,0 +1,52 @@
+{
+  "id": "RDS-005",
+  "layer": "Redis",
+  "appliesTo": [
+    "Redis"
+  ],
+  "when": "redis.reachable && redis.uptime_s < params.min_s",
+  "severity": "Warning",
+  "title": {
+    "fa": "Redis به‌تازگی راه‌اندازی مجدد شده است",
+    "en": "Redis restarted recently"
+  },
+  "explanation": {
+    "fa": "Redis فقط {redis.uptime_s} ثانیه است که اجرا می‌شود؛ Session کاربران و Cache پس از Restart از بین می‌رود.",
+    "en": "Redis has been running for only {redis.uptime_s} s; user sessions and cache are lost on a restart."
+  },
+  "recommendation": {
+    "fa": "علت Restart را در لاگ Redis و رخدادهای سرویس بررسی کنید.",
+    "en": "Find the restart reason in the Redis log and service events."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "min_s": 3600
+  },
+  "examples": [
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.uptime_s": 600
+      },
+      "expect": "Warning",
+      "roles": [
+        "Redis"
+      ]
+    },
+    {
+      "facts": {
+        "redis.reachable": true,
+        "redis.uptime_s": 860000
+      },
+      "expect": null,
+      "roles": [
+        "Redis"
+      ]
+    }
+  ]
+}
