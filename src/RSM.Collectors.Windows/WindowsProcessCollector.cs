@@ -33,7 +33,7 @@ public sealed class WindowsProcessCollector : WindowsCollectorBase<ProcessState>
     private static readonly CimQuery Query = new("Win32_PerfFormattedData_PerfProc_Process",
         ["Name", "IDProcess", "PercentProcessorTime", "PrivateBytes", "WorkingSetPrivate"]);
 
-    protected override async Task CollectCoreAsync(WindowsNodeTransport transport, ProcessState state, LiveOutput output, List<string> problems, CancellationToken cancellationToken)
+    protected override async Task CollectCoreAsync(INodeContext node, WindowsNodeTransport transport, ProcessState state, LiveOutput output, List<string> problems, CancellationToken cancellationToken)
     {
         if (state.LogicalCpus is null)
         {

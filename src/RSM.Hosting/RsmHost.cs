@@ -75,6 +75,10 @@ public static class RsmHost
         services.AddSingleton<ICollector, WindowsInventoryCollector>();
         services.AddSingleton<ICollector, WindowsPerfCollector>();
         services.AddSingleton<ICollector, WindowsProcessCollector>();
+
+        // Phase 3: services, event logs.
+        services.AddSingleton<ICollector, WindowsServicesCollector>();
+        services.AddSingleton<ICollector, WindowsEventLogCollector>();
         services.AddSingleton<RuleRepository>();
         services.AddSingleton<SnapshotStore>();
         services.AddSingleton<SnapshotService>();

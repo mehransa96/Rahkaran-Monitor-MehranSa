@@ -38,7 +38,7 @@ public sealed class WindowsInventoryCollector : WindowsCollectorBase<NoWindowsSt
 
     public override TimeSpan DefaultInterval => TimeSpan.FromHours(1);
 
-    protected override async Task CollectCoreAsync(WindowsNodeTransport transport, NoWindowsState state, LiveOutput output, List<string> problems, CancellationToken cancellationToken)
+    protected override async Task CollectCoreAsync(INodeContext node, WindowsNodeTransport transport, NoWindowsState state, LiveOutput output, List<string> problems, CancellationToken cancellationToken)
     {
         var cim = transport.Cim;
         var os = await TryQueryAsync(cim, new CimQuery("Win32_OperatingSystem",

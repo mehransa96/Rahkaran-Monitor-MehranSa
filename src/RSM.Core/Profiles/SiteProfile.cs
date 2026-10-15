@@ -27,6 +27,12 @@ public sealed record SiteSettings
     /// <summary>Unverified: Windows service name pattern of the attendance (تردد) module.</summary>
     public string? AttendanceServicePattern { get; init; }
 
+    /// <summary>Unverified: service name pattern of the Systemgroup proactive monitor (spec §9.7 names "SGProactiveMonitor").</summary>
+    public string? ProactiveMonitorServicePattern { get; init; } = "SGProactiveMonitor*";
+
+    /// <summary>Antivirus service name patterns shown on the Services page (Defender by default; add the site's product).</summary>
+    public IReadOnlyList<string> AntivirusServicePatterns { get; init; } = ["WinDefend"];
+
     /// <summary>Unverified: SQL Agent job name patterns used by the ستاد فنی database tool.</summary>
     public IReadOnlyList<string> StadFanniToolJobPatterns { get; init; } = [];
 

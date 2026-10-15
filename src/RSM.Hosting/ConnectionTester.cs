@@ -64,12 +64,6 @@ public sealed class ConnectionTester(
             await WindowsCapabilityProbe.ProbeAsync(windows, windowsFailure, matrix, cancellationToken).ConfigureAwait(false);
         }
 
-        // Event logs and services arrive with their collectors.
-        foreach (var id in new[] { CapabilityIds.WinEventLog, CapabilityIds.WinServices })
-        {
-            matrix.Set(id, CapabilityState.NotImplemented, "Phase 3");
-        }
-
         foreach (var id in new[] { CapabilityIds.IisConfig, CapabilityIds.IisRequests, CapabilityIds.IisLogs })
         {
             matrix.Set(id, (node.Roles & (NodeRoles.App | NodeRoles.Arr)) != 0 ? CapabilityState.NotImplemented : CapabilityState.NotApplicable, "Phase 3");

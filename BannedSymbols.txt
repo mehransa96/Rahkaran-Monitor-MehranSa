@@ -129,6 +129,7 @@ M:System.Diagnostics.Eventing.Reader.EventLogSession.ExportLog(System.String,Sys
 M:System.Diagnostics.Eventing.Reader.EventLogSession.ExportLogAndMessages(System.String,System.Diagnostics.Eventing.Reader.PathType,System.String,System.String);RSM is read-only: exporting writes files on the server
 M:System.Diagnostics.Eventing.Reader.EventLogSession.ExportLogAndMessages(System.String,System.Diagnostics.Eventing.Reader.PathType,System.String,System.String,System.Boolean,System.Globalization.CultureInfo);RSM is read-only: exporting writes files on the server
 M:System.Diagnostics.Eventing.Reader.EventLogConfiguration.SaveChanges;RSM is read-only: log configuration must not change
+T:System.Diagnostics.Eventing.Reader.EventLogConfiguration;RSM is read-only: log configuration is never opened (its setters change the log)
 
 // ---- Legacy SQL client (only Microsoft.Data.SqlClient through SafeSqlExecutor) ----
 T:System.Data.SqlClient.SqlConnection;use RSM.Safety.Sql.SafeSqlExecutor

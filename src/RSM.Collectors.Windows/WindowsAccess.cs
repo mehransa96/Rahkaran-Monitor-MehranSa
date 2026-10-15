@@ -58,7 +58,17 @@ public static class WindowsTransportFactory
                 // Remote Registry service stopped or no rights: registry-based checks report "unknown".
             }
 
-            return (new WindowsNodeTransport(cim, counters, registry, local), null);
+            IEventLogSource? events = null;
+            try
+            {
+                events = EventLogReaderSource.Open(local ? null : node.Host, node.Windows.UserName, password);
+            }
+            catch (Exception ex) when (ex is System.Diagnostics.Eventing.Reader.EventLogException or UnauthorizedAccessException)
+            {
+                // Event Log Readers membership or the Remote Event Log Management firewall rule missing: events are "unknown".
+            }
+
+            return (new WindowsNodeTransport(cim, counters, registry, local, events), null);
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
@@ -79,6 +89,8 @@ public static class WindowsCapabilityProbe
             matrix.Set(CapabilityIds.WinCim, state, openFailure);
             matrix.Set(CapabilityIds.WinPerf, state, openFailure);
             matrix.Set(CapabilityIds.WinRegistry, state, openFailure);
+            matrix.Set(CapabilityIds.WinEventLog, state, openFailure);
+            matrix.Set(CapabilityIds.WinServices, state, openFailure);
             return;
         }
 
@@ -86,6 +98,9 @@ public static class WindowsCapabilityProbe
         {
             var os = await transport.Cim.QueryAsync(new CimQuery("Win32_OperatingSystem", ["Caption", "Version"]), cancellationToken).ConfigureAwait(false);
             matrix.Set(CapabilityIds.WinCim, CapabilityState.Available, transport.Cim.Protocol);
+            var services = await transport.Cim.QueryAsync(new CimQuery("Win32_Service", ["Name", "State"], "Name = 'EventLog'"), cancellationToken).ConfigureAwait(false);
+            matrix.Set(CapabilityIds.WinServices, services.Count > 0 ? CapabilityState.Available : CapabilityState.Denied,
+                services.Count > 0 ? transport.Cim.Protocol : "Win32_Service returned nothing (Service Control Manager access?)");
             if (os.FirstOrDefault()?.String("Caption") is { } caption)
             {
                 matrix.Facts["os.caption"] = caption;
@@ -94,11 +109,15 @@ public static class WindowsCapabilityProbe
         catch (UnauthorizedAccessException ex)
         {
             matrix.Set(CapabilityIds.WinCim, CapabilityState.Denied, ex.Message);
+            matrix.Set(CapabilityIds.WinServices, CapabilityState.Denied, ex.Message);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             matrix.Set(CapabilityIds.WinCim, CapabilityState.Unreachable, ex.Message);
+            matrix.Set(CapabilityIds.WinServices, CapabilityState.Unreachable, ex.Message);
         }
+
+        await ProbeEventsAsync(transport.Events, matrix, cancellationToken).ConfigureAwait(false);
 
         try
         {
@@ -130,6 +149,30 @@ public static class WindowsCapabilityProbe
             {
                 matrix.Set(CapabilityIds.WinRegistry, CapabilityState.Denied, ex.Message);
             }
+        }
+    }
+
+    private static async Task ProbeEventsAsync(IEventLogSource? events, CapabilityMatrix matrix, CancellationToken cancellationToken)
+    {
+        if (events is null)
+        {
+            matrix.Set(CapabilityIds.WinEventLog, CapabilityState.Denied, "event log session could not be opened (Event Log Readers / Remote Event Log Management)");
+            return;
+        }
+
+        try
+        {
+            await events.ReadAsync(new EventQuery("System", DateTimeOffset.UtcNow.AddHours(-1), [6005], false, 1), cancellationToken).ConfigureAwait(false);
+            await events.ReadAsync(new EventQuery("Application", DateTimeOffset.UtcNow.AddHours(-1), [1000], false, 1), cancellationToken).ConfigureAwait(false);
+            matrix.Set(CapabilityIds.WinEventLog, CapabilityState.Available);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            matrix.Set(CapabilityIds.WinEventLog, CapabilityState.Denied, ex.Message);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException and not ArgumentException)
+        {
+            matrix.Set(CapabilityIds.WinEventLog, CapabilityState.Unreachable, ex.Message);
         }
     }
 }

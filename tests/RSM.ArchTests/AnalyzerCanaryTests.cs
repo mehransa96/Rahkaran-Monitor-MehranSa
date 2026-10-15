@@ -36,6 +36,10 @@ public class AnalyzerCanaryTests
         { "new System.Diagnostics.PerformanceCounter(\"a\", \"b\", false).RawValue = 1;", "RawValue" },
         { "System.Diagnostics.PerformanceCounterCategory.Delete(\"a\");", "Delete" },
         { "System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;", "PriorityClass" },
+        { "new System.Diagnostics.Eventing.Reader.EventLogSession().ClearLog(\"System\");", "ClearLog" },
+        { "new System.Diagnostics.Eventing.Reader.EventLogSession().ExportLog(\"System\", System.Diagnostics.Eventing.Reader.PathType.LogName, \"*\", \"x.evtx\");", "ExportLog" },
+        { "System.Diagnostics.EventLog.WriteEntry(\"a\", \"b\");", "EventLog" },
+        { "new System.Diagnostics.Eventing.Reader.EventLogConfiguration(\"System\").MaximumSizeInBytes = 1;", "EventLogConfiguration" },
     };
 
     public static TheoryData<string, string> BannedOutsideSafety => new()
@@ -165,7 +169,8 @@ public class AnalyzerCanaryTests
         var trusted = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!).Split(Path.PathSeparator);
         var references = trusted
             .Concat([typeof(Microsoft.Data.SqlClient.SqlConnection).Assembly.Location, LocateDapper(),
-                Path.Combine(AppContext.BaseDirectory, "System.Diagnostics.PerformanceCounter.dll")])
+                Path.Combine(AppContext.BaseDirectory, "System.Diagnostics.PerformanceCounter.dll"),
+                Path.Combine(AppContext.BaseDirectory, "System.Diagnostics.EventLog.dll")])
             .Where(p => !string.IsNullOrEmpty(p))
             .Distinct()
             .Select(p => MetadataReference.CreateFromFile(p));

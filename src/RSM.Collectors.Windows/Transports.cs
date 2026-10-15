@@ -102,9 +102,49 @@ public interface IRegistryValues
     bool KeyExists(RegistryValueId id);
 }
 
-/// <summary>Everything RSM can read from one Windows node; created by the host, never by a collector.</summary>
-public sealed class WindowsNodeTransport(ICimQuery cim, IWindowsCounters counters, IRegistryValues? registry, bool isLocal) : IDisposable
+/// <summary>
+/// An event-log read: one log, events newer than <see cref="SinceUtc"/>, either problems (critical/error/warning) plus
+/// the listed ids, or only the listed ids. <see cref="ToXPath"/> builds the filter from integers and a validated log
+/// name only — there is no free text.
+/// </summary>
+public sealed partial record EventQuery(string Log, DateTimeOffset SinceUtc, IReadOnlyList<int> Ids, bool IncludeProblems, int MaxEvents)
 {
+    public string ToXPath()
+    {
+        if (!LogNamePattern().IsMatch(Log) || (Ids.Count == 0 && !IncludeProblems) || Ids.Count > 40 || Ids.Any(i => i is < 0 or > 65535) || MaxEvents is < 1 or > 20000)
+        {
+            throw new ArgumentException($"Invalid event query for {Log}.");
+        }
+
+        var terms = new List<string>();
+        if (IncludeProblems)
+        {
+            terms.AddRange(["Level=1", "Level=2", "Level=3"]);
+        }
+
+        terms.AddRange(Ids.Distinct().Order().Select(i => $"EventID={i.ToString(CultureInfo.InvariantCulture)}"));
+        var since = SinceUtc.UtcDateTime.ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'", CultureInfo.InvariantCulture);
+        return $"*[System[({string.Join(" or ", terms)}) and TimeCreated[@SystemTime>'{since}']]]";
+    }
+
+    /// <summary>Channel names such as "System" or "Microsoft-Windows-IIS-Configuration/Operational".</summary>
+    [GeneratedRegex(@"^[A-Za-z0-9][A-Za-z0-9 _\-]{0,100}(/[A-Za-z0-9 _\-]{1,60})?$")]
+    private static partial Regex LogNamePattern();
+}
+
+/// <summary>Reads events (newest first) through <c>System.Diagnostics.Eventing.Reader</c>; never writes, clears or exports.</summary>
+public interface IEventLogSource
+{
+    /// <summary>Returns the events and whether <see cref="EventQuery.MaxEvents"/> cut the result short.</summary>
+    Task<(IReadOnlyList<RSM.Parsers.Events.EventRecordData> Events, bool Truncated)> ReadAsync(EventQuery query, CancellationToken cancellationToken);
+}
+
+/// <summary>Everything RSM can read from one Windows node; created by the host, never by a collector.</summary>
+public sealed class WindowsNodeTransport(ICimQuery cim, IWindowsCounters counters, IRegistryValues? registry, bool isLocal, IEventLogSource? events = null) : IDisposable
+{
+    /// <summary>Null when the event logs could not be opened (Event Log Readers membership / firewall rule).</summary>
+    public IEventLogSource? Events { get; } = events;
+
     public ICimQuery Cim { get; } = cim;
 
     public IWindowsCounters Counters { get; } = counters;
@@ -123,5 +163,6 @@ public sealed class WindowsNodeTransport(ICimQuery cim, IWindowsCounters counter
         }
 
         (Registry as IDisposable)?.Dispose();
+        (Events as IDisposable)?.Dispose();
     }
 }

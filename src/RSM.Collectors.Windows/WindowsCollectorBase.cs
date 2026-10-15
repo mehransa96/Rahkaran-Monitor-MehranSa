@@ -40,7 +40,7 @@ public abstract class WindowsCollectorBase<TState> : ILiveCollector, IRequiresTr
         var problems = new List<string>();
         try
         {
-            await CollectCoreAsync(transport, _state.GetOrAdd(node.Node.Id, static _ => new TState()), output, problems, cancellationToken).ConfigureAwait(false);
+            await CollectCoreAsync(node, transport, _state.GetOrAdd(node.Node.Id, static _ => new TState()), output, problems, cancellationToken).ConfigureAwait(false);
         }
         catch (UnauthorizedAccessException ex)
         {
@@ -56,7 +56,7 @@ public abstract class WindowsCollectorBase<TState> : ILiveCollector, IRequiresTr
     public TState StateFor(string nodeId) => _state.GetOrAdd(nodeId, static _ => new TState());
 
     /// <summary>Collects; adds a short reason to <paramref name="problems"/> for every source that could not be read.</summary>
-    protected abstract Task CollectCoreAsync(WindowsNodeTransport transport, TState state, LiveOutput output, List<string> problems, CancellationToken cancellationToken);
+    protected abstract Task CollectCoreAsync(INodeContext node, WindowsNodeTransport transport, TState state, LiveOutput output, List<string> problems, CancellationToken cancellationToken);
 
     /// <summary>Runs a CIM query; on failure records why and returns null.</summary>
     protected static async Task<IReadOnlyList<CimRow>?> TryQueryAsync(ICimQuery cim, CimQuery query, List<string> problems, CancellationToken cancellationToken)
