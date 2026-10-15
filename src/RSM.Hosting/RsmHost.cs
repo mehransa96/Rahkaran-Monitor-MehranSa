@@ -78,6 +78,7 @@ public static class RsmHost
         services.AddSingleton<RuleRepository>();
         services.AddSingleton<SnapshotStore>();
         services.AddSingleton<SnapshotService>();
+        services.AddSingleton<LiveMonitorService>();
         services.AddSingleton<RSM.Reporting.ReportExporter>();
         services.AddSingleton<ReportService>();
     }
