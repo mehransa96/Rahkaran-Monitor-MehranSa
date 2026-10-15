@@ -1,0 +1,57 @@
+{
+  "id": "OS-011",
+  "layer": "Os",
+  "appliesTo": [
+    "Data"
+  ],
+  "when": "os.defender_realtime && os.defender_exclusions_readable && !os.defender_excludes_sqlservr",
+  "severity": "Warning",
+  "title": {
+    "fa": "sqlservr.exe در استثناهای آنتی‌ویروس Defender نیست",
+    "en": "sqlservr.exe is not excluded from Defender real-time scanning"
+  },
+  "explanation": {
+    "fa": "پایش لحظه‌ای Defender فعال است و فرایند SQL Server استثنا نشده است؛ اسکن فایل‌های داده و لاگ I/O را کند می‌کند. (مسیرهای استثنا: {os.defender_excluded_paths})",
+    "en": "Defender real-time protection is on and the SQL Server process is not excluded; scanning data and log files slows I/O. (Excluded paths: {os.defender_excluded_paths})"
+  },
+  "recommendation": {
+    "fa": "استثناهای آنتی‌ویروس را طبق مستند ستاد فنی تنظیم کنید (فرایند sqlservr.exe و مسیر فایل‌های داده/لاگ).",
+    "en": "Configure antivirus exclusions as the ستاد فنی document says (sqlservr.exe and the data/log folders)."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Other"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "os.defender_realtime": true,
+        "os.defender_exclusions_readable": true,
+        "os.defender_excludes_sqlservr": false,
+        "os.defender_excluded_paths": []
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "os.defender_realtime": true,
+        "os.defender_exclusions_readable": true,
+        "os.defender_excludes_sqlservr": true,
+        "os.defender_excluded_paths": [
+          "D:\\SQLData"
+        ]
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "os.defender_realtime": true,
+        "os.defender_exclusions_readable": false
+      },
+      "expect": null,
+      "note": "exclusions not readable: no finding (the Capability Matrix says why)"
+    }
+  ]
+}

@@ -66,6 +66,7 @@ public class RuleCatalogTests
         {
             _ when key.StartsWith("sql.config.", StringComparison.Ordinal) => "$\"sql.config.{key}\"",   // one fact per sys.configurations row
             _ when key.StartsWith("db.", StringComparison.Ordinal) => $".{key[3..]}\"",                 // $"{key}.recovery_model"
+            _ when key.StartsWith("volume.", StringComparison.Ordinal) => $".{key[7..]}\"",            // $"{key}.block_size_kb"
             _ => $"\"{key}\"",
         };
         sources.Should().Contain(needle, $"baseline.actual '{key}' of {file} must be produced by a collector");

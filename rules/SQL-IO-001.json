@@ -1,0 +1,71 @@
+{
+  "id": "SQL-IO-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "db",
+  "when": "db.io.interval_reads >= params.min_ios && db.io.interval_read_ms > params.warn",
+  "severity": "Warning",
+  "escalate": [
+    {
+      "when": "db.io.interval_read_ms > params.crit",
+      "severity": "Critical"
+    }
+  ],
+  "title": {
+    "fa": "تأخیر خواندن فایل‌های داده {instance} زیاد است ({db.io.interval_read_ms} ms)",
+    "en": "High data-file read latency in {instance} ({db.io.interval_read_ms} ms)"
+  },
+  "explanation": {
+    "fa": "میانگین تأخیر خواندن در بازهٔ اخیر برای {db.io.interval_reads} خواندن بیش از {params.warn} میلی‌ثانیه بوده است.",
+    "en": "Average read latency over the last interval exceeded {params.warn} ms across {db.io.interval_reads} reads."
+  },
+  "recommendation": {
+    "fa": "دیسک داده و پرس‌وجوهای پرخواندن را بررسی کنید.",
+    "en": "Check the data volume and read-heavy queries."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "min_ios": 20,
+    "warn": 20,
+    "crit": 50
+  },
+  "examples": [
+    {
+      "facts": {
+        "db[Rahkaran].io.interval_reads": 500,
+        "db[Rahkaran].io.interval_read_ms": 32
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rahkaran].io.interval_reads": 500,
+        "db[Rahkaran].io.interval_read_ms": 75
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "db[Rahkaran].io.interval_reads": 3,
+        "db[Rahkaran].io.interval_read_ms": 200
+      },
+      "expect": null,
+      "note": "too few reads to judge"
+    },
+    {
+      "facts": {
+        "db[Rahkaran].io.interval_reads": 500,
+        "db[Rahkaran].io.interval_read_ms": 4
+      },
+      "expect": null
+    }
+  ]
+}

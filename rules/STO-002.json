@@ -1,0 +1,65 @@
+{
+  "id": "STO-002",
+  "layer": "Storage",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "volume",
+  "when": "(coalesce(volume.has_data, false) || coalesce(volume.has_log, false) || coalesce(volume.has_tempdb, false)) && (volume.is_os || coalesce(volume.has_pagefile, false))",
+  "severity": "Warning",
+  "title": {
+    "fa": "فایل‌های SQL Server روی دیسک سیستم‌عامل/Pagefile هستند ({instance})",
+    "en": "SQL Server files are on the OS / pagefile volume ({instance})"
+  },
+  "explanation": {
+    "fa": "دیسک {instance} هم سیستم‌عامل یا Pagefile و هم فایل‌های داده/لاگ/tempdb را نگه می‌دارد؛ I/O آن‌ها با هم رقابت می‌کند.",
+    "en": "Volume {instance} holds the OS or pagefile and SQL data/log/tempdb files; their I/O competes."
+  },
+  "recommendation": {
+    "fa": "انتقال فایل‌ها به دیسک جداگانه را با ستاد فنی برنامه‌ریزی کنید.",
+    "en": "Plan moving the files to a separate volume with ستاد فنی."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Storage"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "جداسازی فایل‌های SQL از دیسک سیستم",
+      "en": "SQL files off the OS volume"
+    },
+    "expected": {
+      "fa": "دیسک جداگانه",
+      "en": "Separate volume"
+    },
+    "actual": "volume.is_os"
+  },
+  "examples": [
+    {
+      "facts": {
+        "volume[C:\\].has_data": true,
+        "volume[C:\\].is_os": true
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "volume[C:\\].has_tempdb": true,
+        "volume[C:\\].is_os": false,
+        "volume[C:\\].has_pagefile": true
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "volume[D:\\].has_data": true,
+        "volume[D:\\].is_os": false,
+        "volume[D:\\].has_pagefile": false
+      },
+      "expect": null
+    }
+  ]
+}

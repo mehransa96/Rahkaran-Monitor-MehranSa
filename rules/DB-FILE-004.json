@@ -6,7 +6,7 @@
     "Report"
   ],
   "forEach": "db",
-  "when": "db.no_growth_low_free_files > 0",
+  "when": "db.database_id != 2 && db.no_growth_low_free_files > 0",
   "severity": "Critical",
   "title": {
     "fa": "فایل داده {instance} پر است و رشد خودکار ندارد",
@@ -29,15 +29,24 @@
   "examples": [
     {
       "facts": {
+        "db[Rk].database_id": 5,
         "db[Rk].no_growth_low_free_files": 1
       },
       "expect": "Critical"
     },
     {
       "facts": {
+        "db[Rk].database_id": 5,
         "db[Rk].no_growth_low_free_files": 0
       },
       "expect": null
+    },
+    {
+      "facts": {
+        "db[tempdb].database_id": 2
+      },
+      "expect": null,
+      "note": "tempdb is recreated at startup; its space is covered by the tempdb rules"
     }
   ]
 }

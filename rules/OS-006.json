@@ -1,0 +1,65 @@
+{
+  "id": "OS-006",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "win.mem.available_pct_max60 < params.warn",
+  "severity": "Warning",
+  "escalate": [
+    {
+      "when": "win.mem.available_pct_max60 < params.crit || win.mem.available_mb_max60 < params.crit_mb",
+      "severity": "Critical"
+    }
+  ],
+  "title": {
+    "fa": "حافظهٔ آزاد ویندوز کم است ({win.mem.available_pct}٪)",
+    "en": "Low available memory ({win.mem.available_pct} %)"
+  },
+  "explanation": {
+    "fa": "در ۶۰ ثانیهٔ گذشته حافظهٔ آزاد همواره کمتر از {params.warn}٪ بوده است (اکنون {win.mem.available_mb} MB).",
+    "en": "Available memory stayed below {params.warn} % for the last 60 s (now {win.mem.available_mb} MB)."
+  },
+  "recommendation": {
+    "fa": "مصرف حافظهٔ فرایندها (صفحهٔ Windows) و max server memory را بررسی کنید.",
+    "en": "Check process memory use (Windows page) and max server memory."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "warn": 10,
+    "crit": 5,
+    "crit_mb": 2048
+  },
+  "examples": [
+    {
+      "facts": {
+        "win.mem.available_pct_max60": 8,
+        "win.mem.available_mb_max60": 5000,
+        "win.mem.available_pct": 7,
+        "win.mem.available_mb": 4500
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "win.mem.available_pct_max60": 3,
+        "win.mem.available_mb_max60": 900,
+        "win.mem.available_pct": 3,
+        "win.mem.available_mb": 800
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "win.mem.available_pct_max60": 25,
+        "win.mem.available_mb_max60": 16000,
+        "win.mem.available_pct": 30,
+        "win.mem.available_mb": 18000
+      },
+      "expect": null
+    }
+  ]
+}

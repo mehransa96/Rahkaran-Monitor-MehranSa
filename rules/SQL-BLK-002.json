@@ -1,0 +1,46 @@
+{
+  "id": "SQL-BLK-002",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.idle_open_tran.max_age_s > params.max_s",
+  "severity": "Warning",
+  "title": {
+    "fa": "Session بیکار با تراکنش باز (بیش از ۵ دقیقه)",
+    "en": "Idle session holding an open transaction (> 5 minutes)"
+  },
+  "explanation": {
+    "fa": "{sql.idle_open_tran.oldest} — تراکنش باز قفل‌ها را نگه می‌دارد و مانع کوتاه‌شدن لاگ می‌شود.",
+    "en": "{sql.idle_open_tran.oldest} — an open transaction keeps its locks and stops the log from truncating."
+  },
+  "recommendation": {
+    "fa": "برنامه‌ای که Commit/Rollback نکرده را پیدا کنید.",
+    "en": "Find the application that did not commit/roll back."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max_s": 300
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.idle_open_tran.max_age_s": 900,
+        "sql.idle_open_tran.oldest": "session 80 …"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.idle_open_tran.max_age_s": 0
+      },
+      "expect": null
+    }
+  ]
+}

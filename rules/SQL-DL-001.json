@@ -1,0 +1,62 @@
+{
+  "id": "SQL-DL-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.deadlocks.count_24h > 0",
+  "severity": "Info",
+  "escalate": [
+    {
+      "when": "sql.deadlocks.count_24h > params.warn",
+      "severity": "Warning"
+    }
+  ],
+  "title": {
+    "fa": "Deadlock در ۲۴ ساعت گذشته ({sql.deadlocks.count_24h})",
+    "en": "Deadlocks in the last 24 hours ({sql.deadlocks.count_24h})"
+  },
+  "explanation": {
+    "fa": "آخرین مورد: {sql.deadlocks.latest}. منبع: system_health ({sql.deadlocks.source}).",
+    "en": "Latest: {sql.deadlocks.latest}. Source: system_health ({sql.deadlocks.source})."
+  },
+  "recommendation": {
+    "fa": "جزئیات (قربانی، دستورها، اشیا و قفل‌ها) را در صفحهٔ Blocking ببینید و با ستاد فنی بررسی کنید.",
+    "en": "See the details (victim, statements, objects, lock modes) on the Blocking page and review them with ستاد فنی."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "warn": 10
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.deadlocks.count_24h": 2,
+        "sql.deadlocks.latest": "victim 61 …",
+        "sql.deadlocks.source": "file"
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.deadlocks.count_24h": 25,
+        "sql.deadlocks.latest": "victim 61 …",
+        "sql.deadlocks.source": "file"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.deadlocks.count_24h": 0,
+        "sql.deadlocks.source": "file"
+      },
+      "expect": null
+    }
+  ]
+}

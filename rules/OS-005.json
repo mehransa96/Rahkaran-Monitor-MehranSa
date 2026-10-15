@@ -1,0 +1,50 @@
+{
+  "id": "OS-005",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "!os.is_64bit",
+  "severity": "Critical",
+  "title": {
+    "fa": "سیستم‌عامل ۶۴ بیتی نیست",
+    "en": "The operating system is not 64-bit"
+  },
+  "explanation": {
+    "fa": "راهکاران و SQL Server به ویندوز ۶۴ بیتی نیاز دارند.",
+    "en": "Rahkaran and SQL Server need 64-bit Windows."
+  },
+  "recommendation": {
+    "fa": "سرور را با ویندوز Server ۶۴ بیتی آماده کنید.",
+    "en": "Prepare the server with 64-bit Windows Server."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — OS"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "معماری سیستم‌عامل",
+      "en": "OS architecture"
+    },
+    "expected": {
+      "fa": "۶۴ بیتی",
+      "en": "64-bit"
+    },
+    "actual": "os.is_64bit"
+  },
+  "examples": [
+    {
+      "facts": {
+        "os.is_64bit": false
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "os.is_64bit": true
+      },
+      "expect": null
+    }
+  ]
+}

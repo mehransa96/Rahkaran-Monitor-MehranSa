@@ -1,0 +1,42 @@
+{
+  "id": "OS-007",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "win.mem.committed_pct > params.max",
+  "severity": "Warning",
+  "title": {
+    "fa": "حافظهٔ Commit شده به سقف نزدیک است ({win.mem.committed_pct}٪)",
+    "en": "Committed memory is close to the commit limit ({win.mem.committed_pct} %)"
+  },
+  "explanation": {
+    "fa": "وقتی Commit به سقف برسد، تخصیص حافظه در فرایندها شکست می‌خورد.",
+    "en": "When commit reaches the limit, memory allocations in processes fail."
+  },
+  "recommendation": {
+    "fa": "مصرف حافظهٔ فرایندها و اندازهٔ Pagefile را بررسی کنید.",
+    "en": "Check process memory use and the pagefile size."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max": 90
+  },
+  "examples": [
+    {
+      "facts": {
+        "win.mem.committed_pct": 95
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "win.mem.committed_pct": 60
+      },
+      "expect": null
+    }
+  ]
+}

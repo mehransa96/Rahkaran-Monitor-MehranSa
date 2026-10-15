@@ -120,13 +120,25 @@ public sealed class WindowsPerfCollector : WindowsCollectorBase<WindowsPerfState
             }
 
             // Volumes: latency facts keyed like SQL Server's mount points, sustained over the last 3 samples.
-            foreach (var disk in readings.Where(r => r.Instance is not null && r.Key is "win.disk.read_ms" or "win.disk.write_ms" or "win.disk.queue_length"))
+            foreach (var disk in readings.Where(r => r.Instance is not null && r.Key.StartsWith("win.disk.", StringComparison.Ordinal)))
             {
-                var volume = WindowsMetricCatalog.VolumeKey(disk.Instance!);
-                var name = disk.Key["win.disk.".Length..];
+                var volume = $"volume[{WindowsMetricCatalog.VolumeKey(disk.Instance!)}]";
                 Push(state, $"{disk.Key}|{volume}", disk.Value, at);
-                output.Fact($"volume[{volume}].{name}", disk.Value);
-                output.Fact($"volume[{volume}].{name}_min3", MinOfLast(state, $"{disk.Key}|{volume}", 3));
+                var min3 = MinOfLast(state, $"{disk.Key}|{volume}", 3);
+                switch (disk.Key)
+                {
+                    case "win.disk.read_ms":
+                        output.Fact($"{volume}.read_ms", disk.Value);
+                        output.Fact($"{volume}.read_ms_min3", min3);
+                        break;
+                    case "win.disk.write_ms":
+                        output.Fact($"{volume}.write_ms", disk.Value);
+                        output.Fact($"{volume}.write_ms_min3", min3);
+                        break;
+                    case "win.disk.queue_length":
+                        output.Fact($"{volume}.queue_length", disk.Value);
+                        break;
+                }
             }
 
             // Network: utilisation vs link speed, queue, error counters increasing.

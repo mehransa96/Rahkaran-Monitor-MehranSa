@@ -1,0 +1,50 @@
+{
+  "id": "SQL-QS-001",
+  "layer": "Database",
+  "appliesTo": [
+    "Data"
+  ],
+  "forEach": "db",
+  "when": "coalesce(db.qds.regressed_count, 0) > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "پرس‌وجوی پسرفت‌کرده در Query Store ‏{instance}",
+    "en": "Regressed query in Query Store of {instance}"
+  },
+  "explanation": {
+    "fa": "{db.qds.regressed_count} پرس‌وجو در ۲۴ ساعت اخیر بیش از ۲ برابر کندتر از ۷ روز قبل شده و Plan آن تغییر کرده است. بدترین: {db.qds.worst_regression}.",
+    "en": "{db.qds.regressed_count} queries ran more than 2× slower in the last 24 h than the 7 days before, with a plan change. Worst: {db.qds.worst_regression}."
+  },
+  "recommendation": {
+    "fa": "Planهای جدید را با ستاد فنی بررسی کنید؛ RSM هیچ Planی را Force نمی‌کند.",
+    "en": "Review the new plans with ستاد فنی; RSM never forces a plan."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rahkaran].qds.regressed_count": 2,
+        "db[Rahkaran].qds.worst_regression": "query 7: 10 ms → 45 ms, 2 plans"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rahkaran].qds.regressed_count": 0
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "db[master].is_system": true
+      },
+      "expect": null,
+      "note": "no Query Store data for this database"
+    }
+  ]
+}

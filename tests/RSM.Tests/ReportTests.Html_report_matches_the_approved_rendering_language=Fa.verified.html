@@ -58,7 +58,7 @@ footer { margin-top:32px; border-top:1px solid var(--line); padding-top:8px; }
     <tr><th>تاریخ تهیه</th><td class="ltr-num">1405/07/22 10:30 — 2026-10-14 10:30</td></tr>
     <tr><th>بازهٔ جمع‌آوری</th><td class="ltr-num">1405/07/22 10:00 — 2026-10-14 10:00 → 1405/07/22 10:02 — 2026-10-14 10:02</td></tr>
     <tr><th>نسخهٔ RSM</th><td class="ltr-num">1.0.0-test</td></tr>
-    <tr><th>قواعد ارزیابی‌شده</th><td class="ltr-num">85</td></tr>
+    <tr><th>قواعد ارزیابی‌شده</th><td class="ltr-num">125</td></tr>
   </table>
   <p class="note">بررسی‌های سنگین اجرا نشد (فقط به درخواست)</p>
   
@@ -96,9 +96,13 @@ footer { margin-top:32px; border-top:1px solid var(--line); padding-top:8px; }
   
     <h3>انطباق با توصیه‌های ستاد فنی</h3>
     <table class="grid">
-      <thead><tr><th>مورد</th><th>پایگاه داده</th><th>مقدار مورد انتظار</th><th>مقدار فعلی</th><th>وضعیت</th><th>قاعده</th></tr></thead>
+      <thead><tr><th>مورد</th><th>پایگاه داده / دیسک</th><th>مقدار مورد انتظار</th><th>مقدار فعلی</th><th>وضعیت</th><th>قاعده</th></tr></thead>
       <tbody>
-      <tr class="row-ok"><td>priority boost</td><td></td><td>0 (خاموش)</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-001</code></td></tr>
+      <tr class="row-ok"><td>طرح مصرف انرژی</td><td></td><td>High Performance</td><td class="ltr-num">High performance</td><td><span class="sev ok">منطبق</span></td><td><code>OS-001</code></td></tr>
+        <tr class="row-ok"><td>زمان‌بندی پردازنده</td><td></td><td>Background services</td><td class="ltr-num">24</td><td><span class="sev ok">منطبق</span></td><td><code>OS-003</code></td></tr>
+        <tr class="row-ok"><td>Pagefile</td><td></td><td>ثابت؛ حداقل = RAM، حداکثر = ۱٫۵ &#215; RAM</td><td class="ltr-num">16384</td><td><span class="sev ok">منطبق</span></td><td><code>OS-004</code></td></tr>
+        <tr class="row-ok"><td>معماری سیستم‌عامل</td><td></td><td>۶۴ بیتی</td><td class="ltr-num">بله</td><td><span class="sev ok">منطبق</span></td><td><code>OS-005</code></td></tr>
+        <tr class="row-ok"><td>priority boost</td><td></td><td>0 (خاموش)</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-001</code></td></tr>
         <tr class="row-ok"><td>max worker threads</td><td></td><td>0 (خودکار)</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-002</code></td></tr>
         <tr class="row-ok"><td>lightweight pooling</td><td></td><td>0 (خاموش)</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-CFG-003</code></td></tr>
         <tr class="row-warning"><td>backup compression default</td><td></td><td>1 (روشن)</td><td class="ltr-num">0</td><td><span class="sev warning">مغایر · هشدار</span></td><td><code>SQL-CFG-004</code></td></tr>
@@ -119,6 +123,8 @@ footer { margin-top:32px; border-top:1px solid var(--line); padding-top:8px; }
         <tr class="row-ok"><td>اندازه و رشد یکسان فایل‌های TempDB</td><td></td><td>یکسان</td><td class="ltr-num">بله</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-TDB-002</code> <span class="chip general">راهنمای عمومی — با ستاد فنی تأیید کنید</span></td></tr>
         <tr class="row-ok"><td>نسخهٔ SQL Server</td><td></td><td>۲۰۲۲ یا جدیدتر</td><td class="ltr-num">SQL Server 2022</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-VER-001</code></td></tr>
         <tr class="row-ok"><td>آخرین به‌روزرسانی تجمعی (CU)</td><td></td><td>آخرین CU نصب شده باشد</td><td class="ltr-num">16.0.4305.5</td><td><span class="sev ok">منطبق</span></td><td><code>SQL-VER-002</code></td></tr>
+        <tr class="row-ok"><td>واحد تخصیص دیسک‌های SQL</td><td>D:\</td><td>۶۴ KB</td><td class="ltr-num">64</td><td><span class="sev ok">منطبق</span></td><td><code>STO-001</code></td></tr>
+        <tr class="row-ok"><td>جداسازی فایل‌های SQL از دیسک سیستم</td><td>D:\</td><td>دیسک جداگانه</td><td class="ltr-num">خیر</td><td><span class="sev ok">منطبق</span></td><td><code>STO-002</code></td></tr>
         <tr class="row-warning"><td>رشد فایل‌ها</td><td>RK_Tehran1405</td><td>بر حسب MB (نه درصد)</td><td class="ltr-num">2</td><td><span class="sev warning">مغایر · هشدار</span></td><td><code>DB-FILE-001</code></td></tr>
         <tr class="row-info"><td>رشد فایل‌های داده</td><td>RK_Tehran1405</td><td>مضربی از 1024 MB</td><td class="ltr-num">1</td><td><span class="sev info">مغایر · اطلاع</span></td><td><code>DB-FILE-002</code></td></tr>
         <tr class="row-ok"><td>حداکثر اندازهٔ فایل‌ها</td><td>RK_Tehran1405</td><td>نامحدود</td><td class="ltr-num">0</td><td><span class="sev ok">منطبق</span></td><td><code>DB-FILE-003</code></td></tr>

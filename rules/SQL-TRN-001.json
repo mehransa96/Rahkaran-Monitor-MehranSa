@@ -1,0 +1,57 @@
+{
+  "id": "SQL-TRN-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.tran.max_age_s > params.max_s || sql.tran.max_log_mb > params.max_log_mb",
+  "severity": "Warning",
+  "title": {
+    "fa": "تراکنش طولانی یا پرحجم",
+    "en": "Long-running or large transaction"
+  },
+  "explanation": {
+    "fa": "{sql.tran.oldest}. تراکنش طولانی باعث رشد لاگ (log_reuse_wait = ACTIVE_TRANSACTION) و Blocking می‌شود.",
+    "en": "{sql.tran.oldest}. Long transactions grow the log (log_reuse_wait = ACTIVE_TRANSACTION) and cause blocking."
+  },
+  "recommendation": {
+    "fa": "صاحب تراکنش را پیدا کنید؛ RSM هیچ تراکنشی را متوقف نمی‌کند.",
+    "en": "Find the owner of the transaction; RSM never stops a transaction."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — transaction log growth (1403/12/28)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max_s": 600,
+    "max_log_mb": 1024
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.tran.max_age_s": 1200,
+        "sql.tran.max_log_mb": 10,
+        "sql.tran.oldest": "session 80 …"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.tran.max_age_s": 30,
+        "sql.tran.max_log_mb": 2048,
+        "sql.tran.oldest": "session 81 …"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.tran.max_age_s": 30,
+        "sql.tran.max_log_mb": 1
+      },
+      "expect": null
+    }
+  ]
+}

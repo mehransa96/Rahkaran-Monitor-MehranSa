@@ -306,7 +306,7 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 Rules marked P1 above live in [`rules/`](rules/) — one JSON file per rule, named after its id, with fa/en title,
 explanation and recommendation, source, parameters and **built-in examples** (at least one that fires with the expected
 severity and one that stays quiet). `RSM.Tests.RuleCatalogTests` runs every example and checks that each rule id has a
-row in this file. Instance-scoped rules use `"forEach": "db"` / `"volume"`.
+row in this file. Instance-scoped rules use `"forEach": "db"` / `"volume"` / `"net"` (network adapter) / `"ag"` (availability replica).
 
 ### Compliance baseline (Phase 1)
 
@@ -323,6 +323,34 @@ Changes made while building the report (behaviour, not thresholds):
   instead of leaving the schedule rule *unknown*.
 - `DB-INT-001` / `DB-RM-002` titles no longer print the "never" sentinel (99999); reports show "never".
 - Rule placeholders that hold lists (user or job names) render as "a, b, c" (max 10).
+
+### Phase 2 (live)
+
+40 rules added: §1 OS-001…009, 011…015, 017, 018; §2 STO-001, 002, 006, 007; §3.5 SQL-CPU-001…004, SQL-MEM-006…008,
+SQL-WAIT-001, SQL-IO-001…003, SQL-TDB-003, SQL-BLK-001/002, SQL-DL-001, SQL-TRN-001, SQL-PLC-001, SQL-QS-001/002,
+SQL-HA-001 (SQL-MEM-005, SQL-TDB-001/002/004 already existed). Six of them carry a compliance `baseline` (OS-001, 003,
+004, 005, STO-001, 002); the report's compliance table now also lists volumes that hold SQL Server files.
+
+"Sustained" conditions are computed by the collectors as window facts, so the rule language stays simple:
+`…_min3` / `…_max3` (last three samples), `…_min5` (last five one-minute CPU points), `…_min60` / `…_max60` (the last
+60 s, only once the samples cover ≥ 75 % of the window), `win.cpu.throttled_samples` (trailing count). A one-shot
+diagnosis takes a 5 s baseline for interval values (waits, counters, file latency); window facts that need more
+samples stay *unknown* there and are decided in the live view.
+
+Deferred, with the reason:
+- **OS-010** (unexpected shutdowns) needs the event logs → P3 with the event-log collector.
+- **OS-016** (TCP TimeWait / ephemeral ports) has no performance counter for TimeWait; needs a netstat-equivalent
+  CIM class (`MSFT_NetTCPConnection`) → P3 with the IIS/network work.
+- **SQL-MEM-007** uses the absolute fallback (PLE < 300 s per 4 GB of buffer pool, three samples); the
+  hour-of-week baseline arrives with history in P5.
+- **OS-011** checks the `sqlservr.exe` process exclusion and lists excluded paths; matching every data/log path
+  against the exclusions is left for P3 (needs the file paths from the SQL layer on the same node).
+- **SQL-TDB-003** counts PAGELATCH waiters on tempdb allocation pages (PFS/GAM/SGAM by page number) at the moment
+  of sampling (≥ 3); it is a point-in-time signal, not a rate.
+
+Phase 1 noise removed (seen in CI run 5): `DB-IDX-001` now requires `db.is_rahkaran` (fragmentation is only
+scanned on demand in the Rahkaran DB), `DB-FILE-004` and `DB-LOG-003` skip tempdb (`db.database_id != 2`; tempdb is
+recreated at startup and has its own rules).
 
 ## Rule hygiene
 

@@ -1,0 +1,93 @@
+{
+  "id": "SQL-WAIT-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.waits.has_dominant",
+  "severity": "Info",
+  "escalate": [
+    {
+      "when": "sql.waits.ms_per_sec >= params.busy && !(sql.waits.dominant in params.info_only)",
+      "severity": "Warning"
+    }
+  ],
+  "title": {
+    "fa": "انتظار غالب: {sql.waits.dominant} ({sql.waits.dominant_pct}٪)",
+    "en": "Dominant wait: {sql.waits.dominant} ({sql.waits.dominant_pct} %)"
+  },
+  "explanation": {
+    "fa": "{sql.waits.dominant_explain_fa} بیشترین انتظارها: {sql.waits.top}.",
+    "en": "{sql.waits.dominant_explain_en} Top waits: {sql.waits.top}."
+  },
+  "recommendation": {
+    "fa": "دستهٔ انتظار غالب را با صفحه‌های مربوط (I/O، Blocking، پرس‌وجوها) دنبال کنید.",
+    "en": "Follow the dominant category on the matching page (I/O, blocking, queries)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "busy": 1000,
+    "info_only": [
+      "Network",
+      "Backup",
+      "Other"
+    ]
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.waits.has_dominant": true,
+        "sql.waits.dominant": "IoData",
+        "sql.waits.dominant_pct": 62,
+        "sql.waits.ms_per_sec": 300,
+        "sql.waits.dominant_explain_fa": "…",
+        "sql.waits.dominant_explain_en": "…",
+        "sql.waits.top": [
+          "PAGEIOLATCH_SH 9000 ms"
+        ]
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.waits.has_dominant": true,
+        "sql.waits.dominant": "Locking",
+        "sql.waits.dominant_pct": 80,
+        "sql.waits.ms_per_sec": 4000,
+        "sql.waits.dominant_explain_fa": "…",
+        "sql.waits.dominant_explain_en": "…",
+        "sql.waits.top": [
+          "LCK_M_U 60000 ms"
+        ]
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.waits.has_dominant": true,
+        "sql.waits.dominant": "Network",
+        "sql.waits.dominant_pct": 90,
+        "sql.waits.ms_per_sec": 4000,
+        "sql.waits.dominant_explain_fa": "…",
+        "sql.waits.dominant_explain_en": "…",
+        "sql.waits.top": [
+          "ASYNC_NETWORK_IO 60000 ms"
+        ]
+      },
+      "expect": "Info",
+      "note": "network waits point at the client, not SQL"
+    },
+    {
+      "facts": {
+        "sql.waits.has_dominant": false
+      },
+      "expect": null
+    }
+  ]
+}

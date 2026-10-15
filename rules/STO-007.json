@@ -1,0 +1,65 @@
+{
+  "id": "STO-007",
+  "layer": "Storage",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "volume",
+  "when": "coalesce(volume.has_log, false) && volume.write_ms_min3 > params.warn",
+  "severity": "Warning",
+  "escalate": [
+    {
+      "when": "volume.write_ms_min3 > params.crit",
+      "severity": "Critical"
+    }
+  ],
+  "title": {
+    "fa": "تأخیر نوشتن دیسک لاگ {instance} زیاد است ({volume.write_ms} ms)",
+    "en": "High write latency on log volume {instance} ({volume.write_ms} ms)"
+  },
+  "explanation": {
+    "fa": "در سه نمونهٔ پیاپی Avg. Disk sec/Write بیش از {params.warn} میلی‌ثانیه بوده است؛ هر Commit منتظر این نوشتن است.",
+    "en": "Avg. Disk sec/Write exceeded {params.warn} ms for three consecutive samples; every commit waits for it."
+  },
+  "recommendation": {
+    "fa": "دیسک لاگ را بررسی کنید (کش نوشتن کنترلر، RAID، جداسازی از داده).",
+    "en": "Check the log volume (controller write cache, RAID, separation from data)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "warn": 5,
+    "crit": 15
+  },
+  "examples": [
+    {
+      "facts": {
+        "volume[L:\\].has_log": true,
+        "volume[L:\\].write_ms_min3": 8,
+        "volume[L:\\].write_ms": 9
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "volume[L:\\].has_log": true,
+        "volume[L:\\].write_ms_min3": 20,
+        "volume[L:\\].write_ms": 25
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "volume[L:\\].has_log": true,
+        "volume[L:\\].write_ms_min3": 1,
+        "volume[L:\\].write_ms": 1
+      },
+      "expect": null
+    }
+  ]
+}

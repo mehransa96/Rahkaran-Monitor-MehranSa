@@ -1,0 +1,49 @@
+{
+  "id": "SQL-PLC-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.plan_cache.single_use_pct > params.max",
+  "severity": "Info",
+  "title": {
+    "fa": "بخش بزرگی از Plan Cache یک‌بارمصرف است ({sql.plan_cache.single_use_pct}٪)",
+    "en": "Much of the plan cache is single-use ({sql.plan_cache.single_use_pct} %)"
+  },
+  "explanation": {
+    "fa": "{sql.plan_cache.single_use_mb} MB از {sql.plan_cache.mb} MB حافظهٔ Plan Cache متعلق به Planهای یک‌بار اجراشده است.",
+    "en": "{sql.plan_cache.single_use_mb} MB of {sql.plan_cache.mb} MB of plan cache holds plans used once."
+  },
+  "recommendation": {
+    "fa": "تنظیم optimize for ad hoc workloads را طبق ستاد فنی بررسی کنید (SQL-CFG-007).",
+    "en": "Check optimize for ad hoc workloads per ستاد فنی (SQL-CFG-007)."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Instance"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max": 30
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.plan_cache.single_use_pct": 55,
+        "sql.plan_cache.single_use_mb": 550,
+        "sql.plan_cache.mb": 1000
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "sql.plan_cache.single_use_pct": 5,
+        "sql.plan_cache.single_use_mb": 50,
+        "sql.plan_cache.mb": 1000
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "id": "OS-014",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "!os.is_virtual && !os.hypervisor_present && cpu.virtualization_firmware",
+  "severity": "Info",
+  "title": {
+    "fa": "مجازی‌سازی در Firmware فعال است ولی سرور میزبان مجازی‌سازی نیست",
+    "en": "Virtualization is enabled in firmware on a host without a hypervisor"
+  },
+  "explanation": {
+    "fa": "روی سرور فیزیکی بدون Hyper-V، گزینهٔ Virtualization در BIOS فعال است.",
+    "en": "On a physical server without Hyper-V, virtualization is enabled in the BIOS."
+  },
+  "recommendation": {
+    "fa": "طبق راهنمای HPE غیرفعال‌کردن آن را در پنجرهٔ نگهداری بررسی کنید.",
+    "en": "Per the HPE guide, consider disabling it in a maintenance window."
+  },
+  "source": {
+    "kind": "Vendor",
+    "citation": "HPE server preparation guide (informational)"
+  },
+  "verified": true,
+  "confidence": 0.6,
+  "examples": [
+    {
+      "facts": {
+        "os.is_virtual": false,
+        "os.hypervisor_present": false,
+        "cpu.virtualization_firmware": true
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "os.is_virtual": true,
+        "os.hypervisor_present": true,
+        "cpu.virtualization_firmware": false
+      },
+      "expect": null
+    }
+  ]
+}

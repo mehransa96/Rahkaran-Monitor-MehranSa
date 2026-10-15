@@ -1,0 +1,63 @@
+{
+  "id": "STO-001",
+  "layer": "Storage",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "volume",
+  "when": "(coalesce(volume.has_data, false) || coalesce(volume.has_log, false) || coalesce(volume.has_tempdb, false)) && volume.block_size_kb != 64",
+  "severity": "Warning",
+  "title": {
+    "fa": "واحد تخصیص دیسک {instance} برابر ۶۴ کیلوبایت نیست ({volume.block_size_kb} KB)",
+    "en": "Allocation unit of {instance} is not 64 KB ({volume.block_size_kb} KB)"
+  },
+  "explanation": {
+    "fa": "این دیسک فایل‌های SQL Server را نگه می‌دارد؛ مستند ستاد فنی فرمت با Allocation Unit برابر ۶۴ کیلوبایت را الزامی می‌داند.",
+    "en": "This volume holds SQL Server files; the ستاد فنی document requires a 64 KB allocation unit."
+  },
+  "recommendation": {
+    "fa": "تغییر نیاز به فرمت مجدد دارد — فقط هنگام آماده‌سازی دیسک جدید و با ستاد فنی.",
+    "en": "Changing it needs a reformat — only when preparing a new volume, with ستاد فنی."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — Storage"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "واحد تخصیص دیسک‌های SQL",
+      "en": "Allocation unit of SQL volumes"
+    },
+    "expected": {
+      "fa": "۶۴ KB",
+      "en": "64 KB"
+    },
+    "actual": "volume.block_size_kb"
+  },
+  "examples": [
+    {
+      "facts": {
+        "volume[D:\\].has_data": true,
+        "volume[D:\\].block_size_kb": 4
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "volume[D:\\].has_data": true,
+        "volume[D:\\].block_size_kb": 64
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "volume[E:\\].block_size_kb": 4
+      },
+      "expect": null,
+      "note": "volume without SQL Server files"
+    }
+  ]
+}

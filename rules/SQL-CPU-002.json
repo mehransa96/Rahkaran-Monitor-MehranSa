@@ -1,0 +1,47 @@
+{
+  "id": "SQL-CPU-002",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.cpu.sql_pct_min5 > params.max",
+  "severity": "Warning",
+  "title": {
+    "fa": "مصرف CPU توسط SQL Server بالاست (≥ ۵ دقیقه)",
+    "en": "SQL Server CPU is high (≥ 5 minutes)"
+  },
+  "explanation": {
+    "fa": "در ۵ دقیقهٔ گذشته مصرف CPU فرایند SQL Server همواره بیش از {params.max}٪ بوده است (اکنون {sql.cpu.sql_pct}٪).",
+    "en": "SQL Server CPU stayed above {params.max} % for the last 5 minutes (now {sql.cpu.sql_pct} %)."
+  },
+  "recommendation": {
+    "fa": "پرس‌وجوهای پرهزینه از نظر CPU را در صفحهٔ پرس‌وجوها ببینید.",
+    "en": "See the top queries by CPU on the Queries page."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max": 80
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.cpu.sql_pct_min5": 92,
+        "sql.cpu.sql_pct": 95
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.cpu.sql_pct_min5": 40,
+        "sql.cpu.sql_pct": 85
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": "STO-006",
+  "layer": "Storage",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "forEach": "volume",
+  "when": "coalesce(volume.has_data, false) && volume.read_ms_min3 > params.warn",
+  "severity": "Warning",
+  "escalate": [
+    {
+      "when": "volume.read_ms_min3 > params.crit",
+      "severity": "Critical"
+    }
+  ],
+  "title": {
+    "fa": "تأخیر خواندن دیسک داده {instance} زیاد است ({volume.read_ms} ms)",
+    "en": "High read latency on data volume {instance} ({volume.read_ms} ms)"
+  },
+  "explanation": {
+    "fa": "در سه نمونهٔ پیاپی Avg. Disk sec/Read بیش از {params.warn} میلی‌ثانیه بوده است.",
+    "en": "Avg. Disk sec/Read exceeded {params.warn} ms for three consecutive samples."
+  },
+  "recommendation": {
+    "fa": "زیرساخت ذخیره‌سازی (SAN/RAID/درایور) و بار I/O پرس‌وجوها را بررسی کنید.",
+    "en": "Check the storage (SAN/RAID/driver) and the I/O load of queries."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "warn": 20,
+    "crit": 50
+  },
+  "examples": [
+    {
+      "facts": {
+        "volume[D:\\].has_data": true,
+        "volume[D:\\].read_ms_min3": 30,
+        "volume[D:\\].read_ms": 35
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "volume[D:\\].has_data": true,
+        "volume[D:\\].read_ms_min3": 80,
+        "volume[D:\\].read_ms": 90
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "volume[D:\\].has_data": true,
+        "volume[D:\\].read_ms_min3": 4,
+        "volume[D:\\].read_ms": 5
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "id": "OS-008",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "win.cpu.queue_per_cpu_min60 > params.per_cpu",
+  "severity": "Warning",
+  "title": {
+    "fa": "صف پردازنده طولانی است",
+    "en": "Long processor queue"
+  },
+  "explanation": {
+    "fa": "در ۶۰ ثانیهٔ گذشته طول صف پردازنده بیش از {params.per_cpu} برابر تعداد هسته‌ها بوده است (اکنون {win.cpu.queue_per_cpu} به‌ازای هر هسته).",
+    "en": "For the last 60 s the processor queue exceeded {params.per_cpu} × the logical CPUs (now {win.cpu.queue_per_cpu} per CPU)."
+  },
+  "recommendation": {
+    "fa": "فرایندهای پرمصرف CPU و پرس‌وجوهای سنگین را بررسی کنید.",
+    "en": "Look at CPU-heavy processes and queries."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "per_cpu": 2
+  },
+  "examples": [
+    {
+      "facts": {
+        "win.cpu.queue_per_cpu_min60": 3.5,
+        "win.cpu.queue_per_cpu": 4
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "win.cpu.queue_per_cpu_min60": 0.2,
+        "win.cpu.queue_per_cpu": 0.1
+      },
+      "expect": null
+    }
+  ]
+}

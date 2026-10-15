@@ -1,0 +1,46 @@
+{
+  "id": "SQL-CPU-003",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data"
+  ],
+  "when": "sql.cpu.other_pct_min5 > params.max",
+  "severity": "Warning",
+  "title": {
+    "fa": "فرایندهای دیگر روی سرور داده CPU زیادی مصرف می‌کنند ({sql.cpu.other_pct}٪)",
+    "en": "Other processes use much CPU on the data server ({sql.cpu.other_pct} %)"
+  },
+  "explanation": {
+    "fa": "در ۵ دقیقهٔ گذشته فرایندهای غیر از SQL Server بیش از {params.max}٪ CPU مصرف کرده‌اند (طبق Ring Buffer خود SQL Server).",
+    "en": "Processes other than SQL Server used more than {params.max} % CPU for the last 5 minutes (from SQL Server's own ring buffer)."
+  },
+  "recommendation": {
+    "fa": "فرایندهای پرمصرف را در صفحهٔ Windows ببینید (مثلاً IIS/راهکاران روی همان سرور).",
+    "en": "See the busiest processes on the Windows page (e.g. IIS/Rahkaran on the same box)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max": 30
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.cpu.other_pct_min5": 45,
+        "sql.cpu.other_pct": 50
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.cpu.other_pct_min5": 5,
+        "sql.cpu.other_pct": 40
+      },
+      "expect": null
+    }
+  ]
+}

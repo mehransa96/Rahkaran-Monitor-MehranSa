@@ -1,0 +1,44 @@
+{
+  "id": "SQL-MEM-006",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.perf.memory_grants_pending_min3 > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "پرس‌وجوها منتظر Memory Grant هستند",
+    "en": "Queries are waiting for memory grants"
+  },
+  "explanation": {
+    "fa": "Memory Grants Pending در سه نمونهٔ پیاپی بیشتر از صفر بوده است (اکنون {sql.perf.memory_grants_pending}).",
+    "en": "Memory Grants Pending was above zero for three consecutive samples (now {sql.perf.memory_grants_pending})."
+  },
+  "recommendation": {
+    "fa": "پرس‌وجوهای با Grant بزرگ (هشدار Excessive Grant در صفحهٔ پرس‌وجوها) و فشار حافظه را بررسی کنید.",
+    "en": "Check queries with large grants (Excessive grant warnings on the Queries page) and memory pressure."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.perf.memory_grants_pending_min3": 2,
+        "sql.perf.memory_grants_pending": 3
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.perf.memory_grants_pending_min3": 0,
+        "sql.perf.memory_grants_pending": 1
+      },
+      "expect": null
+    }
+  ]
+}

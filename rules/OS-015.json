@@ -1,0 +1,59 @@
+{
+  "id": "OS-015",
+  "layer": "Os",
+  "appliesTo": [],
+  "forEach": "net",
+  "when": "coalesce(net.util_pct_min60, 0) > params.util || coalesce(net.output_queue, 0) > params.queue || coalesce(net.errors_increasing, false)",
+  "severity": "Warning",
+  "title": {
+    "fa": "کارت شبکهٔ {instance} زیر فشار است یا خطا دارد",
+    "en": "Network adapter {instance} is saturated or reports errors"
+  },
+  "explanation": {
+    "fa": "استفاده {net.util_pct}٪ از پهنای باند، صف خروجی {net.output_queue}، خطای رو به افزایش: {net.errors_increasing}.",
+    "en": "Utilisation {net.util_pct} % of link speed, output queue {net.output_queue}, errors increasing: {net.errors_increasing}."
+  },
+  "recommendation": {
+    "fa": "سرعت لینک، درایور و کابل/سوئیچ را بررسی کنید.",
+    "en": "Check link speed, driver and cabling / switch port."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "util": 70,
+    "queue": 2
+  },
+  "examples": [
+    {
+      "facts": {
+        "net[Ethernet].util_pct_min60": 85,
+        "net[Ethernet].util_pct": 90,
+        "net[Ethernet].output_queue": 0,
+        "net[Ethernet].errors_increasing": false
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "net[Ethernet].util_pct_min60": 5,
+        "net[Ethernet].util_pct": 5,
+        "net[Ethernet].output_queue": 0,
+        "net[Ethernet].errors_increasing": true
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "net[Ethernet].util_pct_min60": 5,
+        "net[Ethernet].util_pct": 6,
+        "net[Ethernet].output_queue": 0,
+        "net[Ethernet].errors_increasing": false
+      },
+      "expect": null
+    }
+  ]
+}

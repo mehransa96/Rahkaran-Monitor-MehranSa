@@ -1,0 +1,47 @@
+{
+  "id": "SQL-IO-003",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "io.max_pending_ms > params.max_ms",
+  "severity": "Warning",
+  "title": {
+    "fa": "درخواست I/O معوق بیش از ۱۵ ثانیه",
+    "en": "Pending I/O older than 15 seconds"
+  },
+  "explanation": {
+    "fa": "قدیمی‌ترین I/O معوق {io.max_pending_ms} میلی‌ثانیه منتظر مانده است ({io.pending_count} درخواست).",
+    "en": "The oldest pending I/O has waited {io.max_pending_ms} ms ({io.pending_count} requests)."
+  },
+  "recommendation": {
+    "fa": "زیرساخت ذخیره‌سازی را فوری بررسی کنید (خطای 833 در ErrorLog را هم ببینید).",
+    "en": "Check the storage now (also look for error 833 in the error log)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max_ms": 15000
+  },
+  "examples": [
+    {
+      "facts": {
+        "io.max_pending_ms": 22000,
+        "io.pending_count": 4
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "io.max_pending_ms": 30,
+        "io.pending_count": 1
+      },
+      "expect": null
+    }
+  ]
+}

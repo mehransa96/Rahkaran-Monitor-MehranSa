@@ -1,0 +1,44 @@
+{
+  "id": "OS-002",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "win.cpu.throttled_samples >= params.samples",
+  "severity": "Warning",
+  "title": {
+    "fa": "پردازنده با فرکانس کمتر از حد اسمی کار می‌کند (Throttling)",
+    "en": "CPU is throttled below its nominal frequency"
+  },
+  "explanation": {
+    "fa": "در {win.cpu.throttled_samples} نمونهٔ پیاپی، با بار بیش از ۲۰٪، % Processor Performance زیر ۹۵٪ بوده است ({win.cpu.perf_pct}٪).",
+    "en": "For {win.cpu.throttled_samples} consecutive samples under load (> 20 %), % Processor Performance stayed below 95 % ({win.cpu.perf_pct} %)."
+  },
+  "recommendation": {
+    "fa": "طرح مصرف انرژی ویندوز و تنظیمات Power Management در BIOS را بررسی کنید.",
+    "en": "Check the Windows power plan and the BIOS power-management settings."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — OS"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "samples": 3
+  },
+  "examples": [
+    {
+      "facts": {
+        "win.cpu.throttled_samples": 4,
+        "win.cpu.perf_pct": 62
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "win.cpu.throttled_samples": 1,
+        "win.cpu.perf_pct": 80
+      },
+      "expect": null
+    }
+  ]
+}

@@ -59,7 +59,7 @@
   {{ if n.Compliance.size > 0 }}
   <h3>{{ m.L.Compliance }}</h3>
   <table class="grid">
-    <thead><tr><th>{{ m.L.Item }}</th><th>{{ m.L.Database }}</th><th>{{ m.L.Expected }}</th><th>{{ m.L.Actual }}</th><th>{{ m.L.Status }}</th><th>{{ m.L.Rule }}</th></tr></thead>
+    <thead><tr><th>{{ m.L.Item }}</th><th>{{ m.L.Scope }}</th><th>{{ m.L.Expected }}</th><th>{{ m.L.Actual }}</th><th>{{ m.L.Status }}</th><th>{{ m.L.Rule }}</th></tr></thead>
     <tbody>
     {{ for r in n.Compliance }}<tr class="row-{{ r.StatusClass }}"><td>{{ r.Item }}</td><td>{{ r.Instance }}</td><td>{{ r.Expected }}</td><td class="ltr-num">{{ r.Actual }}</td><td><span class="sev {{ r.StatusClass }}">{{ r.Status }}</span></td><td><code>{{ r.RuleId }}</code>{{ if r.General }} <span class="chip general">{{ m.L.GeneralGuidance }}</span>{{ end }}</td></tr>
     {{ end }}

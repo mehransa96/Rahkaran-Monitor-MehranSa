@@ -1,0 +1,65 @@
+{
+  "id": "SQL-HA-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data"
+  ],
+  "forEach": "ag",
+  "when": "!ag.healthy || ag.send_queue_mb > params.queue_mb || ag.redo_queue_mb > params.queue_mb",
+  "severity": "Warning",
+  "title": {
+    "fa": "Replica گروه دسترسی‌پذیری {instance} سالم نیست یا صف دارد",
+    "en": "Availability replica {instance} is unhealthy or queued"
+  },
+  "explanation": {
+    "fa": "وضعیت: {ag.health}، صف ارسال {ag.send_queue_mb} MB، صف Redo ‏{ag.redo_queue_mb} MB. پایگاه‌های همگام‌نشده: {ag.not_synchronizing_dbs}.",
+    "en": "Health: {ag.health}, send queue {ag.send_queue_mb} MB, redo queue {ag.redo_queue_mb} MB. Not synchronizing: {ag.not_synchronizing_dbs}."
+  },
+  "recommendation": {
+    "fa": "شبکه و دیسک Replica را بررسی کنید.",
+    "en": "Check the replica's network and disks."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "queue_mb": 1024
+  },
+  "examples": [
+    {
+      "facts": {
+        "ag[AG1/SQL2].healthy": false,
+        "ag[AG1/SQL2].health": "NOT_HEALTHY",
+        "ag[AG1/SQL2].send_queue_mb": 0,
+        "ag[AG1/SQL2].redo_queue_mb": 0,
+        "ag[AG1/SQL2].not_synchronizing_dbs": [
+          "Rahkaran"
+        ]
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "ag[AG1/SQL2].healthy": true,
+        "ag[AG1/SQL2].health": "HEALTHY",
+        "ag[AG1/SQL2].send_queue_mb": 2048,
+        "ag[AG1/SQL2].redo_queue_mb": 0,
+        "ag[AG1/SQL2].not_synchronizing_dbs": []
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "ag[AG1/SQL2].healthy": true,
+        "ag[AG1/SQL2].health": "HEALTHY",
+        "ag[AG1/SQL2].send_queue_mb": 1,
+        "ag[AG1/SQL2].redo_queue_mb": 1,
+        "ag[AG1/SQL2].not_synchronizing_dbs": []
+      },
+      "expect": null
+    }
+  ]
+}

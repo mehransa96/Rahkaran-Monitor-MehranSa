@@ -1,0 +1,46 @@
+{
+  "id": "SQL-MEM-007",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.perf.ple_max3 < sql.perf.ple_floor_s",
+  "severity": "Warning",
+  "title": {
+    "fa": "Page Life Expectancy پایین است ({sql.perf.ple_s} ثانیه)",
+    "en": "Low page life expectancy ({sql.perf.ple_s} s)"
+  },
+  "explanation": {
+    "fa": "در سه نمونهٔ پیاپی PLE کمتر از {sql.perf.ple_floor_s} ثانیه (۳۰۰ ثانیه به‌ازای هر ۴ گیگابایت Buffer Pool) بوده است. مبنای ساعتی/هفتگی در فاز ۵ اضافه می‌شود.",
+    "en": "PLE stayed below {sql.perf.ple_floor_s} s (300 s per 4 GB of buffer pool) for three consecutive samples. The hour-of-week baseline arrives in phase 5."
+  },
+  "recommendation": {
+    "fa": "پرس‌وجوهای پرخواندن (Logical Reads) و حافظهٔ اختصاص‌یافته به SQL را بررسی کنید.",
+    "en": "Check read-heavy queries (logical reads) and SQL Server's memory."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "sql.perf.ple_max3": 400,
+        "sql.perf.ple_floor_s": 1200,
+        "sql.perf.ple_s": 350
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.perf.ple_max3": 5000,
+        "sql.perf.ple_floor_s": 1200,
+        "sql.perf.ple_s": 4800
+      },
+      "expect": null
+    }
+  ]
+}

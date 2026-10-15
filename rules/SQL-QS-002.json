@@ -1,0 +1,43 @@
+{
+  "id": "SQL-QS-002",
+  "layer": "Database",
+  "appliesTo": [
+    "Data"
+  ],
+  "forEach": "db",
+  "when": "coalesce(db.qds.forced_failures, 0) > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "Plan اجباری (Forced) در {instance} شکست می‌خورد",
+    "en": "A forced plan fails in {instance}"
+  },
+  "explanation": {
+    "fa": "{db.qds.forced_failures} Plan اجباری با خطا مواجه شده است (آخرین علت: {db.qds.forced_failure_reason}).",
+    "en": "{db.qds.forced_failures} forced plans fail (last reason: {db.qds.forced_failure_reason})."
+  },
+  "recommendation": {
+    "fa": "Planهای اجباری را با ستاد فنی بازبینی کنید؛ RSM تغییری در Query Store نمی‌دهد.",
+    "en": "Review the forced plans with ستاد فنی; RSM never changes Query Store."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "db[Rahkaran].qds.forced_failures": 1,
+        "db[Rahkaran].qds.forced_failure_reason": "NO_INDEX"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "db[Rahkaran].qds.forced_failures": 0
+      },
+      "expect": null
+    }
+  ]
+}

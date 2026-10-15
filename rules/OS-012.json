@@ -1,0 +1,43 @@
+{
+  "id": "OS-012",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "os.is_hpe",
+  "severity": "Info",
+  "title": {
+    "fa": "سرور HPE: به‌روزبودن Firmware/SPP را بررسی کنید",
+    "en": "HPE server: check firmware / SPP currency"
+  },
+  "explanation": {
+    "fa": "سخت‌افزار {os.manufacturer} {os.model} است. راهنمای HPE به‌روزرسانی Service Pack for ProLiant را توصیه می‌کند.",
+    "en": "The hardware is {os.manufacturer} {os.model}. The HPE guide recommends a current Service Pack for ProLiant."
+  },
+  "recommendation": {
+    "fa": "نسخهٔ Firmware و SPP را با آخرین نسخهٔ HPE مقایسه کنید.",
+    "en": "Compare firmware / SPP with the latest HPE release."
+  },
+  "source": {
+    "kind": "Vendor",
+    "citation": "HPE server preparation guide (informational)"
+  },
+  "verified": true,
+  "confidence": 0.7,
+  "examples": [
+    {
+      "facts": {
+        "os.is_hpe": true,
+        "os.manufacturer": "HPE",
+        "os.model": "ProLiant DL380 Gen10"
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "os.is_hpe": false,
+        "os.manufacturer": "Dell Inc.",
+        "os.model": "PowerEdge"
+      },
+      "expect": null
+    }
+  ]
+}

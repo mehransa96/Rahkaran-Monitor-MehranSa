@@ -213,7 +213,7 @@ public sealed partial class ReportTests : IDisposable
             foreach (var key in FactKey().Matches(text).Select(m => m.Value).Where(k => !k.StartsWith("params.", StringComparison.Ordinal)).Distinct())
             {
                 var (prefix, rest) = (key[..key.IndexOf('.')], key[(key.IndexOf('.') + 1)..]);
-                var found = prefix is "db" or "volume" ? sources.Contains($".{rest}\"", StringComparison.Ordinal)
+                var found = prefix is "db" or "volume" or "net" or "ag" ? sources.Contains($".{rest}\"", StringComparison.Ordinal)
                     : key.StartsWith("sql.config.", StringComparison.Ordinal) ? sources.Contains("$\"sql.config.{key}\"", StringComparison.Ordinal)
                     : key.StartsWith("sql.errorlog.e", StringComparison.Ordinal) ? sources.Contains($"\"{key["sql.errorlog.e".Length..]}\"", StringComparison.Ordinal)
                     : sources.Contains($"\"{key}\"", StringComparison.Ordinal);

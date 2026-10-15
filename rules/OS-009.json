@@ -1,0 +1,43 @@
+{
+  "id": "OS-009",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "os.pending_reboot",
+  "severity": "Info",
+  "title": {
+    "fa": "ویندوز منتظر راه‌اندازی مجدد است",
+    "en": "Windows has a pending reboot"
+  },
+  "explanation": {
+    "fa": "علت: {os.pending_reboot_reasons}. به‌روزرسانی‌ها تا راه‌اندازی مجدد کامل نمی‌شوند.",
+    "en": "Reason: {os.pending_reboot_reasons}. Updates are not complete until the server restarts."
+  },
+  "recommendation": {
+    "fa": "راه‌اندازی مجدد را در پنجرهٔ نگهداری برنامه‌ریزی کنید.",
+    "en": "Plan a restart in a maintenance window."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "os.pending_reboot": true,
+        "os.pending_reboot_reasons": [
+          "Windows Update"
+        ]
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "os.pending_reboot": false,
+        "os.pending_reboot_reasons": []
+      },
+      "expect": null
+    }
+  ]
+}

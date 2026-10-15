@@ -1,0 +1,52 @@
+{
+  "id": "OS-003",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "!os.priority_background",
+  "severity": "Info",
+  "title": {
+    "fa": "زمان‌بندی پردازنده روی «برنامه‌ها» تنظیم شده است",
+    "en": "Processor scheduling favours programs"
+  },
+  "explanation": {
+    "fa": "Win32PrioritySeparation = {os.priority_separation}. برای سرور، «Background services» توصیه شده است.",
+    "en": "Win32PrioritySeparation = {os.priority_separation}. For a server, \"Background services\" is recommended."
+  },
+  "recommendation": {
+    "fa": "در System Properties ‣ Advanced ‣ Performance گزینهٔ Background services را انتخاب کنید (با هماهنگی).",
+    "en": "Select Background services under System Properties ‣ Advanced ‣ Performance (coordinated)."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — OS"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "زمان‌بندی پردازنده",
+      "en": "Processor scheduling"
+    },
+    "expected": {
+      "fa": "Background services",
+      "en": "Background services"
+    },
+    "actual": "os.priority_separation"
+  },
+  "examples": [
+    {
+      "facts": {
+        "os.priority_background": false,
+        "os.priority_separation": 38
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "os.priority_background": true,
+        "os.priority_separation": 24
+      },
+      "expect": null
+    }
+  ]
+}

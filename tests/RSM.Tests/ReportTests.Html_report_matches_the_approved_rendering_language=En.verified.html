@@ -58,7 +58,7 @@ footer { margin-top:32px; border-top:1px solid var(--line); padding-top:8px; }
     <tr><th>Generated</th><td class="ltr-num">2026-10-14 10:30 (1405/07/22 10:30)</td></tr>
     <tr><th>Collection window</th><td class="ltr-num">2026-10-14 10:00 (1405/07/22 10:00) → 2026-10-14 10:02 (1405/07/22 10:02)</td></tr>
     <tr><th>RSM version</th><td class="ltr-num">1.0.0-test</td></tr>
-    <tr><th>Rules evaluated</th><td class="ltr-num">85</td></tr>
+    <tr><th>Rules evaluated</th><td class="ltr-num">125</td></tr>
   </table>
   <p class="note">Heavy checks were not run (on demand only)</p>
   
@@ -96,9 +96,13 @@ footer { margin-top:32px; border-top:1px solid var(--line); padding-top:8px; }
   
     <h3>Compliance with the ستاد فنی baseline</h3>
     <table class="grid">
-      <thead><tr><th>Item</th><th>Database</th><th>Expected</th><th>Actual</th><th>Status</th><th>Rule</th></tr></thead>
+      <thead><tr><th>Item</th><th>Database / volume</th><th>Expected</th><th>Actual</th><th>Status</th><th>Rule</th></tr></thead>
       <tbody>
-      <tr class="row-ok"><td>priority boost</td><td></td><td>0 (off)</td><td class="ltr-num">0</td><td><span class="sev ok">Compliant</span></td><td><code>SQL-CFG-001</code></td></tr>
+      <tr class="row-ok"><td>Power plan</td><td></td><td>High Performance</td><td class="ltr-num">High performance</td><td><span class="sev ok">Compliant</span></td><td><code>OS-001</code></td></tr>
+        <tr class="row-ok"><td>Processor scheduling</td><td></td><td>Background services</td><td class="ltr-num">24</td><td><span class="sev ok">Compliant</span></td><td><code>OS-003</code></td></tr>
+        <tr class="row-ok"><td>Pagefile</td><td></td><td>Fixed; min = RAM, max = 1.5 &#215; RAM</td><td class="ltr-num">16384</td><td><span class="sev ok">Compliant</span></td><td><code>OS-004</code></td></tr>
+        <tr class="row-ok"><td>OS architecture</td><td></td><td>64-bit</td><td class="ltr-num">yes</td><td><span class="sev ok">Compliant</span></td><td><code>OS-005</code></td></tr>
+        <tr class="row-ok"><td>priority boost</td><td></td><td>0 (off)</td><td class="ltr-num">0</td><td><span class="sev ok">Compliant</span></td><td><code>SQL-CFG-001</code></td></tr>
         <tr class="row-ok"><td>max worker threads</td><td></td><td>0 (automatic)</td><td class="ltr-num">0</td><td><span class="sev ok">Compliant</span></td><td><code>SQL-CFG-002</code></td></tr>
         <tr class="row-ok"><td>lightweight pooling</td><td></td><td>0 (off)</td><td class="ltr-num">0</td><td><span class="sev ok">Compliant</span></td><td><code>SQL-CFG-003</code></td></tr>
         <tr class="row-warning"><td>backup compression default</td><td></td><td>1 (on)</td><td class="ltr-num">0</td><td><span class="sev warning">Deviation · Warning</span></td><td><code>SQL-CFG-004</code></td></tr>
@@ -119,6 +123,8 @@ footer { margin-top:32px; border-top:1px solid var(--line); padding-top:8px; }
         <tr class="row-ok"><td>Equal TempDB file size and growth</td><td></td><td>Equal</td><td class="ltr-num">yes</td><td><span class="sev ok">Compliant</span></td><td><code>SQL-TDB-002</code> <span class="chip general">general guidance — confirm with ستاد فنی</span></td></tr>
         <tr class="row-ok"><td>SQL Server version</td><td></td><td>2022 or later</td><td class="ltr-num">SQL Server 2022</td><td><span class="sev ok">Compliant</span></td><td><code>SQL-VER-001</code></td></tr>
         <tr class="row-ok"><td>Latest cumulative update</td><td></td><td>Latest CU installed</td><td class="ltr-num">16.0.4305.5</td><td><span class="sev ok">Compliant</span></td><td><code>SQL-VER-002</code></td></tr>
+        <tr class="row-ok"><td>Allocation unit of SQL volumes</td><td>D:\</td><td>64 KB</td><td class="ltr-num">64</td><td><span class="sev ok">Compliant</span></td><td><code>STO-001</code></td></tr>
+        <tr class="row-ok"><td>SQL files off the OS volume</td><td>D:\</td><td>Separate volume</td><td class="ltr-num">no</td><td><span class="sev ok">Compliant</span></td><td><code>STO-002</code></td></tr>
         <tr class="row-warning"><td>File growth</td><td>RK_Tehran1405</td><td>In MB (not percent)</td><td class="ltr-num">2</td><td><span class="sev warning">Deviation · Warning</span></td><td><code>DB-FILE-001</code></td></tr>
         <tr class="row-info"><td>Data-file growth</td><td>RK_Tehran1405</td><td>A multiple of 1024 MB</td><td class="ltr-num">1</td><td><span class="sev info">Deviation · Info</span></td><td><code>DB-FILE-002</code></td></tr>
         <tr class="row-ok"><td>File max size</td><td>RK_Tehran1405</td><td>Unlimited</td><td class="ltr-num">0</td><td><span class="sev ok">Compliant</span></td><td><code>DB-FILE-003</code></td></tr>

@@ -1,0 +1,66 @@
+{
+  "id": "OS-004",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "os.pagefile_system_managed || os.pagefile_min_to_ram < params.min_ratio || os.pagefile_max_to_ram > params.max_ratio",
+  "severity": "Info",
+  "title": {
+    "fa": "تنظیم Pagefile با توصیه مطابقت ندارد",
+    "en": "Pagefile size differs from the recommendation"
+  },
+  "explanation": {
+    "fa": "Pagefile: حداقل {os.pagefile_min_mb} MB، حداکثر {os.pagefile_max_mb} MB (حافظه {os.ram_mb} MB). توصیه: اندازه ثابت، حداقل برابر RAM و حداکثر ۱٫۵ برابر.",
+    "en": "Pagefile: min {os.pagefile_min_mb} MB, max {os.pagefile_max_mb} MB (RAM {os.ram_mb} MB). Recommended: fixed size, min = RAM, max = 1.5 × RAM."
+  },
+  "recommendation": {
+    "fa": "اندازهٔ Pagefile را طبق مستند ستاد فنی تنظیم کنید.",
+    "en": "Set the pagefile size as the ستاد فنی document says."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — OS"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "Pagefile",
+      "en": "Pagefile"
+    },
+    "expected": {
+      "fa": "ثابت؛ حداقل = RAM، حداکثر = ۱٫۵ × RAM",
+      "en": "Fixed; min = RAM, max = 1.5 × RAM"
+    },
+    "actual": "os.pagefile_min_mb"
+  },
+  "params": {
+    "min_ratio": 1,
+    "max_ratio": 1.5
+  },
+  "examples": [
+    {
+      "facts": {
+        "os.pagefile_system_managed": true,
+        "os.pagefile_min_to_ram": 0,
+        "os.pagefile_max_to_ram": 0
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "os.pagefile_system_managed": false,
+        "os.pagefile_min_to_ram": 0.25,
+        "os.pagefile_max_to_ram": 0.5
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "os.pagefile_system_managed": false,
+        "os.pagefile_min_to_ram": 1,
+        "os.pagefile_max_to_ram": 1.5
+      },
+      "expect": null
+    }
+  ]
+}

@@ -105,6 +105,8 @@ public sealed class ReportBuilder(IReadOnlyList<RuleDefinition> rules)
         bool Flag(string db, string prop) => facts.GetValueOrDefault($"db[{db}].{prop}") is true or JsonElement { ValueKind: JsonValueKind.True };
         var rahkaran = dbs.Where(d => Flag(d, "is_rahkaran")).ToList();
         var reportServer = dbs.Where(d => Flag(d, "is_reportserver") || Flag(d, "is_reportserver_temp")).ToList();
+        bool VolumeFlag(string v, string prop) => facts.GetValueOrDefault($"volume[{v}].{prop}") is true or JsonElement { ValueKind: JsonValueKind.True };
+        var sqlVolumes = Instances(facts, "volume").Where(v => VolumeFlag(v, "has_data") || VolumeFlag(v, "has_log") || VolumeFlag(v, "has_tempdb")).ToList();
 
         foreach (var rule in rules.Where(r => r.Baseline is not null).OrderBy(r => r.Id, StringComparer.Ordinal))
         {
@@ -115,20 +117,26 @@ public sealed class ReportBuilder(IReadOnlyList<RuleDefinition> rules)
 
             var baseline = rule.Baseline!;
             IEnumerable<string?> instances = [null];
-            if (rule.ForEach is { } prefix)
+            var forEach = rule.ForEach;
+            if (forEach is not null)
             {
-                var scope = rule.When.Contains("is_reportserver", StringComparison.Ordinal) ? reportServer : rahkaran;
-                instances = scope.Concat(node.Findings.Where(f => f.RuleId == rule.Id && f.Instance is not null).Select(f => f.Instance!))
-                    .Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.OrdinalIgnoreCase).ToList();
-                if (!string.Equals(prefix, "db", StringComparison.OrdinalIgnoreCase))
+                // Databases: the Rahkaran (or ReportServer) ones. Volumes: those holding SQL Server files.
+                IEnumerable<string> scope = string.Equals(forEach, "db", StringComparison.OrdinalIgnoreCase)
+                    ? rule.When.Contains("is_reportserver", StringComparison.Ordinal) ? reportServer : rahkaran
+                    : string.Equals(forEach, "volume", StringComparison.OrdinalIgnoreCase) ? sqlVolumes
+                    : [];
+                if (!scope.Any() && !string.Equals(forEach, "db", StringComparison.OrdinalIgnoreCase) && !string.Equals(forEach, "volume", StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
+
+                instances = scope.Concat(node.Findings.Where(f => f.RuleId == rule.Id && f.Instance is not null).Select(f => f.Instance!))
+                    .Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.OrdinalIgnoreCase).ToList();
             }
 
             foreach (var instance in instances)
             {
-                var actualKey = instance is null ? baseline.Actual : $"db[{instance}].{baseline.Actual[(baseline.Actual.IndexOf('.') + 1)..]}";
+                var actualKey = instance is null ? baseline.Actual : $"{forEach}[{instance}].{baseline.Actual[(baseline.Actual.IndexOf('.') + 1)..]}";
                 var finding = node.Findings.FirstOrDefault(f => f.RuleId == rule.Id && string.Equals(f.Instance, instance, StringComparison.OrdinalIgnoreCase));
                 var unknown = node.Indeterminate.Any(i => i.RuleId == rule.Id && string.Equals(i.Instance, instance, StringComparison.OrdinalIgnoreCase))
                     || facts.GetValueOrDefault(actualKey) is null;

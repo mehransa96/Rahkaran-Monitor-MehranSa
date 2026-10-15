@@ -6,7 +6,7 @@
     "Report"
   ],
   "forEach": "db",
-  "when": "db.fragmented_indexes > 0",
+  "when": "db.is_rahkaran && db.fragmented_indexes > 0",
   "severity": "Info",
   "title": {
     "fa": "ایندکس‌های پراکنده در {instance} ({db.fragmented_indexes})",
@@ -29,15 +29,24 @@
   "examples": [
     {
       "facts": {
+        "db[Rk].is_rahkaran": true,
         "db[Rk].fragmented_indexes": 12
       },
       "expect": "Info"
     },
     {
       "facts": {
+        "db[Rk].is_rahkaran": true,
         "db[Rk].fragmented_indexes": 0
       },
       "expect": null
+    },
+    {
+      "facts": {
+        "db[master].is_rahkaran": false
+      },
+      "expect": null,
+      "note": "fragmentation is scanned (on demand) only in the Rahkaran database"
     }
   ]
 }

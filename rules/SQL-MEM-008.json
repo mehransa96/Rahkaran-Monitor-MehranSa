@@ -1,0 +1,58 @@
+{
+  "id": "SQL-MEM-008",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data"
+  ],
+  "when": "node.shared_box && win.mem.available_pct < params.os_free && sql.perf.total_to_target_pct >= 99 && win.process.w3wp_private_rising",
+  "severity": "Warning",
+  "title": {
+    "fa": "رقابت حافظه بین SQL Server و IIS روی سرور مشترک",
+    "en": "SQL Server and IIS compete for memory on a shared server"
+  },
+  "explanation": {
+    "fa": "حافظهٔ آزاد ویندوز {win.mem.available_pct}٪ است، SQL Server به Target خود رسیده و حافظهٔ w3wp ({win.process.w3wp_private_mb} MB) رو به افزایش است.",
+    "en": "Windows has {win.mem.available_pct} % free, SQL Server reached its target and w3wp memory ({win.process.w3wp_private_mb} MB) keeps rising."
+  },
+  "recommendation": {
+    "fa": "max server memory را طبق توصیهٔ سرور مشترک (۶۵٪) و مصرف حافظهٔ راهکاران را بررسی کنید.",
+    "en": "Check max server memory against the shared-server guidance (65 %) and Rahkaran's memory use."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "os_free": 10
+  },
+  "examples": [
+    {
+      "facts": {
+        "node.shared_box": true,
+        "win.mem.available_pct": 6,
+        "sql.perf.total_to_target_pct": 100,
+        "win.process.w3wp_private_rising": true,
+        "win.process.w3wp_private_mb": 6000
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "node.shared_box": true,
+        "win.mem.available_pct": 30,
+        "sql.perf.total_to_target_pct": 100,
+        "win.process.w3wp_private_rising": true,
+        "win.process.w3wp_private_mb": 3000
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "node.shared_box": false
+      },
+      "expect": null
+    }
+  ]
+}

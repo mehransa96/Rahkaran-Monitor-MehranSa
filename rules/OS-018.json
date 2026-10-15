@@ -1,0 +1,44 @@
+{
+  "id": "OS-018",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "win.cpu.context_switches_per_core_min60 > params.per_core",
+  "severity": "Info",
+  "title": {
+    "fa": "تعویض زمینه (Context Switch) زیاد است",
+    "en": "High context-switch rate"
+  },
+  "explanation": {
+    "fa": "در ۶۰ ثانیهٔ گذشته بیش از {params.per_core} تعویض زمینه در ثانیه به‌ازای هر هسته (اکنون {win.cpu.context_switches_per_core}).",
+    "en": "More than {params.per_core} context switches per second per core for the last 60 s (now {win.cpu.context_switches_per_core})."
+  },
+  "recommendation": {
+    "fa": "فرایندها/درایورهای پرمصرف و تعداد Threadها را بررسی کنید.",
+    "en": "Look at busy processes / drivers and thread counts."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "per_core": 15000
+  },
+  "examples": [
+    {
+      "facts": {
+        "win.cpu.context_switches_per_core_min60": 20000,
+        "win.cpu.context_switches_per_core": 21000
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "win.cpu.context_switches_per_core_min60": 2000,
+        "win.cpu.context_switches_per_core": 2500
+      },
+      "expect": null
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "id": "OS-001",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "!os.power_plan_high",
+  "severity": "Warning",
+  "title": {
+    "fa": "طرح مصرف انرژی ویندوز High Performance نیست ({os.power_plan})",
+    "en": "Windows power plan is not High Performance ({os.power_plan})"
+  },
+  "explanation": {
+    "fa": "در طرح Balanced پردازنده با فرکانس پایین‌تر کار می‌کند و پاسخ SQL Server و IIS کندتر می‌شود.",
+    "en": "With the Balanced plan the CPU runs at lower clocks and SQL Server / IIS respond more slowly."
+  },
+  "recommendation": {
+    "fa": "طرح High Performance را طبق مستند ستاد فنی فعال کنید (و در BIOS سرورهای HPE حالت Static High Performance).",
+    "en": "Switch to the High Performance plan as the ستاد فنی document says (and Static High Performance in the BIOS of HPE servers)."
+  },
+  "source": {
+    "kind": "StadFanni",
+    "citation": "SQL Server Tuning V.3 — OS"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "طرح مصرف انرژی",
+      "en": "Power plan"
+    },
+    "expected": {
+      "fa": "High Performance",
+      "en": "High Performance"
+    },
+    "actual": "os.power_plan"
+  },
+  "examples": [
+    {
+      "facts": {
+        "os.power_plan_high": false,
+        "os.power_plan": "Balanced"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "os.power_plan_high": true,
+        "os.power_plan": "High performance"
+      },
+      "expect": null
+    }
+  ]
+}

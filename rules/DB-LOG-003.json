@@ -6,7 +6,7 @@
     "Report"
   ],
   "forEach": "db",
-  "when": "db.vlf_count > params.max",
+  "when": "db.database_id != 2 && db.vlf_count > params.max",
   "severity": "Warning",
   "title": {
     "fa": "تعداد VLFهای لاگ {instance} زیاد است ({db.vlf_count})",
@@ -32,15 +32,24 @@
   "examples": [
     {
       "facts": {
+        "db[Rk].database_id": 5,
         "db[Rk].vlf_count": 4000
       },
       "expect": "Warning"
     },
     {
       "facts": {
+        "db[Rk].database_id": 5,
         "db[Rk].vlf_count": 120
       },
       "expect": null
+    },
+    {
+      "facts": {
+        "db[tempdb].database_id": 2
+      },
+      "expect": null,
+      "note": "tempdb's log is recreated at startup"
     }
   ]
 }

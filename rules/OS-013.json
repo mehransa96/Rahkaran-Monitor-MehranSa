@@ -1,0 +1,47 @@
+{
+  "id": "OS-013",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "os.is_hpe && !os.is_virtual && !cpu.hyperthreading",
+  "severity": "Info",
+  "title": {
+    "fa": "Hyper-Threading روی سرور فیزیکی HPE خاموش است",
+    "en": "Hyper-Threading is off on a physical HPE server"
+  },
+  "explanation": {
+    "fa": "تعداد هسته‌های منطقی ({os.logical_cpus}) با هسته‌های فیزیکی ({cpu.cores}) برابر است.",
+    "en": "Logical CPUs ({os.logical_cpus}) equal physical cores ({cpu.cores})."
+  },
+  "recommendation": {
+    "fa": "طبق راهنمای HPE وضعیت Hyper-Threading را در BIOS بررسی کنید.",
+    "en": "Check Hyper-Threading in the BIOS per the HPE guide."
+  },
+  "source": {
+    "kind": "Vendor",
+    "citation": "HPE server preparation guide (informational)"
+  },
+  "verified": true,
+  "confidence": 0.7,
+  "examples": [
+    {
+      "facts": {
+        "os.is_hpe": true,
+        "os.is_virtual": false,
+        "cpu.hyperthreading": false,
+        "os.logical_cpus": 16,
+        "cpu.cores": 16
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "os.is_hpe": true,
+        "os.is_virtual": false,
+        "cpu.hyperthreading": true,
+        "os.logical_cpus": 32,
+        "cpu.cores": 16
+      },
+      "expect": null
+    }
+  ]
+}

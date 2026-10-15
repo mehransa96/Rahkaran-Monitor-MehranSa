@@ -1,0 +1,56 @@
+{
+  "id": "SQL-CPU-001",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "sql.waits.ms_per_sec >= params.min_ms_per_sec && sql.waits.signal_pct > params.max",
+  "severity": "Warning",
+  "title": {
+    "fa": "سهم Signal Wait بالاست ({sql.waits.signal_pct}٪)",
+    "en": "High signal-wait share ({sql.waits.signal_pct} %)"
+  },
+  "explanation": {
+    "fa": "بخش بزرگی از زمان انتظار، انتظار برای گرفتن CPU پس از آماده‌شدن است: فشار CPU.",
+    "en": "A large share of wait time is spent waiting for a CPU after the resource was ready: CPU pressure."
+  },
+  "recommendation": {
+    "fa": "پرس‌وجوهای پرمصرف CPU (صفحهٔ پرس‌وجوها) و MAXDOP را بررسی کنید.",
+    "en": "Check CPU-heavy queries (Queries page) and MAXDOP."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "min_ms_per_sec": 100,
+    "max": 25
+  },
+  "examples": [
+    {
+      "facts": {
+        "sql.waits.ms_per_sec": 500,
+        "sql.waits.signal_pct": 40
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "sql.waits.ms_per_sec": 20,
+        "sql.waits.signal_pct": 60
+      },
+      "expect": null,
+      "note": "too little waiting to mean anything"
+    },
+    {
+      "facts": {
+        "sql.waits.ms_per_sec": 500,
+        "sql.waits.signal_pct": 10
+      },
+      "expect": null
+    }
+  ]
+}

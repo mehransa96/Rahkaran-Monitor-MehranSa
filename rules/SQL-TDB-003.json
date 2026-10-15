@@ -1,0 +1,45 @@
+{
+  "id": "SQL-TDB-003",
+  "layer": "Sql",
+  "appliesTo": [
+    "Data",
+    "Report"
+  ],
+  "when": "tempdb.alloc_contention_waiters >= params.min",
+  "severity": "Warning",
+  "title": {
+    "fa": "رقابت روی صفحات تخصیص tempdb",
+    "en": "tempdb allocation-page contention"
+  },
+  "explanation": {
+    "fa": "{tempdb.alloc_contention_waiters} Task هم‌اکنون منتظر PAGELATCH روی صفحات PFS/GAM/SGAM در tempdb هستند.",
+    "en": "{tempdb.alloc_contention_waiters} tasks are waiting on PAGELATCH for PFS/GAM/SGAM pages in tempdb right now."
+  },
+  "recommendation": {
+    "fa": "تعداد و اندازهٔ یکسان فایل‌های داده tempdb را بررسی کنید (SQL-TDB-001/002).",
+    "en": "Check the number and equal size of tempdb data files (SQL-TDB-001/002)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "min": 3
+  },
+  "examples": [
+    {
+      "facts": {
+        "tempdb.alloc_contention_waiters": 6
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "tempdb.alloc_contention_waiters": 0
+      },
+      "expect": null
+    }
+  ]
+}

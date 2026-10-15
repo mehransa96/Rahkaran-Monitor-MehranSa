@@ -54,6 +54,7 @@ internal static class ReportText
 
     public static readonly LocalizedText Databases = new("پایگاه‌های داده", "Databases");
     public static readonly LocalizedText Database = new("پایگاه داده", "Database");
+    public static readonly LocalizedText Scope = new("پایگاه داده / دیسک", "Database / volume");
     public static readonly LocalizedText State = new("وضعیت", "State");
     public static readonly LocalizedText Recovery = new("Recovery", "Recovery");
     public static readonly LocalizedText SizeMb = new("حجم داده (MB)", "Data (MB)");
