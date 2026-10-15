@@ -20,16 +20,17 @@ public sealed partial class NavItem(string titleKey, Func<object> createPage) : 
 
 public sealed partial class MainViewModel : ObservableObject
 {
-    public MainViewModel(SitesViewModel sites, SettingsViewModel settings, DiagnosisViewModel diagnosis, StatusBarViewModel status)
+    public MainViewModel(SitesViewModel sites, SettingsViewModel settings, DiagnosisViewModel diagnosis, LiveViewModel live, StatusBarViewModel status)
     {
         Status = status;
+        Live = live;
         NavItems =
         [
-            new NavItem("Nav_Overview", () => new OverviewViewModel()),
-            new NavItem("Nav_Sql", () => new LayerFindingsViewModel("Nav_Sql", Core.Model.Layer.Sql, diagnosis)),
+            new NavItem("Nav_Overview", () => new OverviewViewModel(live)),
+            new NavItem("Nav_Sql", () => new SqlPageViewModel(live, new LayerFindingsViewModel("Nav_Sql", Core.Model.Layer.Sql, diagnosis))),
             new NavItem("Nav_Databases", () => new LayerFindingsViewModel("Nav_Databases", Core.Model.Layer.Database, diagnosis)),
-            new NavItem("Nav_Queries", () => new PlaceholderViewModel("Nav_Queries", 2)),
-            new NavItem("Nav_Windows", () => new PlaceholderViewModel("Nav_Windows", 2)),
+            new NavItem("Nav_Queries", () => new QueriesPageViewModel(live)),
+            new NavItem("Nav_Windows", () => new WindowsPageViewModel(live)),
             new NavItem("Nav_Iis", () => new PlaceholderViewModel("Nav_Iis", 3)),
             new NavItem("Nav_Arr", () => new PlaceholderViewModel("Nav_Arr", 3)),
             new NavItem("Nav_Redis", () => new PlaceholderViewModel("Nav_Redis", 4)),
@@ -56,6 +57,8 @@ public sealed partial class MainViewModel : ObservableObject
 
     public StatusBarViewModel Status { get; }
 
+    public LiveViewModel Live { get; }
+
     [ObservableProperty]
     private NavItem _selectedNav;
 }
@@ -67,8 +70,6 @@ public sealed partial class StatusBarViewModel : ObservableObject
 
     public void Show(string message) => Message = message;
 }
-
-public sealed class OverviewViewModel;
 
 public sealed class PlaceholderViewModel : ObservableObject
 {

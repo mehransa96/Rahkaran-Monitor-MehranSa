@@ -17,6 +17,9 @@
     <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><views:SettingsView /></DataTemplate>
     <DataTemplate DataType="{x:Type vm:DiagnosisViewModel}"><views:ReportsView /></DataTemplate>
     <DataTemplate DataType="{x:Type vm:LayerFindingsViewModel}"><views:LayerFindingsView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:SqlPageViewModel}"><views:SqlLiveView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:QueriesPageViewModel}"><views:QueriesView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:WindowsPageViewModel}"><views:WindowsView /></DataTemplate>
   </Window.Resources>
   <DockPanel>
     <!-- Status bar -->

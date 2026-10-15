@@ -42,6 +42,7 @@ public partial class App : Application
             services.AddSingleton<SitesViewModel>();
             services.AddSingleton<SettingsViewModel>();
             services.AddSingleton<DiagnosisViewModel>();
+            services.AddSingleton<LiveViewModel>();
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<MainWindow>();
         });
@@ -57,6 +58,8 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        // Close the live connections first (disposes the scheduler loops and SQL/CIM sessions).
+        _host?.Services.GetService<LiveMonitorService>()?.StopAsync().GetAwaiter().GetResult();
         _host?.Dispose();
         base.OnExit(e);
     }

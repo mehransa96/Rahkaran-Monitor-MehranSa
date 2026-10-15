@@ -1,0 +1,36 @@
+<UserControl x:Class="RSM.App.Views.SqlLiveView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:views="clr-namespace:RSM.App.Views">
+  <!-- DataContext: SqlPageViewModel. -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+      <TextBlock Style="{StaticResource Text.Title}" Text="{Binding Title}" />
+      <views:LiveToolbar DataContext="{Binding Live}" />
+      <UniformGrid Columns="2">
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding WaitsChart}" Margin="0,0,8,0" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding SessionsChart}" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding ReadLatencyChart}" Margin="0,0,8,0" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding LogLatencyChart}" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding PleChart}" Margin="0,0,8,0" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding GrantsChart}" />
+      </UniformGrid>
+
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Live_TopWaits], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Waits}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="320">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="200" Binding="{Binding WaitType}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_WaitType]}" />
+            <DataGridTextColumn Width="140" Binding="{Binding Category}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Category]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding WaitMs}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_WaitMs]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Explanation}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Explanation]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,12,0,4" Text="{Binding [Live_DiagnosisFindings], Source={x:Static loc:Loc.Instance}}" />
+      <views:LayerFindingsView DataContext="{Binding Diagnosis}" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

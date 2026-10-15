@@ -1,0 +1,43 @@
+<UserControl x:Class="RSM.App.Views.WindowsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:views="clr-namespace:RSM.App.Views">
+  <!-- DataContext: WindowsPageViewModel. Processes are listed, never ended or re-prioritised. -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+      <TextBlock Style="{StaticResource Text.Title}" Text="{Binding Title}" />
+      <views:LiveToolbar DataContext="{Binding Live}" />
+      <UniformGrid Columns="2">
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding CpuChart}" Margin="0,0,8,0" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding MemoryChart}" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding DiskReadChart}" Margin="0,0,8,0" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding DiskWriteChart}" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding NetworkChart}" Margin="0,0,8,0" />
+      </UniformGrid>
+
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Live_TopProcesses], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Processes}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="320">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Process]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding ProcessId}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_ProcessId]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Cpu}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_CpuPct]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding PrivateMb}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_PrivateMb]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding WorkingSetMb}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_WorkingSetMb]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Live_Inventory], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Inventory}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="360">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="260" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Fact_Name]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Value}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Fact_Value]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -71,6 +71,23 @@ public partial class RepositoryConsistencyTests
     }
 
     [Fact]
+    public void Enum_driven_labels_exist_in_both_languages()
+    {
+        // The live pages build these keys from enum names ("WaitCategory_" + category, "PlanWarning_" + kind).
+        var app = Path.Combine(RepoRoot(), "src", "RSM.App", "Resources");
+        var en = ReadResx(Path.Combine(app, "Strings.resx"));
+        var fa = ReadResx(Path.Combine(app, "Strings.fa.resx"));
+        var keys = Enum.GetNames<RSM.Parsers.Sql.WaitCategory>().Select(n => "WaitCategory_" + n)
+            .Concat(Enum.GetNames<RSM.Parsers.Showplan.PlanWarningKind>().Select(n => "PlanWarning_" + n))
+            .Concat(Enum.GetNames<RSM.Core.Model.Severity>().Select(n => "Severity_" + n));
+        foreach (var key in keys)
+        {
+            en.Should().ContainKey(key);
+            fa.Should().ContainKey(key);
+        }
+    }
+
+    [Fact]
     public void Xaml_has_no_hard_coded_user_visible_text()
     {
         var app = Path.Combine(RepoRoot(), "src", "RSM.App");

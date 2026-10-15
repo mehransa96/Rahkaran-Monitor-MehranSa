@@ -26,7 +26,7 @@
   <data name="Nav_Settings" xml:space="preserve"><value>تنظیمات</value></data>
   <data name="Placeholder_Phase" xml:space="preserve"><value>این بخش در فاز {0} اضافه می‌شود.</value></data>
   <data name="Overview_Title" xml:space="preserve"><value>نمای کلی</value></data>
-  <data name="Overview_Intro" xml:space="preserve"><value>فاز ۰: در بخش «سایت‌ها و اتصال‌ها» یک سایت و سرورهای آن را تعریف کنید و با «آزمون اتصال» ماتریس قابلیت‌ها را ببینید؛ یعنی RSM با دسترسی فعلی چه چیزهایی را می‌تواند بخواند و چرا برخی موارد در دسترس نیست.</value></data>
+  <data name="Overview_Intro" xml:space="preserve"><value>نمای زنده را به یک سایت متصل کنید تا SQL Server و ویندوز را لحظه‌ای ببینید (فقط پرس‌وجوی خواندنی؛ با کوچک‌کردن پنجره متوقف می‌شود). برای بررسی کامل سلامت، در صفحهٔ گزارش‌ها عیب‌یابی کامل را اجرا کنید.</value></data>
   <data name="Sites_Title" xml:space="preserve"><value>سایت‌ها و اتصال‌ها</value></data>
   <data name="Sites_List" xml:space="preserve"><value>سایت‌ها</value></data>
   <data name="Sites_New" xml:space="preserve"><value>سایت جدید</value></data>
@@ -156,4 +156,140 @@
   <data name="Fact_Never" xml:space="preserve"><value>هرگز</value></data>
   <data name="Fact_Yes" xml:space="preserve"><value>بله</value></data>
   <data name="Fact_No" xml:space="preserve"><value>خیر</value></data>
+  <data name="Blocking_HeadIdle" xml:space="preserve"><value>بیکار، با تراکنش باز</value></data>
+  <data name="Chart_Blocking" xml:space="preserve"><value>طولانی‌ترین انتظار Blocking (ثانیه)</value></data>
+  <data name="Chart_Cpu" xml:space="preserve"><value>CPU: ‏SQL Server در برابر سایر فرایندها (٪)</value></data>
+  <data name="Chart_DataReadLatency" xml:space="preserve"><value>تأخیر خواندن فایل داده هر پایگاه داده (میلی‌ثانیه)</value></data>
+  <data name="Chart_DiskRead" xml:space="preserve"><value>تأخیر خواندن دیسک هر درایو (میلی‌ثانیه)</value></data>
+  <data name="Chart_DiskWrite" xml:space="preserve"><value>تأخیر نوشتن دیسک هر درایو (میلی‌ثانیه)</value></data>
+  <data name="Chart_FreeMemory" xml:space="preserve"><value>حافظهٔ آزاد (٪)</value></data>
+  <data name="Chart_LogWriteLatency" xml:space="preserve"><value>تأخیر نوشتن لاگ هر پایگاه داده (میلی‌ثانیه)</value></data>
+  <data name="Chart_MemoryGrants" xml:space="preserve"><value>Memory Grantها</value></data>
+  <data name="Chart_Network" xml:space="preserve"><value>استفاده از شبکه برای هر کارت (٪)</value></data>
+  <data name="Chart_NoData" xml:space="preserve"><value>هنوز داده‌ای برای این سرور و بازه وجود ندارد.</value></data>
+  <data name="Chart_Ple" xml:space="preserve"><value>Page Life Expectancy (ثانیه)</value></data>
+  <data name="Chart_Sessions" xml:space="preserve"><value>Sessionها و درخواست‌ها</value></data>
+  <data name="Chart_Threshold_Critical" xml:space="preserve"><value>{0} بحرانی: {1}</value></data>
+  <data name="Chart_Threshold_Warning" xml:space="preserve"><value>{0} هشدار: {1}</value></data>
+  <data name="Chart_WaitsByCategory" xml:space="preserve"><value>انتظارها بر اساس دسته (میلی‌ثانیه در ثانیه)</value></data>
+  <data name="Chart_WindowsCpu" xml:space="preserve"><value>CPU ویندوز و کارایی پردازنده (٪)</value></data>
+  <data name="Chart_Workload" xml:space="preserve"><value>بار کاری</value></data>
+  <data name="Col_AvgCpuMs" xml:space="preserve"><value>میانگین CPU (ms)</value></data>
+  <data name="Col_AvgDurationMs" xml:space="preserve"><value>میانگین مدت (ms)</value></data>
+  <data name="Col_AvgReads" xml:space="preserve"><value>میانگین خواندن</value></data>
+  <data name="Col_BlockedBy" xml:space="preserve"><value>مسدودکننده</value></data>
+  <data name="Col_BlockedCount" xml:space="preserve"><value>مسدودشده</value></data>
+  <data name="Col_Category" xml:space="preserve"><value>دسته</value></data>
+  <data name="Col_CpuMs" xml:space="preserve"><value>CPU (ms)</value></data>
+  <data name="Col_CpuPct" xml:space="preserve"><value>CPU (٪)</value></data>
+  <data name="Col_Database" xml:space="preserve"><value>پایگاه داده</value></data>
+  <data name="Col_ElapsedS" xml:space="preserve"><value>مدت (ثانیه)</value></data>
+  <data name="Col_Executions" xml:space="preserve"><value>تعداد اجرا</value></data>
+  <data name="Col_Explanation" xml:space="preserve"><value>معمولاً یعنی</value></data>
+  <data name="Col_HeadBlocker" xml:space="preserve"><value>سرِ زنجیره</value></data>
+  <data name="Col_Host" xml:space="preserve"><value>میزبان</value></data>
+  <data name="Col_ImpactPct" xml:space="preserve"><value>اثر (٪)</value></data>
+  <data name="Col_LockModes" xml:space="preserve"><value>نوع قفل</value></data>
+  <data name="Col_LogMb" xml:space="preserve"><value>لاگ (MB)</value></data>
+  <data name="Col_Login" xml:space="preserve"><value>Login</value></data>
+  <data name="Col_MaxWaitS" xml:space="preserve"><value>بیشترین انتظار (ثانیه)</value></data>
+  <data name="Col_Objects" xml:space="preserve"><value>اشیا</value></data>
+  <data name="Col_PlanWarnings" xml:space="preserve"><value>هشدارهای Plan</value></data>
+  <data name="Col_PrivateMb" xml:space="preserve"><value>Private (MB)</value></data>
+  <data name="Col_Process" xml:space="preserve"><value>فرایند</value></data>
+  <data name="Col_ProcessId" xml:space="preserve"><value>PID</value></data>
+  <data name="Col_Program" xml:space="preserve"><value>برنامه</value></data>
+  <data name="Col_Seeks" xml:space="preserve"><value>Seek + Scan</value></data>
+  <data name="Col_Session" xml:space="preserve"><value>Session</value></data>
+  <data name="Col_State" xml:space="preserve"><value>وضعیت</value></data>
+  <data name="Col_Statement" xml:space="preserve"><value>دستور</value></data>
+  <data name="Col_Suggestion" xml:space="preserve"><value>پیشنهاد (فقط نمایش)</value></data>
+  <data name="Col_Time" xml:space="preserve"><value>زمان</value></data>
+  <data name="Col_TotalCpuMs" xml:space="preserve"><value>مجموع CPU (ms)</value></data>
+  <data name="Col_TranAgeS" xml:space="preserve"><value>عمر تراکنش (ثانیه)</value></data>
+  <data name="Col_Victim" xml:space="preserve"><value>قربانی</value></data>
+  <data name="Col_Wait" xml:space="preserve"><value>انتظار</value></data>
+  <data name="Col_WaitMs" xml:space="preserve"><value>انتظار (ms)</value></data>
+  <data name="Col_WaitType" xml:space="preserve"><value>نوع انتظار</value></data>
+  <data name="Col_WorkingSetMb" xml:space="preserve"><value>Working Set (MB)</value></data>
+  <data name="Index_VendorCaution" xml:space="preserve"><value>ساختار پایگاه داده راهکاران متعلق به سازنده است: بدون ستاد فنی ایندکس نسازید و حذف نکنید. این پیشنهادها فقط برای بررسی نمایش داده می‌شوند (DB-IDX-000).</value></data>
+  <data name="Kpi_BatchRequests" xml:space="preserve"><value>Batch Request در ثانیه</value></data>
+  <data name="Kpi_Blocking" xml:space="preserve"><value>مسدودشده / طولانی‌ترین انتظار</value></data>
+  <data name="Kpi_Deadlocks" xml:space="preserve"><value>Deadlock (۲۴ ساعت)</value></data>
+  <data name="Kpi_FreeMemory" xml:space="preserve"><value>حافظهٔ آزاد ویندوز</value></data>
+  <data name="Kpi_OtherCpu" xml:space="preserve"><value>CPU سایر فرایندها</value></data>
+  <data name="Kpi_Ple" xml:space="preserve"><value>Page Life Expectancy</value></data>
+  <data name="Kpi_SqlCpu" xml:space="preserve"><value>CPU ‏SQL Server</value></data>
+  <data name="Kpi_Waits" xml:space="preserve"><value>انتظارها</value></data>
+  <data name="Kpi_WindowsCpu" xml:space="preserve"><value>CPU ویندوز</value></data>
+  <data name="Live_BlockingChains" xml:space="preserve"><value>زنجیره‌های Blocking (سرِ زنجیره اول)</value></data>
+  <data name="Live_Connect" xml:space="preserve"><value>اتصال نمای زنده</value></data>
+  <data name="Live_Deadlocks" xml:space="preserve"><value>Deadlockها (system_health، ۲۴ ساعت اخیر)</value></data>
+  <data name="Live_DiagnosisFindings" xml:space="preserve"><value>یافته‌های آخرین عیب‌یابی کامل</value></data>
+  <data name="Live_Disconnect" xml:space="preserve"><value>قطع اتصال</value></data>
+  <data name="Live_Findings" xml:space="preserve"><value>یافته‌های زنده</value></data>
+  <data name="Live_IntervalLabel" xml:space="preserve"><value>نمونه‌برداری</value></data>
+  <data name="Live_Interval_Half" xml:space="preserve"><value>هر ۲ برابر بازه</value></data>
+  <data name="Live_Interval_Normal" xml:space="preserve"><value>عادی</value></data>
+  <data name="Live_Interval_Quarter" xml:space="preserve"><value>هر ۴ برابر بازه</value></data>
+  <data name="Live_Inventory" xml:space="preserve"><value>مشخصات ویندوز و سخت‌افزار</value></data>
+  <data name="Live_MissingIndexes" xml:space="preserve"><value>پیشنهادهای ایندکس</value></data>
+  <data name="Live_Node" xml:space="preserve"><value>سرور</value></data>
+  <data name="Live_Overhead" xml:space="preserve"><value>مصرف خود RSM: CPU کلاینت {0}٪، حافظه {1} MB · روی SQL Server: ‏CPU {2}٪، زمان رفت‌وبرگشت {3} ms · {4} اجرای جمع‌آوری در دقیقه، {5} کندشده، {6} سری</value></data>
+  <data name="Live_Pause" xml:space="preserve"><value>توقف موقت</value></data>
+  <data name="Live_RefreshNow" xml:space="preserve"><value>به‌روزرسانی اکنون</value></data>
+  <data name="Live_Requests" xml:space="preserve"><value>درخواست‌های در حال اجرا</value></data>
+  <data name="Live_Resume" xml:space="preserve"><value>ادامه</value></data>
+  <data name="Live_Site" xml:space="preserve"><value>سایت</value></data>
+  <data name="Live_State_Live" xml:space="preserve"><value>● زنده</value></data>
+  <data name="Live_State_Paused" xml:space="preserve"><value>❚❚ متوقف</value></data>
+  <data name="Live_State_PausedMinimized" xml:space="preserve"><value>❚❚ متوقف (پنجره کوچک شده)</value></data>
+  <data name="Live_Status_Connected" xml:space="preserve"><value>نمای زنده به {0} متصل شد (فقط‌خواندنی).</value></data>
+  <data name="Live_Status_Connecting" xml:space="preserve"><value>در حال اتصال: {0}…</value></data>
+  <data name="Live_Status_Disconnected" xml:space="preserve"><value>نمای زنده قطع شد.</value></data>
+  <data name="Live_Status_Failed" xml:space="preserve"><value>اتصال نمای زنده ممکن نشد: {0}</value></data>
+  <data name="Live_TopProcesses" xml:space="preserve"><value>فرایندهای پرمصرف</value></data>
+  <data name="Live_TopQueries" xml:space="preserve"><value>دستورهای پرمصرف CPU (با تحلیل Plan)</value></data>
+  <data name="Live_TopWaits" xml:space="preserve"><value>بیشترین انتظارها در بازهٔ اخیر</value></data>
+  <data name="Live_Transactions" xml:space="preserve"><value>تراکنش‌های باز</value></data>
+  <data name="Live_WindowLabel" xml:space="preserve"><value>بازهٔ نمایش</value></data>
+  <data name="Live_Window_Minutes" xml:space="preserve"><value>{0} دقیقه</value></data>
+  <data name="Series_ActiveRequests" xml:space="preserve"><value>درخواست‌های در حال اجرا</value></data>
+  <data name="Series_Adapter" xml:space="preserve"><value>کارت شبکه</value></data>
+  <data name="Series_BatchRequests" xml:space="preserve"><value>Batch Request در ثانیه</value></data>
+  <data name="Series_BlockedRequests" xml:space="preserve"><value>درخواست‌های مسدود</value></data>
+  <data name="Series_BlockingWait" xml:space="preserve"><value>طولانی‌ترین انتظار</value></data>
+  <data name="Series_CpuPerformance" xml:space="preserve"><value>٪ کارایی پردازنده</value></data>
+  <data name="Series_CpuTotal" xml:space="preserve"><value>کل CPU</value></data>
+  <data name="Series_Database" xml:space="preserve"><value>پایگاه داده</value></data>
+  <data name="Series_FreeMemory" xml:space="preserve"><value>حافظهٔ آزاد</value></data>
+  <data name="Series_GrantsOutstanding" xml:space="preserve"><value>Grantهای فعال</value></data>
+  <data name="Series_GrantsPending" xml:space="preserve"><value>Grantهای در انتظار</value></data>
+  <data name="Series_OtherCpu" xml:space="preserve"><value>سایر فرایندها</value></data>
+  <data name="Series_Ple" xml:space="preserve"><value>PLE</value></data>
+  <data name="Series_SqlCpu" xml:space="preserve"><value>SQL Server</value></data>
+  <data name="Series_UserSessions" xml:space="preserve"><value>Sessionهای کاربر</value></data>
+  <data name="Series_Volume" xml:space="preserve"><value>درایو</value></data>
+  <data name="Series_WaitCategory" xml:space="preserve"><value>دسته</value></data>
+  <data name="Series_WaitMs" xml:space="preserve"><value>انتظار (ms/s)</value></data>
+  <data name="WaitCategory_Cpu" xml:space="preserve"><value>CPU</value></data>
+  <data name="WaitCategory_Parallelism" xml:space="preserve"><value>موازی‌سازی</value></data>
+  <data name="WaitCategory_Worker" xml:space="preserve"><value>Worker</value></data>
+  <data name="WaitCategory_IoData" xml:space="preserve"><value>I/O داده</value></data>
+  <data name="WaitCategory_IoLog" xml:space="preserve"><value>I/O لاگ</value></data>
+  <data name="WaitCategory_Locking" xml:space="preserve"><value>قفل</value></data>
+  <data name="WaitCategory_Latch" xml:space="preserve"><value>Latch</value></data>
+  <data name="WaitCategory_Memory" xml:space="preserve"><value>حافظه</value></data>
+  <data name="WaitCategory_Network" xml:space="preserve"><value>شبکه/کلاینت</value></data>
+  <data name="WaitCategory_Backup" xml:space="preserve"><value>پشتیبان‌گیری</value></data>
+  <data name="WaitCategory_Other" xml:space="preserve"><value>سایر</value></data>
+  <data name="PlanWarning_MissingIndex" xml:space="preserve"><value>ایندکس پیشنهادی</value></data>
+  <data name="PlanWarning_ImplicitConversion" xml:space="preserve"><value>تبدیل ضمنی</value></data>
+  <data name="PlanWarning_SpillToTempDb" xml:space="preserve"><value>سرریز به tempdb</value></data>
+  <data name="PlanWarning_KeyLookup" xml:space="preserve"><value>Key Lookup</value></data>
+  <data name="PlanWarning_RidLookup" xml:space="preserve"><value>RID Lookup</value></data>
+  <data name="PlanWarning_LargeScan" xml:space="preserve"><value>پیمایش بزرگ</value></data>
+  <data name="PlanWarning_ExcessiveMemoryGrant" xml:space="preserve"><value>Memory Grant زیاد</value></data>
+  <data name="PlanWarning_Parallelism" xml:space="preserve"><value>اجرای موازی</value></data>
+  <data name="PlanWarning_NoJoinPredicate" xml:space="preserve"><value>Join بدون شرط</value></data>
 </root>

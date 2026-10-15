@@ -70,6 +70,14 @@ public sealed class LiveSession : IAsyncDisposable
 
     public MetricStore Metrics { get; }
 
+    /// <summary>The rules evaluated on live facts (charts read their thresholds from here, so overrides apply).</summary>
+    public RulesEngine Engine => _engine;
+
+    /// <summary>A numeric parameter of a loaded rule (e.g. SQL-IO-001 <c>warn</c>), or null when absent.</summary>
+    public double? RuleParam(string ruleId, string name) =>
+        _engine.Rules.FirstOrDefault(r => r.Definition.Id == ruleId)?.Definition.Params.TryGetValue(name, out var v) == true
+        && v.ValueKind == System.Text.Json.JsonValueKind.Number ? v.GetDouble() : null;
+
     public CollectorScheduler Scheduler { get; }
 
     public IReadOnlyList<LiveNode> Nodes => _nodes;
