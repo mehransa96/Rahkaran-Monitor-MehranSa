@@ -72,13 +72,13 @@ dependency and are the most test-heavy code, so isolating them lets the bulk of 
 | MVVM | CommunityToolkit.Mvvm 8.x | source generators |
 | Host/DI | Microsoft.Extensions.Hosting 8.x | |
 | UI kit | plain styled WPF (*P0 decision*) | WPF-UI 3.x only after its RTL rendering is verified on Windows |
-| Charts | ScottPlot.WPF 5.x | streaming `DataLogger`/`DataStreamer`; charts keep LTR axes inside RTL layout |
+| Charts | ScottPlot.WPF 5.0.55 (MIT) | *as built (P2)*: each chart is redrawn from the in-memory `MetricStore` every 2 s while visible; the plot shows numbers only, titles/legends are WPF text (Persian shaping), LTR axes inside RTL layout |
 | Code view | AvalonEdit 6.3 | read-only, T-SQL/XML highlighting |
 | SQL | Microsoft.Data.SqlClient 6.1, Dapper 2.1, Microsoft.SqlServer.TransactSql.ScriptDom 161.9142 | `TSql160Parser` |
-| CIM | Microsoft.Management.Infrastructure 3.x | queries only (`QueryInstances`, `EnumerateInstances`, `GetInstance`) |
+| CIM | Microsoft.Management.Infrastructure 3.0.0 (MIT) | queries only: `CimSessionQuery` calls `QueryInstances` with WQL built from validated identifiers (`CimQuery`); method/instance APIs banned and canary-checked |
 | Event logs | System.Diagnostics.EventLog 8.x (`Eventing.Reader`) | `EventLogSession` for remote |
 | Services | System.ServiceProcess.ServiceController 8.x | read members only (banned mutators) |
-| Perf counters | System.Diagnostics.PerformanceCounter 8.x | local PDH; remote via CIM `Win32_PerfFormattedData_*` |
+| Perf counters | System.Diagnostics.PerformanceCounter 8.0.1 (MIT) | local PDH (`readOnly: true`, `NextValue` only; writers banned); remote via CIM `Win32_PerfFormattedData_*`, disk latency via `Win32_PerfRawData_*` average-timer math (the formatted class truncates seconds) |
 | IIS | Microsoft.Web.Administration | **P0 spike**: confirm a .NET 8-compatible build and `ServerManager(readOnly: true, path)` |
 | .NET counters | Microsoft.Diagnostics.NETCore.Client | optional, local, off by default |
 | Storage | Microsoft.Data.Sqlite 8.x — **not used yet** (P1 stores snapshots as files, see §10) | WAL mode |
@@ -201,6 +201,18 @@ Mechanics:
   *to* our `program_name`, the only query that looks at our own sessions) / wall time / scheduler count,
   plus CIM/PDH call counts. Shown as "RSM overhead ≈ x %" per node; P2 acceptance gate is < 2 %.
 - **Live mode pauses** when the window is minimized for > 5 min (configurable), except headless `--collect`.
+
+*As built (P2):* `RSM.Core.Live.LiveSession` schedules every `ILiveCollector` whose transport the node has
+(`IRequiresTransport`) on `CollectorScheduler` (single flight, per-node gate 2, back-off as above, plus `Paused` and an
+`IntervalScale` of 1×/2×/4× from the UI). Intervals: `sql.perf` (counters + waits + file stats + pending I/O) 15 s,
+`sql.activity` 15 s, `rsm.overhead.sql` 30 s, `sql.cpu` 60 s (ring buffer, first read back-fills ~4 h), `sql.ha` 60 s,
+`win.perf` 15 s, `win.processes` 60 s, `sql.deadlocks`/`sql.querystats` 5 min, `sql.querystore` 15 min,
+`win.inventory` 1 h. Results feed a `MetricStore` (ring buffers: 60 min, ≤ 1 500 points per series), a per-node
+`FactStore` and the rules engine (findings keep their first-seen time while they persist). The window pauses as soon
+as it is minimised (no 5-minute grace yet). The overhead line shows RSM's own client CPU/working set
+(`AppDomain.MonitoringTotalProcessorTime`, `Environment.WorkingSet` — no `Process` API) and, per node, RSM's SQL CPU
+share from `cap.self_overhead` deltas and the `cap.rtt` round trip. A one-shot diagnosis runs the same collectors once;
+interval values come from a 5 s baseline taken inside that run.
 
 ---
 
@@ -329,6 +341,13 @@ arch test that fails if any other type uses the API or if the class grows a new 
 Decision Q2: there is **no** `SelfElevation` or `ShellOpen` class — `Process.Start` has zero call sites. *P0:* the
 `Audited/` folder contains only a README; `RSM.ArchTests` pins the (empty) type list.
 
+*As built (P2):* neither audited class was needed, so `Audited/` is still empty and no file suppresses RS0030.
+Registry values are read with `RegistryKey.OpenBaseKey`/`OpenRemoteBaseKey` + `OpenSubKey(name)` (read-only; the
+Remote Registry service with the current Windows user's rights), limited to the hard-coded `RegistryWhitelist` in
+`RSM.Collectors.Windows`; there is no `InvokeMethod` call anywhere. When remote registry is unreachable the
+registry-based checks report *unknown* and the Capability Matrix says why (`win.registry`). The process list comes from
+CIM `Win32_PerfFormattedData_PerfProc_Process` (local and remote), so `ProcessSnapshot` is not needed either.
+
 ### 6.5 Banned symbols (`BannedSymbols.txt` + `BannedSymbols.NonSafety.txt`)
 
 *P0:* the full lists live in the two files at the repo root. `BannedSymbols.txt` applies to **every** production
@@ -337,7 +356,13 @@ registry writes, classic `EventLog`, log clearing/export, legacy SQL clients, We
 `BannedSymbols.NonSafety.txt` applies to every project except `RSM.Safety` (the whole `Process` type,
 `SqlConnection`/`SqlCommand`/Dapper, sockets, `HttpClient`, `File`/`Directory`/`FileStream`, mutating
 `FileInfo`/`DirectoryInfo` members, `ZipFile`). The analyzer canary test also checks that every entry whose declaring
-type is available resolves to a real API (a signature typo would otherwise ban nothing). Original sketch:
+type is available resolves to a real API (a signature typo would otherwise ban nothing).
+
+*P2 finding:* `M:Type.set_Property(…)` entries are silently ignored by the analyzer for property assignments
+(the canaries for `FileInfo.IsReadOnly`, `Process.PriorityClass` and `PerformanceCounter.RawValue` did not fire).
+All such entries are now `P:Type.Property` bans (getter and setter), a test forbids `M:…set_` entries, and file
+times/attributes that collectors may need later are to be read through `RSM.Safety.Files`. CIM and PDH bans are now
+canary-checked too (their assemblies are referenced by the arch tests). Original sketch:
 
 ```
 M:System.Diagnostics.Process.Start(System.String);Process start is forbidden (read-only tool)
@@ -412,7 +437,7 @@ are unchanged before/after.
 | SQL | SqlClient | SqlClient | `rsm_monitor` login (§2.4) |
 | Perf counters | `PerformanceCounter` (PDH) | CIM `Win32_PerfRawData_*` (delta math in RSM) / `Win32_PerfFormattedData_*` | Performance Monitor Users; WinRM (5985/5986) or DCOM |
 | Inventory | CIM local | CIM over WinRM (fallback DCOM) | Remote WMI read on `root\cimv2` |
-| Power plan | CIM `root\cimv2\power` | same | may be access-denied remotely → registry fallback (Q3) |
+| Power plan | CIM `root\cimv2\power` | same | may be access-denied remotely → registry fallback (`ActivePowerScheme`, read-only Remote Registry) |
 | Event logs | `EventLogReader` | `EventLogSession(host, domain, user, pwd)` | Event Log Readers + "Remote Event Log Management" firewall rule |
 | Services | `ServiceController` (read) | `ServiceController(name, machine)` (read) / CIM `Win32_Service` | SCM connect |
 | IIS config | `ServerManager(readOnly:true, applicationHost.config path)` | `ServerManager.OpenRemote` (admin, DCOM) **or** CIM `root\WebAdministration` | local admin for applicationHost.config |

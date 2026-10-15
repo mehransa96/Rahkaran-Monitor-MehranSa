@@ -335,6 +335,22 @@ team once confirmed.
 - No `OPTION (MAXRECURSION …)`: SqlGuard allows only RECOMPILE/MAXDOP hints, so the blocking tree caps its depth with
   `chain_level < 32` instead.
 - `sql.waits.session_waits` is not needed by the P2 pages and was not written.
+- Ages (`TranAgeS`, `IdleTranAgeS`, `AgeS`) are computed **on the server** with `DATEDIFF(SECOND, …, GETDATE())`, so a
+  client clock or time zone different from the server's cannot distort "open transaction > 5 min".
+- `sql.dl.from_file`: `sys.dm_os_server_diagnostics_log_configurations.path` may or may not end with a separator
+  (Windows `\`, Linux `/`); the query appends one with a `CASE` expression before `system_health*.xel`. The collector
+  falls back to `sql.dl.from_ring` when the files cannot be read **or** return no deadlock (event files are flushed
+  lazily — up to ~2 min).
+- `sql.qs.plan_text` is called for the top 5 statements by CPU only (by plan handle and offsets, every 5 min); it is not a
+  plan-cache scan, which stays an on-demand heavy operation.
+- Live collectors and their queries: `sql.perf` (`sql.perf.counters`, `sql.waits.wait_stats`, `sql.io.file_stats`,
+  `sql.waits.waiting_tasks`, `sql.io.pending`), `sql.cpu` (`sql.cpu.ring_buffer`), `sql.activity` (`sql.req.active`,
+  `sql.block.chains`, `sql.req.idle_open_tran`, `sql.tran.active`, `sql.req.sessions_summary`), `sql.deadlocks`
+  (`sql.dl.from_file` → `sql.dl.from_ring`), `sql.querystats` (`sql.qs.top_queries`, `sql.qs.plan_text`,
+  `sql.qs.top_procs`, `sql.qs.plan_cache_health`, `sql.idx.missing`), `sql.querystore` (`sql.qds.options`,
+  `sql.qds.regressed`, `sql.qds.forced_plans`, `sql.idx.usage` — Rahkaran DBs only), `sql.ha` (`sql.ha.ag`),
+  `rsm.overhead.sql` (`cap.rtt`, `cap.self_overhead`). `sql.block.locks_summary` and `sql.req.input_buffer` are in the
+  catalog for on-demand use (P3 UI) and not scheduled.
 
 ## Phase 1 implementation notes
 
