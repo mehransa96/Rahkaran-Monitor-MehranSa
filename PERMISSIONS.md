@@ -78,16 +78,22 @@ GRANT SELECT ON dbo.Subscriptions TO rsm_monitor;   -- subscription failures (P4
 GRANT SELECT ON dbo.Catalog       TO rsm_monitor;   -- report paths for subscriptions (P4)
 ```
 
-## 5. Windows (Phase 2+)
+## 5. Windows and IIS (Phase 2–3)
 
 | Need | Grant |
 |---|---|
 | Performance counters (local / remote) | member of **Performance Monitor Users** |
-| Event logs | member of **Event Log Readers**; firewall rule *Remote Event Log Management* for remote reads |
-| WMI / CIM inventory (remote) | WinRM (5985/5986) or DCOM; read access to `root\cimv2` (and `root\WebAdministration` for IIS) |
-| Registry checks (remote) | WMI `StdRegProv` read access (RSM calls only *Get\*/Enum\** methods) |
-| IIS configuration, live requests, some logs | local **Administrators** on that server (run RSM elevated, locally) |
-| IIS / ERRORLOG files via admin share | read access to `\\server\c$\inetpub\logs\…` / SQL `Log` folder |
+| Event logs (System, Application) | member of **Event Log Readers**; firewall rule *Remote Event Log Management* for remote reads |
+| WMI / CIM inventory and services (remote) | WinRM (5985/5986) or DCOM; read access to `root\cimv2` (and `root\StandardCimv2` for TCP connection counts) |
+| Registry checks (remote) | the Remote Registry service and read rights for the current Windows user (whitelisted keys only) |
+| IIS configuration (applicationHost.config, web.config) | local: **Administrators** (run RSM elevated); remote: read access to the admin share `\\server\C$\Windows\System32\inetsrv\config` and the sites' folders |
+| IIS live requests and pool runtime state | run RSM **elevated on the IIS server itself** + the IIS **Request Monitor** feature (remote nodes show pool state from the WAS counters) |
+| IIS W3C / HTTPERR / stdout / FREB logs | read access to the log folders (local or admin share, e.g. `\\server\C$\inetpub\logs\LogFiles`, `\\server\C$\Windows\System32\LogFiles\HTTPERR`) |
+| TLS certificates of bindings | local only (LocalMachine store read); remote nodes show expiry as unknown |
+| SQL ERRORLOG files via admin share | read access to the SQL `Log` folder |
+
+RSM never needs write access to any of these: files are opened read-only with shared access, IIS configuration is
+never committed, and there is no control for services, pools or sites.
 
 ## 6. Redis / RabbitMQ (Phase 4)
 

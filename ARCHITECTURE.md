@@ -36,8 +36,8 @@ RSM.sln
 │  │                                              ExecutionLog/web.config parsers (pure, unit-tested on Linux)
 │  ├─ RSM.Collectors.Sql          net8.0          §7 instance-level collectors
 │  ├─ RSM.Collectors.Database     net8.0          §8 per-database collectors + query packs
-│  ├─ RSM.Collectors.Windows      net8.0-windows  PDH/CIM/EventLog/ServiceController(read)/registry(read)
-│  ├─ RSM.Collectors.Iis          net8.0-windows  Microsoft.Web.Administration (read-only) + CIM fallback
+│  ├─ RSM.Collectors.Windows      net8.0          PDH/CIM/EventLogReader/registry(read); services via CIM
+│  ├─ RSM.Collectors.Iis          net8.0          IIS files (local or admin share) + MWA read-only (local)
 │  ├─ RSM.Collectors.Redis        net8.0          uses RSM.Safety.RespWhitelistClient
 │  ├─ RSM.Collectors.Rahkaran     net8.0-windows  topology, version drift, SSRS, CodeMeter, RabbitMQ,
 │  │                                              EventPipe runtime counters (optional, local only)
@@ -60,6 +60,9 @@ RSM.sln
 
 *P0:* created `RSM.Core`, `RSM.Safety`, `RSM.Collectors.Sql`, `RSM.Collectors.Redis`, `RSM.Storage`, `RSM.Hosting`,
 `RSM.App` and the four test projects; the other projects are added in the phase that first needs them.
+*P1–P3:* added `RSM.Parsers`, `RSM.Collectors.Database`, `RSM.Reporting` (P1), `RSM.Collectors.Windows` (P2) and
+`RSM.Collectors.Iis` (P3); both collector projects target `net8.0` so their analysis is unit-tested on Linux, with the
+Windows-only calls platform-annotated.
 
 Why the extra `RSM.Parsers` and `RSM.Hosting` projects vs. the spec proposal: parsers have no Windows
 dependency and are the most test-heavy code, so isolating them lets the bulk of tests run on Linux CI;
@@ -76,10 +79,10 @@ dependency and are the most test-heavy code, so isolating them lets the bulk of 
 | Code view | AvalonEdit 6.3 | read-only, T-SQL/XML highlighting |
 | SQL | Microsoft.Data.SqlClient 6.1, Dapper 2.1, Microsoft.SqlServer.TransactSql.ScriptDom 161.9142 | `TSql160Parser` |
 | CIM | Microsoft.Management.Infrastructure 3.0.0 (MIT) | queries only: `CimSessionQuery` calls `QueryInstances` with WQL built from validated identifiers (`CimQuery`); method/instance APIs banned and canary-checked |
-| Event logs | System.Diagnostics.EventLog 8.x (`Eventing.Reader`) | `EventLogSession` for remote |
-| Services | System.ServiceProcess.ServiceController 8.x | read members only (banned mutators) |
+| Event logs | System.Diagnostics.EventLog 8.0.1 (MIT, `Eventing.Reader`) | *as built (P3)*: `EventLogReader` on a local or remote `EventLogSession`, XPath built from integers and a validated channel name; classic `EventLog`, `EventLogConfiguration`, clear/export banned |
+| Services | — (CIM `Win32_Service`) | *as built (P3)*: services are queried through CIM, so no service-control API is referenced; System.ServiceProcess.ServiceController 8.0.1 is pinned only to lift the netstandard1.x version that MWA pulls in (its mutators stay banned) |
 | Perf counters | System.Diagnostics.PerformanceCounter 8.0.1 (MIT) | local PDH (`readOnly: true`, `NextValue` only; writers banned); remote via CIM `Win32_PerfFormattedData_*`, disk latency via `Win32_PerfRawData_*` average-timer math (the formatted class truncates seconds) |
-| IIS | Microsoft.Web.Administration | **P0 spike**: confirm a .NET 8-compatible build and `ServerManager(readOnly: true, path)` |
+| IIS | Microsoft.Web.Administration 11.1.0 (netstandard1.5; Microsoft .NET Library EULA — redistributable, no telemetry) | *as built (P3)*: used **locally only** for runtime state, worker processes and `WorkerProcess.GetRequests`, opened as `new ServerManager(true, applicationHost.config)`; parameterless/read-write constructors, `OpenRemote`, `SetMetadata`, `CommitChanges`, Start/Stop/Recycle and configuration methods are banned and canary-checked. Configuration (applicationHost.config, web.config) is parsed from the files with `SafeXml`, locally or through the admin share — works remotely, never needs a writable API, and is unit-tested on Linux |
 | .NET counters | Microsoft.Diagnostics.NETCore.Client | optional, local, off by default |
 | Storage | Microsoft.Data.Sqlite 8.x — **not used yet** (P1 stores snapshots as files, see §10) | WAL mode |
 | Compression | System.IO.Compression (Brotli) | **instead of zstd** – zero extra dependency; see §10 |
@@ -172,6 +175,12 @@ public sealed record Evidence(string FactKey, object? Value, string? Unit, DateT
 not in the Systemgroup docs (spec rule §0.4); the UI shows an "unverified" chip.
 
 ### 4.1 Facts
+
+*As built (P3):* **site analyzers** (`ISiteAnalyzer` in `RSM.Core.Rules`) are pure passes over every node's facts that
+add facts before the rules run — IIS pool/web.config drift between App nodes, rewrite path segments deployed on any
+node, ARR measured distribution, worker starts outside the recycle schedule, and the Defender-vs-SQL-folder check on
+the same node. The diagnosis runs them after collecting all nodes; the live view re-runs one when a result of one of
+its input collectors arrives.
 
 Collectors publish flattened **facts** (`key → value`, scoped by node and optional instance), e.g.
 `sql.config.maxdop = 8`, `db[Rahkaran].recovery_model = "SIMPLE"`, `os.power.plan = "Balanced"`,
@@ -362,7 +371,15 @@ type is available resolves to a real API (a signature typo would otherwise ban n
 (the canaries for `FileInfo.IsReadOnly`, `Process.PriorityClass` and `PerformanceCounter.RawValue` did not fire).
 All such entries are now `P:Type.Property` bans (getter and setter), a test forbids `M:…set_` entries, and file
 times/attributes that collectors may need later are to be read through `RSM.Safety.Files`. CIM and PDH bans are now
-canary-checked too (their assemblies are referenced by the arch tests). Original sketch:
+canary-checked too (their assemblies are referenced by the arch tests).
+
+*P3 additions:* `ServerManager(string)` (read-write), `OpenRemote`, `SetMetadata`; the whole `EventLogConfiguration`
+type; `X509Store.Add/AddRange/Remove/RemoveRange`; private-key access (`PrivateKey`, `Get*PrivateKey`) and password
+exports. All are canary-checked (MWA, EventLog and X509 assemblies are referenced by the arch tests). A source rule
+requires certificate stores to be opened only with `OpenFlags.ReadOnly`/`OpenExistingOnly` and chains to be built
+offline (`DisableCertificateDownloads = true`, `X509RevocationMode.NoCheck`): RSM makes no internet calls.
+Server files are read through `RSM.Safety.Files.ReadOnlyFile` (new: `ListInfo` with size/last-write time, offset reads
+for incremental log tails). Original sketch:
 
 ```
 M:System.Diagnostics.Process.Start(System.String);Process start is forbidden (read-only tool)
@@ -439,8 +456,9 @@ are unchanged before/after.
 | Inventory | CIM local | CIM over WinRM (fallback DCOM) | Remote WMI read on `root\cimv2` |
 | Power plan | CIM `root\cimv2\power` | same | may be access-denied remotely → registry fallback (`ActivePowerScheme`, read-only Remote Registry) |
 | Event logs | `EventLogReader` | `EventLogSession(host, domain, user, pwd)` | Event Log Readers + "Remote Event Log Management" firewall rule |
-| Services | `ServiceController` (read) | `ServiceController(name, machine)` (read) / CIM `Win32_Service` | SCM connect |
-| IIS config | `ServerManager(readOnly:true, applicationHost.config path)` | `ServerManager.OpenRemote` (admin, DCOM) **or** CIM `root\WebAdministration` | local admin for applicationHost.config |
+| Services | CIM `Win32_Service` (*as built P3*) | same over WS-Man/DCOM | remote WMI read |
+| Certificates | `X509Store` LocalMachine, `ReadOnly \| OpenExistingOnly`, offline chain build | ✗ (expiry *unknown*, said in the UI) | local read |
+| IIS config | applicationHost.config / web.config read as files (`SafeXml`) | same files through the admin share `\\host\C$\Windows\System32\inetsrv\config` (*as built P3*; `OpenRemote` is banned) | Administrators (local) / admin-share read (remote) |
 | IIS live requests | `WorkerProcess.GetRequests` | not supported remotely → "run RSM locally" hint | admin + Request Monitor feature |
 | IIS/HTTPERR/ANCM logs | file read | admin share `\\host\c$\inetpub\logs\...` | admin share access |
 | SQL ERRORLOG fallback | file read | admin share | file ACL on `MSSQL\Log` |
@@ -594,6 +612,12 @@ All sources emit `UnifiedEvent { ts, nodeId, layer, source, code, severity, mess
 Grouping key = (node, source, code, normalized message hash) in a time bucket. KB lookup by
 `source+code` (`kb/events.json`, `kb/sql-errors.json`, `kb/waits.json`, `kb/http.json`). Correlation view:
 pick a spike on any chart ⇒ events ±5 min across all nodes.
+
+*As built (P3):* the knowledge base for Windows events is code (`RSM.Parsers.Events.EventKnowledgeBase`, fa/en title,
+explanation and next step for every event id of spec §9.8, checked by a test); the live session keeps the last 500
+unified events of all collectors. The Errors & Events page filters by layer, severity, node and text; selecting an
+event lists everything within ±5 minutes on every node and shows its KB entry. Event-log messages are masked
+(`key=value` secrets, URL credentials) and truncated before they are stored or shown.
 
 ---
 

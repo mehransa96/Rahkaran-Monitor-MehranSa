@@ -4,14 +4,18 @@ A portable, **strictly read-only** Windows tool that support engineers run on (o
 servers to see the health of SQL Server, databases, Windows, IIS/ARR, Redis, SSRS and services, find the cause of
 slowness, and export a diagnostic report — in Persian or English.
 
-**Status: Phase 2 (live SQL Server + Windows).** Define sites and servers, run *Test connection* to get the Capability
+**Status: Phase 3 (live SQL Server, Windows, IIS/ARR, services, event logs).** Define sites and servers, run *Test connection* to get the Capability
 Matrix, then *Reports → Diagnose now* for a read-only health check of SQL Server, its databases and Windows against the
 ستاد فنی baseline (Persian or English HTML report, JSON bundle, optional masking). *Connect live view* on the Overview,
 SQL Server, Queries & Blocking or Windows page watches the servers in real time: CPU (SQL vs other processes), waits,
 counters, file and disk latency, blocking chains with the head blocker, open transactions, deadlocks from
 `system_health`, top queries with plan warnings, Query Store regressions, memory, disks, network and top processes —
-15/30/60-minute charts with threshold lines, pause (automatic while minimised) and RSM's own overhead. IIS, Redis,
-SSRS, history and the slowness wizard arrive in Phases 3–5 (`PLAN.md`).
+15/30/60-minute charts with threshold lines, pause (automatic while minimised) and RSM's own overhead. The IIS page
+shows sites, pools, worker processes, the requests executing right now, latency percentiles per URL from the W3C
+logs, HTTP.sys errors, masked web.config and certificates; the ARR page shows farms and URL Rewrite rules (including
+"application path changed after an update"); Services lists the watched services (display only); Errors & Events puts
+SQL, Windows and IIS events on one timeline with ±5-minute correlation and a Persian/English knowledge base. Redis,
+SSRS, history and the slowness wizard arrive in Phases 4–5 (`PLAN.md`).
 
 ## Read-only by construction
 
