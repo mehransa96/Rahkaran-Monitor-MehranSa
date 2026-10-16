@@ -115,6 +115,7 @@ public static class RsmHost
         services.AddSingleton<SlownessInvestigationService>();
         services.AddSingleton<RSM.Reporting.ReportExporter>();
         services.AddSingleton<ReportService>();
+        services.AddSingleton<BundleImportService>();
     }
 
     /// <summary>Rolling file log in the data folder; every event passes the redaction enricher.</summary>

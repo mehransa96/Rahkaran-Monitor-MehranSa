@@ -38,6 +38,7 @@ public partial class App : Application
         _host = RsmHost.Build(dataFolder, services =>
         {
             services.AddSingleton<IUserDialogs, WpfDialogs>();
+            services.AddSingleton<RSM.Hosting.IPdfPrinter, Services.WebView2PdfPrinter>();
             services.AddSingleton<StatusBarViewModel>();
             services.AddSingleton<SitesViewModel>();
             services.AddSingleton<SettingsViewModel>();

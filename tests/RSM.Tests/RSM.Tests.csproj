@@ -11,6 +11,7 @@
     <ProjectReference Include="..\..\src\RSM.Collectors.Iis\RSM.Collectors.Iis.csproj" />
     <ProjectReference Include="..\..\src\RSM.Collectors.Rahkaran\RSM.Collectors.Rahkaran.csproj" />
     <ProjectReference Include="..\..\src\RSM.Reporting\RSM.Reporting.csproj" />
+    <ProjectReference Include="..\..\src\RSM.Cli\RSM.Cli.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Verify.Xunit" />

@@ -122,6 +122,8 @@
   <data name="Diag_ExportHtml" xml:space="preserve"><value>Save HTML report</value></data>
   <data name="Diag_ExportBundle" xml:space="preserve"><value>Save JSON bundle</value></data>
   <data name="Diag_ExportPath" xml:space="preserve"><value>Saved file (copy the path to open or send it)</value></data>
+  <data name="Diag_ExportPdf" xml:space="preserve"><value>Save PDF</value></data>
+  <data name="Diag_PdfFallback" xml:space="preserve"><value>PDF not available ({0}). The HTML report was saved at {1}: open it in a browser and print it to PDF.</value></data>
   <data name="Diag_Exported" xml:space="preserve"><value>Saved: {0}</value></data>
   <data name="Finding_Severity" xml:space="preserve"><value>Severity</value></data>
   <data name="Finding_Rule" xml:space="preserve"><value>Rule</value></data>

@@ -51,6 +51,9 @@ public sealed class ReportBuilder(IReadOnlyList<RuleDefinition> rules)
             Nodes = snapshot.Nodes.Select((n, i) => NodeView(ctx, n, i)).ToList(),
             L = Labels(ctx),
             Glossary = ReportText.GlossaryTerms.Select(g => new KeyValueView(ctx.Plain(g.Term), ctx.T(g.Meaning))).ToList(),
+            Sources = (snapshot.Sources ?? []).Select(src => new SourceRow(ctx.Plain(src.SnapshotId), ctx.H(src.SiteName),
+                ctx.Plain(DateText.Format(src.StartedUtc, options.Language, options.PersianDigits, options.TimeZone)), ctx.Plain(src.RsmVersion),
+                ctx.H(string.Join(", ", src.NodeIds.Select(id => snapshot.Nodes.FirstOrDefault(n => n.Node.Id == id)?.Node.Name ?? id))), src.Masked)).ToList(),
         };
     }
 
@@ -77,6 +80,11 @@ public sealed class ReportBuilder(IReadOnlyList<RuleDefinition> rules)
                      .Select(f => FindingView(ctx, node, f)).ToList()))
                 .ToList(),
             Databases = Databases(ctx, facts),
+            Gaps = node.Capabilities.Results
+                .Where(r => r.State is not (CapabilityState.Available or CapabilityState.NotApplicable or CapabilityState.NotImplemented))
+                .OrderBy(r => r.Id, StringComparer.Ordinal)
+                .Select(r => ctx.T(TryCapabilityTitle(r.Id)) + " (" + ctx.T(CapabilityCatalog.DescribeState(r.State)) + ")")
+                .ToList(),
             Capabilities = node.Capabilities.Results.OrderBy(r => r.Id, StringComparer.Ordinal).Select(r => new CapabilityRow(
                     ctx.T(TryCapabilityTitle(r.Id)),
                     ctx.T(CapabilityCatalog.DescribeState(r.State)),

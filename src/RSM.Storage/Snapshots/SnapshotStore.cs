@@ -70,6 +70,12 @@ public sealed partial class SnapshotStore(IDataFolder dataFolder)
             : null;
     }
 
+    /// <summary>The stored snapshot as an object (facts as plain values, ready to render or evaluate); null when unknown.</summary>
+    public async Task<SiteSnapshot?> LoadAsync(string snapshotId, CancellationToken cancellationToken) =>
+        await LoadJsonAsync(snapshotId, cancellationToken).ConfigureAwait(false) is { } json && JsonSerializer.Deserialize<SiteSnapshot>(json, JsonOptions) is { } snapshot
+            ? RSM.Core.Rules.FactValues.Plain(snapshot)
+            : null;
+
     private static string CheckId(string id) =>
         SafeId().IsMatch(id) ? id : throw new ArgumentException("Snapshot ids are letters, digits, '-' and '_' only.", nameof(id));
 

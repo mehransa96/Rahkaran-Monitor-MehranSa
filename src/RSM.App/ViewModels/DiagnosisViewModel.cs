@@ -59,7 +59,7 @@ public sealed partial class DiagnosisViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsIdle))]
-    [NotifyCanExecuteChangedFor(nameof(DiagnoseCommand), nameof(ExportHtmlCommand), nameof(ExportBundleCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DiagnoseCommand), nameof(ExportHtmlCommand), nameof(ExportPdfCommand), nameof(ExportBundleCommand))]
     private bool _isBusy;
 
     [ObservableProperty]
@@ -67,7 +67,7 @@ public sealed partial class DiagnosisViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasSnapshot), nameof(Summary))]
-    [NotifyCanExecuteChangedFor(nameof(ExportHtmlCommand), nameof(ExportBundleCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportHtmlCommand), nameof(ExportPdfCommand), nameof(ExportBundleCommand))]
     private SiteSnapshot? _latest;
 
     /// <summary>Absolute path of the last exported file, shown in a read-only box to copy (RSM opens nothing itself).</summary>
@@ -134,12 +134,22 @@ public sealed partial class DiagnosisViewModel : ObservableObject
     private bool CanExport() => IsIdle && Latest is not null;
 
     [RelayCommand(CanExecute = nameof(CanExport))]
-    private Task ExportHtmlAsync() => ExportAsync(s => _reports.ExportHtmlAsync(s, ReportInPersian ? UiLanguage.Fa : UiLanguage.En, Mask, CancellationToken.None));
+    private Task ExportHtmlAsync() => ExportAsync(async s => (await _reports.ExportHtmlAsync(s, ReportInPersian ? UiLanguage.Fa : UiLanguage.En, Mask, CancellationToken.None), null));
 
     [RelayCommand(CanExecute = nameof(CanExport))]
-    private Task ExportBundleAsync() => ExportAsync(s => _reports.ExportBundleAsync(s, Mask, CancellationToken.None));
+    private Task ExportPdfAsync() => ExportAsync(async s =>
+    {
+        var result = await _reports.ExportPdfAsync(s, ReportInPersian ? UiLanguage.Fa : UiLanguage.En, Mask, CancellationToken.None);
+        return result.PdfPath is { } pdf
+            ? (pdf, null)
+            : (result.HtmlPath, Loc.Instance.Format("Diag_PdfFallback", result.UnavailableReason ?? string.Empty, result.HtmlPath));
+    });
 
-    private async Task ExportAsync(Func<SiteSnapshot, Task<string>> export)
+    [RelayCommand(CanExecute = nameof(CanExport))]
+    private Task ExportBundleAsync() => ExportAsync(async s => (await _reports.ExportBundleAsync(s, Mask, CancellationToken.None), null));
+
+    /// <summary>Runs an export; the export returns the saved path and, optionally, its own status text.</summary>
+    private async Task ExportAsync(Func<SiteSnapshot, Task<(string Path, string? Status)>> export)
     {
         if (Latest is not { } snapshot)
         {
@@ -149,8 +159,9 @@ public sealed partial class DiagnosisViewModel : ObservableObject
         IsBusy = true;
         try
         {
-            LastExportPath = await export(snapshot);
-            _status.Show(Loc.Instance.Format("Diag_Exported", LastExportPath));
+            var (path, status) = await export(snapshot);
+            LastExportPath = path;
+            _status.Show(status ?? Loc.Instance.Format("Diag_Exported", path));
         }
         catch (Exception ex)
         {

@@ -28,6 +28,12 @@ public sealed record SiteSnapshot(
 {
     [System.Text.Json.Serialization.JsonIgnore]
     public IEnumerable<Finding> AllFindings => Nodes.SelectMany(n => n.Findings);
+
+    /// <summary>Set on a snapshot merged from imported bundles: where each part came from (null for a local diagnosis).</summary>
+    public IReadOnlyList<SnapshotSource>? Sources { get; init; }
 }
+
+/// <summary>One imported bundle that contributed to a merged snapshot, and the nodes it supplied data for.</summary>
+public sealed record SnapshotSource(string SnapshotId, string SiteName, DateTimeOffset StartedUtc, string RsmVersion, bool Masked, IReadOnlyList<string> NodeIds);
 
 public sealed record SnapshotOptions(bool IncludeHeavy = false);

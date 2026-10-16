@@ -42,6 +42,25 @@ public partial class SourceRulesTests
         }
     }
 
+    /// <summary>
+    /// WebView2 (PDF export) is a browser engine: it may live in one file only, which keeps it offline (virtual host on a
+    /// reserved .invalid name, every other request refused, scripts off, background networking off) and writes the PDF
+    /// through IDataFolder.
+    /// </summary>
+    [Fact]
+    public void WebView2_is_confined_to_the_offline_pdf_printer()
+    {
+        var users = Repo.SourceFiles("*.cs").Where(f => File.ReadAllText(f).Contains("Microsoft.Web.WebView2", StringComparison.Ordinal)).Select(Repo.Relative).ToList();
+        users.Should().Equal(Path.Combine("src", "RSM.App", "Services", "WebView2PdfPrinter.cs"));
+
+        var text = File.ReadAllText(Path.Combine(Repo.Root, users[0]));
+        text.Should().Contain("rsm-report.invalid").And.Contain("AddWebResourceRequestedFilter(\"*\"").And.Contain("403")
+            .And.Contain("IsScriptEnabled = false").And.Contain("--disable-background-networking").And.Contain("folder.WriteAllBytesAsync(")
+            .And.Contain("PrintToPdfStreamAsync(");
+        text.Should().NotContainAny("http://", "NavigateToString", "ExecuteScriptAsync", "PostWebMessage", "AddHostObjectToScript", "PrintToPdfAsync(", "OpenDevToolsWindow");
+        Regex.Matches(text, @"\.Navigate\(").Should().HaveCount(1);
+    }
+
     [GeneratedRegex(@"OpenFlags\.\w+")]
     private static partial Regex OpenFlagsUse();
 

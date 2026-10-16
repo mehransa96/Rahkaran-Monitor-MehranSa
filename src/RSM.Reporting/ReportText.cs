@@ -65,6 +65,13 @@ internal static class ReportText
     public static readonly LocalizedText RahkaranDb = new("راهکاران", "Rahkaran");
 
     public static readonly LocalizedText Appendix = new("پیوست", "Appendix");
+    public static readonly LocalizedText MergedFrom = new("ادغام‌شده از بسته‌های واردشده", "Merged from imported bundles");
+    public static readonly LocalizedText MergedNote = new("این گزارش از چند بستهٔ JSON (اجرای RSM روی گره‌های مختلف) ساخته شده و قواعد روی دادهٔ ادغام‌شده دوباره ارزیابی شده‌اند.", "This report was built from several JSON bundles (RSM run on different nodes); the rules were evaluated again on the merged data.");
+    public static readonly LocalizedText Bundle = new("بسته", "Bundle");
+    public static readonly LocalizedText NodesSupplied = new("گره‌های تأمین‌شده", "Nodes supplied");
+    public static readonly LocalizedText CapabilityGaps = new("کمبود قابلیت پس از ادغام", "Capability gaps after the merge");
+    public static readonly LocalizedText NoGaps = new("بدون کمبود", "none");
+    public static readonly LocalizedText NodeName = new("گره", "Node");
     public static readonly LocalizedText Capabilities = new("ماتریس قابلیت‌ها", "Capability Matrix");
     public static readonly LocalizedText Capability = new("قابلیت", "Capability");
     public static readonly LocalizedText Detail = new("توضیح", "Detail");

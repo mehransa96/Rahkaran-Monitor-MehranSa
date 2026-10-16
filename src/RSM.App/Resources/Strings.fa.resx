@@ -122,6 +122,8 @@
   <data name="Diag_ExportHtml" xml:space="preserve"><value>ذخیرهٔ گزارش HTML</value></data>
   <data name="Diag_ExportBundle" xml:space="preserve"><value>ذخیرهٔ بستهٔ JSON</value></data>
   <data name="Diag_ExportPath" xml:space="preserve"><value>فایل ذخیره‌شده (مسیر را برای باز کردن یا ارسال کپی کنید)</value></data>
+  <data name="Diag_ExportPdf" xml:space="preserve"><value>ذخیرهٔ PDF</value></data>
+  <data name="Diag_PdfFallback" xml:space="preserve"><value>ساخت PDF ممکن نیست ({0}). گزارش HTML در {1} ذخیره شد؛ آن را در مرورگر باز کنید و به PDF چاپ کنید.</value></data>
   <data name="Diag_Exported" xml:space="preserve"><value>ذخیره شد: {0}</value></data>
   <data name="Finding_Severity" xml:space="preserve"><value>شدت</value></data>
   <data name="Finding_Rule" xml:space="preserve"><value>قاعده</value></data>

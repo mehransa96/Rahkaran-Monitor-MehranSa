@@ -31,7 +31,12 @@ public sealed class ReportModel
     public required IReadOnlyList<NodeView> Nodes { get; init; }
     public required IReadOnlyDictionary<string, string> L { get; init; }
     public required IReadOnlyList<KeyValueView> Glossary { get; init; }
+
+    /// <summary>Imported bundles this report was merged from (empty for a local diagnosis).</summary>
+    public IReadOnlyList<SourceRow> Sources { get; init; } = [];
 }
+
+public sealed record SourceRow(string SnapshotId, string Site, string Started, string Version, string Nodes, bool Masked);
 
 public sealed class NodeView
 {
@@ -50,6 +55,9 @@ public sealed class NodeView
     public required IReadOnlyList<CollectorRow> Collectors { get; init; }
     public required IReadOnlyList<IndeterminateRow> Indeterminate { get; init; }
     public required IReadOnlyList<string> RuleErrors { get; init; }
+
+    /// <summary>Capabilities still unavailable on this node (titles); shown in the merge summary.</summary>
+    public IReadOnlyList<string> Gaps { get; init; } = [];
 }
 
 public sealed record KeyValueView(string Key, string Value);

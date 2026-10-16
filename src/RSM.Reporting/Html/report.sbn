@@ -44,6 +44,18 @@
     {{ for f in m.TopIssues }}<li><span class="sev {{ f.SeverityClass }}">{{ f.Severity }}</span> <code>{{ f.RuleId }}</code> {{ f.Title }} <span class="muted">— {{ f.Node }}</span></li>{{ end }}
   </ol>
   {{ end }}
+  {{ if m.Sources.size > 0 }}
+  <h3>{{ m.L.MergedFrom }}</h3>
+  <p class="hint">{{ m.L.MergedNote }}</p>
+  <table class="grid">
+    <thead><tr><th>{{ m.L.Bundle }}</th><th>{{ m.L.Site }}</th><th>{{ m.L.SnapshotWindow }}</th><th>{{ m.L.NodesSupplied }}</th></tr></thead>
+    <tbody>{{ for b in m.Sources }}<tr><td><code>{{ b.SnapshotId }}</code></td><td>{{ b.Site }}</td><td>{{ b.Started }}</td><td>{{ b.Nodes }}</td></tr>{{ end }}</tbody>
+  </table>
+  <table class="grid">
+    <thead><tr><th>{{ m.L.NodeName }}</th><th>{{ m.L.CapabilityGaps }}</th></tr></thead>
+    <tbody>{{ for n in m.Nodes }}<tr><td>{{ n.Name }}</td><td>{{ if n.Gaps.size == 0 }}{{ m.L.NoGaps }}{{ else }}{{ n.Gaps | array.join "، " }}{{ end }}</td></tr>{{ end }}</tbody>
+  </table>
+  {{ end }}
 </section>
 
 {{ for n in m.Nodes }}
