@@ -17,6 +17,7 @@
     <PackageReference Include="Dapper" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" />
+    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="RSM.Safety.Tests" />

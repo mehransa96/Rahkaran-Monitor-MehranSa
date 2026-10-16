@@ -86,7 +86,24 @@ public sealed class ConnectionTester(
 
         var rabbitPassword = node.RabbitMq is { UserName: { Length: > 0 } } ? await secrets.GetAsync(site.Id, node.Id, SecretKind.RabbitPassword, cancellationToken).ConfigureAwait(false) : null;
         await RabbitCapabilityProbe.ProbeAsync(node.RabbitMq, rabbitPassword, node.Roles, matrix, cancellationToken).ConfigureAwait(false);
-        matrix.Set(CapabilityIds.DotNetEventPipe, CapabilityState.NotImplemented, "Phase 4 (optional, off by default)");
+        if ((node.Roles & NodeRoles.App) == 0)
+        {
+            matrix.Set(CapabilityIds.DotNetEventPipe, CapabilityState.NotApplicable);
+        }
+        else if (!site.Settings.DotNetRuntimeCounters)
+        {
+            matrix.Set(CapabilityIds.DotNetEventPipe, CapabilityState.NotConfigured, "optional, off by default (site settings)");
+        }
+        else if (!WindowsTransportFactory.IsLocal(node.Host))
+        {
+            matrix.Set(CapabilityIds.DotNetEventPipe, CapabilityState.NotApplicable, "local only: run RSM on this App server");
+        }
+        else
+        {
+            var published = new EventPipeCounterProvider().PublishedProcesses();
+            matrix.Set(CapabilityIds.DotNetEventPipe, published.Count > 0 ? CapabilityState.Available : CapabilityState.Unreachable,
+                published.Count > 0 ? $"{published.Count} .NET process(es) publish a diagnostics endpoint" : "no .NET process publishes a diagnostics endpoint (or no access)");
+        }
         matrix.Set(CapabilityIds.RsmElevated, Elevation.IsElevated() ? CapabilityState.Available : CapabilityState.NeedsElevation);
 
         logger.LogInformation("Node {NodeName}: {Available}/{Total} capabilities available", node.Name, matrix.Results.Count(r => r.IsAvailable), matrix.Results.Count);

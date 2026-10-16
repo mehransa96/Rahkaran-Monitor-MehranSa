@@ -50,6 +50,13 @@ public class AnalyzerCanaryTests
         { "new System.Security.Cryptography.X509Certificates.X509Store().Remove(null!);", "Remove" },
         { "System.Security.Cryptography.X509Certificates.RSACertificateExtensions.GetRSAPrivateKey(null!);", "GetRSAPrivateKey" },
         { "_ = new System.Security.Cryptography.X509Certificates.X509Certificate2(new byte[0]).PrivateKey;", "PrivateKey" },
+        { "new Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient(1).WriteDump(Microsoft.Diagnostics.NETCore.Client.DumpType.Full, \"x\", false);", "WriteDump" },
+        { "new Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient(1).AttachProfiler(System.TimeSpan.Zero, System.Guid.Empty, \"x\", null);", "AttachProfiler" },
+        { "new Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient(1).SetEnvironmentVariable(\"a\", \"b\");", "SetEnvironmentVariable" },
+        { "new Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient(1).GetProcessEnvironment();", "GetProcessEnvironment" },
+        { "new Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient(1).ApplyStartupHook(\"x\");", "ApplyStartupHook" },
+        { "new Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient(1).StartEventPipeSession(new Microsoft.Diagnostics.NETCore.Client.EventPipeProvider(\"Microsoft-Windows-DotNETRuntime\", System.Diagnostics.Tracing.EventLevel.Verbose), true, 256);", "StartEventPipeSession" },
+        { "new Microsoft.Diagnostics.Tracing.Session.TraceEventSession(\"x\");", "TraceEventSession" },
     };
 
     public static TheoryData<string, string> BannedOutsideSafety => new()
@@ -68,6 +75,7 @@ public class AnalyzerCanaryTests
         { "new Microsoft.Data.SqlClient.SqlConnection(\"x\");", "SqlConnection" },
         { "new Microsoft.Data.SqlClient.SqlCommand(\"DELETE FROM t\");", "SqlCommand" },
         { "Dapper.SqlMapper.Execute(null!, \"DELETE FROM t\");", "SqlMapper" },
+        { "new Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient(1);", "DiagnosticsClient" },
     };
 
     [Theory]
@@ -130,6 +138,34 @@ public class AnalyzerCanaryTests
         unresolved.Should().BeEmpty($"these {file} entries do not match any API (typo in the signature?)");
     }
 
+    /// <summary>
+    /// Every public method of the diagnostics IPC client is either one RSM needs (listing processes, the counters-only
+    /// session) or banned — a package update that adds a new command fails here until it is reviewed.
+    /// </summary>
+    [Fact]
+    public void Every_diagnostics_client_method_is_allowed_or_banned()
+    {
+        string[] allowed =
+        [
+            "M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.GetPublishedProcesses",
+            "M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.GetLocalPublishedProcesses",
+            "M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.GetProcPublishedProcesses",
+            "M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.StartEventPipeSession(System.Collections.Generic.IEnumerable{Microsoft.Diagnostics.NETCore.Client.EventPipeProvider},System.Boolean,System.Int32)",
+            "M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.WaitForConnection(System.TimeSpan)",
+            "M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.WaitForConnectionAsync(System.Threading.CancellationToken)",
+        ];
+        var banned = ReadIds("BannedSymbols.txt").ToHashSet(StringComparer.Ordinal);
+        var type = CreateCompilation("class C {}").GetTypeByMetadataName("Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient");
+        type.Should().NotBeNull();
+        var methods = type!.GetMembers().OfType<IMethodSymbol>()
+            .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
+            .Select(m => DocumentationCommentId.CreateDeclarationId(m)!.Split('~')[0])
+            .ToList();
+
+        methods.Should().NotBeEmpty();
+        methods.Where(m => !allowed.Contains(m) && !banned.Contains(m)).Should().BeEmpty("each DiagnosticsClient method must be reviewed: allow it here or ban it in BannedSymbols.txt");
+    }
+
     [Theory]
     [InlineData("BannedSymbols.txt")]
     [InlineData("BannedSymbols.NonSafety.txt")]
@@ -181,7 +217,9 @@ public class AnalyzerCanaryTests
             .Concat([typeof(Microsoft.Data.SqlClient.SqlConnection).Assembly.Location, LocateDapper(),
                 Path.Combine(AppContext.BaseDirectory, "System.Diagnostics.PerformanceCounter.dll"),
                 Path.Combine(AppContext.BaseDirectory, "System.Diagnostics.EventLog.dll"),
-                Path.Combine(AppContext.BaseDirectory, "Microsoft.Web.Administration.dll")])
+                Path.Combine(AppContext.BaseDirectory, "Microsoft.Web.Administration.dll"),
+                Path.Combine(AppContext.BaseDirectory, "Microsoft.Diagnostics.NETCore.Client.dll"),
+                Path.Combine(AppContext.BaseDirectory, "Microsoft.Diagnostics.Tracing.TraceEvent.dll")])
             .Where(p => !string.IsNullOrEmpty(p))
             .Distinct()
             .Select(p => MetadataReference.CreateFromFile(p));

@@ -24,6 +24,9 @@
     <!-- Lifts the netstandard1.x ServiceController that Microsoft.Web.Administration pulls in to the current one. -->
     <PackageVersion Include="System.ServiceProcess.ServiceController" Version="8.0.1" />
     <PackageVersion Include="ScottPlot.WPF" Version="5.0.55" />
+    <!-- Optional .NET runtime counters (EventPipe, local only, off by default). MIT. -->
+    <PackageVersion Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.745401" />
+    <PackageVersion Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.2.8" />
   </ItemGroup>
   <ItemGroup Label="Tests">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />

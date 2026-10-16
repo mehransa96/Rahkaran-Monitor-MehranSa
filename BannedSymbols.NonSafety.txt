@@ -67,3 +67,6 @@ M:System.IO.DirectoryInfo.MoveTo(System.String);forbidden
 M:System.IO.Path.GetTempFileName;forbidden: creates a file outside the data folder
 T:System.IO.Compression.ZipFile;use RSM.Safety.Files.IDataFolder
 T:System.IO.Compression.ZipFileExtensions;use RSM.Safety.Files.IDataFolder
+
+// ---- .NET diagnostics IPC: only RSM.Safety.DotNet.RuntimeCounterSource talks to a monitored process ----
+T:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient;use RSM.Safety.DotNet.RuntimeCounterSource (EventPipe counters only)

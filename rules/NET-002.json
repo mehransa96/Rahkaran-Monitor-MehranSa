@@ -1,0 +1,109 @@
+{
+  "id": "NET-002",
+  "layer": "DotNet",
+  "appliesTo": [
+    "App"
+  ],
+  "forEach": "dotnet",
+  "when": "coalesce(dotnet.gen2_sustained, false) || coalesce(dotnet.gc_heap_mb, 0) > params.heap_pct / 100 * coalesce(os.ram_mb, 1000000000)",
+  "severity": "Warning",
+  "title": {
+    "fa": "فشار حافظه GC در {instance}",
+    "en": "GC memory pressure in {instance}"
+  },
+  "explanation": {
+    "fa": "Gen2: {dotnet.gen2_per_min} بار در دقیقه، heap: {dotnet.gc_heap_mb} MB از {os.ram_mb} MB حافظه سرور. جمع‌آوری‌های مکرر Gen2 یا heap نزدیک به کل حافظه یعنی پردازش در آستانه کمبود حافظه است.",
+    "en": "Gen2: {dotnet.gen2_per_min} per minute, heap: {dotnet.gc_heap_mb} MB of {os.ram_mb} MB server memory. Frequent Gen2 collections or a heap close to all memory mean the process is near memory exhaustion."
+  },
+  "recommendation": {
+    "fa": "مصرف حافظه پردازش و تعداد کاربران هم‌زمان را با ستاد فنی بررسی کنید.",
+    "en": "Review the process memory use and concurrent users with ستاد فنی."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — GC wait / worker process crashes"
+  },
+  "verified": true,
+  "confidence": 0.75,
+  "params": {
+    "heap_pct": 80
+  },
+  "examples": [
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 3,
+        "dotnet[RahkaranPool].gen2_sustained": true,
+        "os.ram_mb": 32768
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 28000,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2,
+        "dotnet[RahkaranPool].gen2_sustained": false,
+        "os.ram_mb": 32768
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2,
+        "dotnet[RahkaranPool].gen2_sustained": false,
+        "os.ram_mb": 32768
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2,
+        "dotnet[RahkaranPool].gen2_sustained": false
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ],
+      "note": "RAM unknown: only the Gen2 part is judged"
+    }
+  ]
+}

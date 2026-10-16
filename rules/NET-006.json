@@ -1,0 +1,71 @@
+{
+  "id": "NET-006",
+  "layer": "DotNet",
+  "appliesTo": [
+    "App"
+  ],
+  "forEach": "dotnet",
+  "when": "coalesce(dotnet.requests_per_s, 0) > 0 && coalesce(dotnet.failed_pct, 0) > params.max_pct",
+  "severity": "Warning",
+  "title": {
+    "fa": "درخواست‌های ناموفق ASP.NET Core در {instance}",
+    "en": "Failed ASP.NET Core requests in {instance}"
+  },
+  "explanation": {
+    "fa": "{dotnet.failed_pct}٪ درخواست‌ها ناموفق‌اند ({dotnet.failed_per_s} در ثانیه از {dotnet.requests_per_s}).",
+    "en": "{dotnet.failed_pct} % of requests fail ({dotnet.failed_per_s}/s of {dotnet.requests_per_s}/s)."
+  },
+  "recommendation": {
+    "fa": "کدهای وضعیت 5xx را در صفحه IIS و رخدادهای برنامه بررسی کنید.",
+    "en": "Check 5xx status codes on the IIS page and application events."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max_pct": 1
+  },
+  "examples": [
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2,
+        "dotnet[RahkaranPool].failed_pct": 4,
+        "dotnet[RahkaranPool].failed_per_s": 2
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2,
+        "dotnet[RahkaranPool].failed_pct": 0.2,
+        "dotnet[RahkaranPool].failed_per_s": 0.1
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

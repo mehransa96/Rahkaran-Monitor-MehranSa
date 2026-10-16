@@ -52,6 +52,12 @@ public sealed record SiteSettings
     /// </summary>
     public string? RahkaranVersionFile { get; init; }
 
+    /// <summary>
+    /// Optional, off by default (spec §9.4, PLAN Q8): read EventPipe counters (GC, thread pool, exceptions, requests)
+    /// of the local w3wp/dotnet processes. The UI warns before this is switched on; no dumps, no other diagnostics.
+    /// </summary>
+    public bool DotNetRuntimeCounters { get; init; }
+
     /// <summary>Data size from which a database counts as "large" (log 10 GB guideline; diff + weekly full allowed).</summary>
     public int LargeDatabaseThresholdGb { get; init; } = 200;
 }

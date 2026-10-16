@@ -1,0 +1,89 @@
+{
+  "id": "NET-004",
+  "layer": "DotNet",
+  "appliesTo": [
+    "App"
+  ],
+  "forEach": "dotnet",
+  "when": "coalesce(dotnet.exceptions_vs_baseline, 0) > params.factor",
+  "severity": "Info",
+  "title": {
+    "fa": "افزایش استثناها در {instance}",
+    "en": "Exceptions rising in {instance}"
+  },
+  "explanation": {
+    "fa": "نرخ استثنا {dotnet.exceptions_per_s} در ثانیه است؛ {dotnet.exceptions_vs_baseline} برابر میانه همین جلسه پایش.",
+    "en": "Exception rate is {dotnet.exceptions_per_s}/s, {dotnet.exceptions_vs_baseline} × the median of this monitoring session."
+  },
+  "recommendation": {
+    "fa": "رخدادهای Application و لاگ برنامه را در همین بازه بررسی کنید.",
+    "en": "Check Application events and the application log for the same period."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "factor": 3
+  },
+  "examples": [
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2,
+        "dotnet[RahkaranPool].exceptions_vs_baseline": 5,
+        "dotnet[RahkaranPool].exceptions_per_s": 40
+      },
+      "expect": "Info",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2,
+        "dotnet[RahkaranPool].exceptions_vs_baseline": 1.2,
+        "dotnet[RahkaranPool].exceptions_per_s": 9
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ],
+      "note": "no baseline yet"
+    }
+  ]
+}

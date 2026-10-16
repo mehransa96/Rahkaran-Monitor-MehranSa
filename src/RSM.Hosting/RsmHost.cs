@@ -89,6 +89,7 @@ public static class RsmHost
         services.AddSingleton<ICollector, RedisCollector>();
         services.AddSingleton<ICollector, RabbitMqCollector>();
         services.AddSingleton<ICollector, RSM.Collectors.Sql.Live.SqlClientsCollector>();
+        services.AddSingleton<ICollector>(_ => new DotNetRuntimeCollector());
         services.AddSingleton<RSM.Core.Rules.ISiteAnalyzer, RahkaranSiteAnalyzer>();
 
         // §8.7 query packs next to the exe (empty by default): loaded once, every file guarded or refused with the reason.

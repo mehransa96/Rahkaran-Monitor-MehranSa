@@ -167,3 +167,30 @@ M:System.Xml.Linq.XElement.Parse(System.String);server XML is untrusted: use RSM
 M:System.Xml.Linq.XElement.Parse(System.String,System.Xml.Linq.LoadOptions);server XML is untrusted: use RSM.Parsers.Xml.SafeXml
 M:System.Xml.XmlDocument.LoadXml(System.String);server XML is untrusted: use RSM.Parsers.Xml.SafeXml
 T:System.Xml.XmlTextReader;server XML is untrusted: use RSM.Parsers.Xml.SafeXml
+
+// ---- .NET diagnostics IPC (optional EventPipe counters): only RSM.Safety.DotNet.RuntimeCounterSource, counters only ----
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.WriteDump(Microsoft.Diagnostics.NETCore.Client.DumpType,System.String,Microsoft.Diagnostics.NETCore.Client.WriteDumpFlags);RSM never writes dumps (read-only telemetry)
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.WriteDump(Microsoft.Diagnostics.NETCore.Client.DumpType,System.String,System.Boolean);RSM never writes dumps (read-only telemetry)
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.WriteDumpAsync(Microsoft.Diagnostics.NETCore.Client.DumpType,System.String,Microsoft.Diagnostics.NETCore.Client.WriteDumpFlags,System.Threading.CancellationToken);RSM never writes dumps
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.WriteDumpAsync(Microsoft.Diagnostics.NETCore.Client.DumpType,System.String,System.Boolean,System.Threading.CancellationToken);RSM never writes dumps
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.AttachProfiler(System.TimeSpan,System.Guid,System.String,System.Byte[]);RSM never injects code into a monitored process
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.SetStartupProfiler(System.Guid,System.String);RSM never injects code into a monitored process
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.ApplyStartupHook(System.String);RSM never injects code into a monitored process
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.ApplyStartupHookAsync(System.String,System.Threading.CancellationToken);RSM never injects code into a monitored process
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.ResumeRuntime;RSM never changes a monitored process
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.SetEnvironmentVariable(System.String,System.String);RSM never changes a monitored process
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.GetProcessEnvironment;environment variables carry secrets (connection strings)
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.EnablePerfMap(Microsoft.Diagnostics.NETCore.Client.PerfMapType);writes files on the server
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.DisablePerfMap;RSM never changes a monitored process
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.StartEventPipeSession(Microsoft.Diagnostics.NETCore.Client.EventPipeSessionConfiguration);use RSM.Safety.DotNet.RuntimeCounterSource (fixed counter providers)
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.StartEventPipeSessionAsync(Microsoft.Diagnostics.NETCore.Client.EventPipeSessionConfiguration,System.Threading.CancellationToken);use RSM.Safety.DotNet.RuntimeCounterSource
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.StartEventPipeSession(Microsoft.Diagnostics.NETCore.Client.EventPipeProvider,System.Boolean,System.Int32);use RSM.Safety.DotNet.RuntimeCounterSource
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.StartEventPipeSessionAsync(Microsoft.Diagnostics.NETCore.Client.EventPipeProvider,System.Boolean,System.Int32,System.Threading.CancellationToken);use RSM.Safety.DotNet.RuntimeCounterSource
+M:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClient.StartEventPipeSessionAsync(System.Collections.Generic.IEnumerable{Microsoft.Diagnostics.NETCore.Client.EventPipeProvider},System.Boolean,System.Int32,System.Threading.CancellationToken);use RSM.Safety.DotNet.RuntimeCounterSource
+T:Microsoft.Diagnostics.NETCore.Client.DiagnosticsClientConnector;RSM opens no diagnostic ports
+T:Microsoft.Diagnostics.NETCore.Client.ReversedDiagnosticsServer;RSM opens no diagnostic ports
+T:Microsoft.Diagnostics.NETCore.Client.DiagnosticsServerRouterFactory;RSM opens no diagnostic ports
+T:Microsoft.Diagnostics.NETCore.Client.DiagnosticsServerRouterRunner;RSM opens no diagnostic ports
+T:Microsoft.Diagnostics.Tracing.Session.TraceEventSession;RSM creates no ETW sessions (system-wide change)
+T:Microsoft.Diagnostics.Tracing.Etlx.TraceLog;writes .etlx files outside the data folder
+T:Microsoft.Diagnostics.Tracing.Parsers.SymbolTraceEventParser;no symbol lookups (internet)

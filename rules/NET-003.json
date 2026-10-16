@@ -1,0 +1,66 @@
+{
+  "id": "NET-003",
+  "layer": "DotNet",
+  "appliesTo": [
+    "App"
+  ],
+  "forEach": "dotnet",
+  "when": "coalesce(dotnet.threadpool_starvation_30s, false)",
+  "severity": "Warning",
+  "title": {
+    "fa": "کمبود نخ در Thread pool پردازش {instance}",
+    "en": "Thread pool starvation in {instance}"
+  },
+  "explanation": {
+    "fa": "صف Thread pool بیش از ۳۰ ثانیه خالی نشده ({dotnet.threadpool_queue} مورد) و تعداد نخ‌ها رو به افزایش است ({dotnet.threadpool_threads}). درخواست‌ها منتظر نخ آزاد می‌مانند.",
+    "en": "The thread pool queue stayed non-empty for over 30 s ({dotnet.threadpool_queue} items) while the thread count rises ({dotnet.threadpool_threads}). Requests wait for a free thread."
+  },
+  "recommendation": {
+    "fa": "درخواست‌های طولانی (صفحه IIS) و انتظار روی SQL/Redis را بررسی کنید.",
+    "en": "Look at long requests (IIS page) and waits on SQL/Redis."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 120,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2,
+        "dotnet[RahkaranPool].threadpool_starvation_30s": true
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2,
+        "dotnet[RahkaranPool].threadpool_starvation_30s": false
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "id": "NET-001",
+  "layer": "DotNet",
+  "appliesTo": [
+    "App"
+  ],
+  "forEach": "dotnet",
+  "when": "coalesce(dotnet.gc_time_sustained_60s, false)",
+  "severity": "Warning",
+  "title": {
+    "fa": "زمان GC در پردازش {instance} بالاست (GC wait)",
+    "en": "High time in GC in {instance} (GC wait)"
+  },
+  "explanation": {
+    "fa": "درصد زمان GC بیش از ۶۰ ثانیه بالای ۲۰٪ مانده است (اکنون {dotnet.time_in_gc_pct}٪، heap {dotnet.gc_heap_mb} MB). این همان علامت «GC wait» در پایگاه دانش است: کاربران کندی متناوب می‌بینند.",
+    "en": "Time in GC stayed above 20 % for over 60 s (now {dotnet.time_in_gc_pct} %, heap {dotnet.gc_heap_mb} MB). This is the \"GC wait\" symptom from the knowledge base: users see intermittent slowness."
+  },
+  "recommendation": {
+    "fa": "حافظه سرور برنامه و تنظیمات GC/Pool را با ستاد فنی بررسی کنید؛ در صورت نیاز ستاد فنی تهیه dump را راهنمایی می‌کند (RSM dump نمی‌گیرد).",
+    "en": "Review App server memory and GC/pool settings with ستاد فنی; they guide a dump if needed (RSM never takes dumps)."
+  },
+  "source": {
+    "kind": "KnowledgeBase",
+    "citation": "Systemgroup KB — GC wait / worker process crashes"
+  },
+  "verified": true,
+  "confidence": 0.8,
+  "examples": [
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 35,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2,
+        "dotnet[RahkaranPool].gc_time_sustained_60s": true
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2,
+        "dotnet[RahkaranPool].gc_time_sustained_60s": false
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "dotnet[RahkaranPool].pid": 4242,
+        "dotnet[RahkaranPool].hosting": "in-process",
+        "dotnet[RahkaranPool].gc_heap_mb": 1200,
+        "dotnet[RahkaranPool].time_in_gc_pct": 4,
+        "dotnet[RahkaranPool].working_set_mb": 2500,
+        "dotnet[RahkaranPool].threadpool_queue": 0,
+        "dotnet[RahkaranPool].threadpool_threads": 30,
+        "dotnet[RahkaranPool].requests_per_s": 50,
+        "dotnet[RahkaranPool].gen2_per_min": 0.2
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ],
+      "note": "under 60 s of samples"
+    }
+  ]
+}
