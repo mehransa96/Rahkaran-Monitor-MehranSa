@@ -1,0 +1,43 @@
+{
+  "id": "SLOW-APP-CONSUMING",
+  "layer": "Iis",
+  "title": {
+    "fa": "لایهٔ برنامه در دریافت نتایج SQL کند است",
+    "en": "The application tier is slow consuming SQL results"
+  },
+  "explanation": {
+    "fa": "SQL Server منتظر ASYNC_NETWORK_IO است در حالی که سرورهای App مشغول‌اند (CPU یا GC): کلاینت نتایج را کند می‌خواند.",
+    "en": "SQL Server waits on ASYNC_NETWORK_IO while the App servers are busy (CPU or GC): the client reads results slowly."
+  },
+  "nextSteps": [
+    {
+      "fa": "CPU، GC و Thread Pool فرایند w3wp را در همان زمان روی خط زمانی مشترک بررسی کنید.",
+      "en": "Check w3wp CPU, GC and thread-pool on the App servers at the same time on the shared timeline."
+    },
+    {
+      "fa": "گزارش‌ها یا صفحه‌هایی که نتیجهٔ بسیار بزرگ می‌گیرند را پیدا کنید.",
+      "en": "Look for reports or screens that fetch very large result sets."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "AsyncNetworkIo",
+      "weight": 0.5,
+      "required": true
+    },
+    {
+      "detector": "AppCpuHigh",
+      "weight": 0.25
+    },
+    {
+      "detector": "GcPressure",
+      "weight": 0.25
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "SLOW-REDIS",
+  "layer": "Redis",
+  "title": {
+    "fa": "تأخیر، Eviction یا راه‌اندازی مجدد Redis",
+    "en": "Redis latency, evictions or restart"
+  },
+  "explanation": {
+    "fa": "حافظهٔ نهان کند است، کلید حذف می‌کند یا مجدداً راه‌اندازی شده و برنامه به مسیرهای کندتر برمی‌گردد.",
+    "en": "The cache is slow, evicting keys or was restarted, so the application falls back to slower paths."
+  },
+  "nextSteps": [
+    {
+      "fa": "صفحهٔ Redis را بررسی کنید: حافظه، سیاست maxmemory، Slow Log و مدت کارکرد.",
+      "en": "Check the Redis page: memory, maxmemory policy, slow log and uptime."
+    },
+    {
+      "fa": "از مدیر Redis بخواهید زمان‌بندی ماندگاری (RDB/AOF) و محدودیت حافظه را بررسی کند.",
+      "en": "Ask the Redis administrator to review persistence (RDB/AOF) timing and memory limits."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "RedisLatency",
+      "weight": 0.4
+    },
+    {
+      "detector": "RedisEvictions",
+      "weight": 0.35
+    },
+    {
+      "detector": "RedisRestart",
+      "weight": 0.25
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

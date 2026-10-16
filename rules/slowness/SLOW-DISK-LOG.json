@@ -1,0 +1,44 @@
+{
+  "id": "SLOW-DISK-LOG",
+  "layer": "Sql",
+  "title": {
+    "fa": "نوشتن کند لاگ تراکنش (WRITELOG)",
+    "en": "Slow transaction-log writes (WRITELOG)"
+  },
+  "explanation": {
+    "fa": "هر Commit منتظر نوشتن لاگ است؛ درایو کند لاگ همهٔ تغییرات داده را کند می‌کند.",
+    "en": "Every commit waits for the log write; a slow log volume slows all data changes."
+  },
+  "nextSteps": [
+    {
+      "fa": "اطمینان حاصل کنید فایل‌های لاگ روی درایو سریع و اختصاصی هستند (چیدمان فایل ستاد فنی).",
+      "en": "Confirm the log files sit on a fast, dedicated volume (ستاد فنی file layout)."
+    },
+    {
+      "fa": "تأخیر نوشتن آن درایو را با تیم ذخیره‌سازی بررسی کنید.",
+      "en": "Check write latency of that volume with the storage team."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "WritelogShare",
+      "weight": 0.5
+    },
+    {
+      "detector": "LogWriteLatency",
+      "weight": 0.3
+    },
+    {
+      "detector": "DiskWriteLatencyOs",
+      "weight": 0.2
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [
+    "volume[*].write_ms"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

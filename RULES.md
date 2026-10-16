@@ -306,6 +306,81 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 | PACK-001 | A query-pack threshold is exceeded (severity Info/Warning/Critical and source as declared in the manifest; ⚠U) | I/W/C | GEN (per manifest) |
 | PACK-002 | A query-pack query could not run (missing object, permission, timeout) ⚠U | I | GEN |
 
+## 12. Slowness causes (§12, `rules/slowness/`) — P5
+
+Scored by `RSM.Core.Slowness` from a synchronized capture (default 120 s, all nodes). Confidence = weighted mean of the
+best detector strengths (0..1) across nodes, multiplied by exclusion factors, capped at 0.95; causes below 0.15 are not
+listed; a cause with a missing *required* detector is skipped. Every cause and detector is `general` guidance —
+confirm with ستاد فنی. Next steps are text only. Acceptance fixtures: `tests/RSM.Tests/SlownessTests.cs` (one per
+`tests/lab` scenario).
+
+| Cause | Evidence (weight, * = required) | Excluded by (above → ×factor) | Source |
+|---|---|---|---|
+| `SLOW-APP-CONSUMING` The application tier is slow consuming SQL results | AsyncNetworkIo 0.5*, AppCpuHigh 0.25, GcPressure 0.25 | — | GEN |
+| `SLOW-ARR` ARR imbalance or an unhealthy App server | ArrImbalance 0.5, ArrNodeUnhealthy 0.5 | — | GEN |
+| `SLOW-BLOCKING` Blocking chain | BlockingChain 0.6*, LockWaitShare 0.4 | — | GEN |
+| `SLOW-CLIENT-NETWORK` Client or network slow to read SQL results | AsyncNetworkIo 0.5*, NetworkSaturation 0.25, SqlRttHigh 0.25 | AppCpuHigh >0.5 → ×0.5, GcPressure >0.5 → ×0.5 | GEN |
+| `SLOW-CPU-APP` IIS worker processes are using most of the CPU | AppCpuHigh 0.5*, HostCpuSaturated 0.3, GcPressure 0.2 | — | GEN |
+| `SLOW-CPU-NONSQL` Host CPU saturated by a process other than SQL Server | HostCpuSaturated 0.6*, NonSqlCpu 0.4 | SqlCpuHigh >0.5 → ×0.5, AppCpuHigh >0.5 → ×0.6 | GEN |
+| `SLOW-CPU-SQL` SQL Server CPU is high, with high signal waits | SqlCpuHigh 0.5*, SignalWaitsHigh 0.3, HostCpuSaturated 0.2 | — | GEN |
+| `SLOW-CPU-THROTTLED` CPU is throttled by the power plan or firmware | CpuThrottled 0.6*, PowerPlanFinding 0.4 | — | GEN |
+| `SLOW-DISK-DATA` Disk latency on the SQL Server data volumes | DiskLatencySqlData 0.4, DiskReadLatencyOs 0.3, IoDataWaitShare 0.3 | — | GEN |
+| `SLOW-DISK-LOG` Slow transaction-log writes (WRITELOG) | WritelogShare 0.5, LogWriteLatency 0.3, DiskWriteLatencyOs 0.2 | — | GEN |
+| `SLOW-EXPENSIVE-QUERY` Expensive queries running now or regressed plans | LongRunningRequest 0.4, SqlCpuHigh 0.3, PlanRegression 0.3 | BlockingChain >0.5 → ×0.4 | GEN |
+| `SLOW-GC` High .NET garbage-collection time in the application | GcPressure 0.6*, AppCpuHigh 0.2, ThreadPoolStarvation 0.2 | — | GEN |
+| `SLOW-HTTP-503` HTTP 503 errors or dropped requests | Http503Burst 0.5, Http5xxRate 0.3, RecentRecycleOrRapidFail 0.2 | — | GEN |
+| `SLOW-IIS-QUEUE` IIS request queue is backing up | IisQueue 0.5*, ThreadPoolStarvation 0.2, Http503Burst 0.15, AppCpuHigh 0.15 | — | GEN |
+| `SLOW-MEM-OS` Memory pressure on the server | MemoryPressureOs 0.6*, Paging 0.4 | — | GEN |
+| `SLOW-MEM-SQL` SQL Server memory pressure (grants pending, PLE drop) | MemoryGrantsPending 0.5, PleDrop 0.3, MemoryPressureOs 0.2 | — | GEN |
+| `SLOW-NETWORK` Network saturation or high SQL round-trip time | NetworkSaturation 0.5, SqlRttHigh 0.5 | AsyncNetworkIo >0.5 → ×0.6 | GEN |
+| `SLOW-POOL-RECYCLE` Application pool recycled or rapid-failed recently | RecentRecycleOrRapidFail 0.7*, Http5xxRate 0.3 | — | GEN |
+| `SLOW-REDIS` Redis latency, evictions or restart | RedisLatency 0.4, RedisEvictions 0.35, RedisRestart 0.25 | — | GEN |
+| `SLOW-SQL-WORKERS` SQL Server is running out of worker threads | SqlWorkerStarvation 0.7*, BlockingChain 0.3 | — | GEN |
+| `SLOW-TEMPDB` tempdb allocation contention | TempdbContention 1* | — | GEN |
+| `SLOW-THREADPOOL` .NET thread-pool starvation | ThreadPoolStarvation 0.7*, IisQueue 0.3 | — | GEN |
+
+Detectors (strength ramps linearly from *from* (0) to *to* (1); from > to = lower is worse):
+
+| Detector | Input | Stat | From → To | Source |
+|---|---|---|---|---|
+| HostCpuSaturated | `win.cpu.total_pct` | P50 | 70 → 95 % | GEN |
+| NonSqlCpu | `sql.cpu.other_pct` | P50 | 30 → 70 % | GEN |
+| SqlCpuHigh | `sql.cpu.sql_pct` | P50 | 60 → 90 % | GEN |
+| SignalWaitsHigh | `sql.waits.signal_pct` | Avg | 15 → 40 % | GEN |
+| CpuThrottled | fact `win.cpu.throttled_samples` | — | 0 → 5 | GEN |
+| PowerPlanFinding | findings OS-001, OS-002 | — | active = 1 (info 0.6) | GEN |
+| MemoryPressureOs | `win.mem.available_mb` | Min | 2048 → 256 MB | GEN |
+| Paging | `win.mem.pages_sec` | Avg | 500 → 5000 /s | GEN |
+| MemoryGrantsPending | `sql.perf.memory_grants_pending` | Max | 0.5 → 5 | GEN |
+| PleDrop | `sql.perf.ple_s` | DropPct | 30 → 80 % | GEN |
+| GcPressure | `dotnet.time_in_gc_pct` | Avg | 10 → 40 % | GEN |
+| AppCpuHigh | `win.process.cpu_pct`[w3wp] | P50 | 40 → 85 % | GEN |
+| DiskLatencySqlData | `sql.io.data_read_ms`[*] | P50 | 20 → 100 ms | GEN |
+| DiskReadLatencyOs | `win.disk.read_ms`[*] | P50 | 20 → 100 ms | GEN |
+| DiskWriteLatencyOs | `win.disk.write_ms`[*] | P50 | 20 → 100 ms | GEN |
+| IoDataWaitShare | `sql.waits.ms_per_sec`[IoData] share of `_Total` | Avg | 20 → 60 % | GEN |
+| LogWriteLatency | `sql.io.log_write_ms`[*] | P50 | 5 → 30 ms | GEN |
+| WritelogShare | `sql.waits.ms_per_sec`[IoLog] share of `_Total` | Avg | 20 → 60 % | GEN |
+| BlockingChain | `sql.blocking.max_wait_s` | Max | 5 → 60 s | GEN |
+| LockWaitShare | `sql.waits.ms_per_sec`[Locking] share of `_Total` | Avg | 20 → 60 % | GEN |
+| LongRunningRequest | fact `sql.req.longest_running_s` | — | 30 → 300 s | GEN |
+| PlanRegression | fact `db[*].qds.regressed_count` | — | 0 → 5 | GEN |
+| TempdbContention | `sql.tempdb.alloc_contention_waiters` | Max | 1 → 10 | GEN |
+| AsyncNetworkIo | `sql.waits.ms_per_sec`[Network] share of `_Total` | Avg | 20 → 60 % | GEN |
+| SqlWorkerStarvation | `sql.waits.ms_per_sec`[Worker] share of `_Total` | Avg | 5 → 30 % | GEN |
+| NetworkSaturation | `win.net.util_pct`[*] | P50 | 60 → 90 % | GEN |
+| SqlRttHigh | `rsm.sql_rtt_ms` | P50 | 5 → 50 ms | GEN |
+| IisQueue | `win.iis.queue.size`[*] | Max | 1 → 50 | GEN |
+| ThreadPoolStarvation | `dotnet.threadpool_queue` | P50 | 10 → 500 | GEN |
+| Http503Burst | findings IIS-ERR-002, IIS-ERR-004, IIS-Q-001 | — | active = 1 (info 0.6) | GEN |
+| Http5xxRate | `iis.log.err5xx_pct_15m`[*] | Last | 1 → 10 % | GEN |
+| RecentRecycleOrRapidFail | findings IIS-POOL-002, IIS-POOL-003, IIS-POOL-001 | — | active = 1 (info 0.6) | GEN |
+| ArrImbalance | fact `farm[*].distribution_deviation_pct` | — | 30 → 80 % | GEN |
+| ArrNodeUnhealthy | findings ARR-001, ARR-002 | — | active = 1 (info 0.6) | GEN |
+| RedisLatency | fact `redis.latency_max_ms` | — | 20 → 200 ms | GEN |
+| RedisEvictions | findings RDS-002, RDS-006 | — | active = 1 (info 0.6) | GEN |
+| RedisRestart | findings RDS-001, RDS-005, RDS-007 | — | active = 1 (info 0.6) | GEN |
+
 ---
 
 ## Implementation status

@@ -25,6 +25,8 @@
   <ItemGroup>
     <!-- Default rules ship inside the exe; a rules/ folder next to RSM.exe overrides them by id. -->
     <EmbeddedResource Include="..\..\rules\*.json" LogicalName="rules/%(Filename)%(Extension)" />
+    <!-- §12 slowness detectors and causes (scored by RSM.Core.Slowness). -->
+    <EmbeddedResource Include="..\..\rules\slowness\*.json" LogicalName="slowness/%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="RSM.Tests" />

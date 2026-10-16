@@ -1,0 +1,40 @@
+{
+  "id": "SLOW-ARR",
+  "layer": "Arr",
+  "title": {
+    "fa": "عدم توازن ARR یا سرور App ناسالم",
+    "en": "ARR imbalance or an unhealthy App server"
+  },
+  "explanation": {
+    "fa": "یک سرور App بیشتر بار را می‌گیرد یا یکی از اعضای مزرعه غیرفعال یا ناسالم است.",
+    "en": "One App server receives most of the load, or a farm member is disabled/unhealthy."
+  },
+  "nextSteps": [
+    {
+      "fa": "صفحهٔ ARR را بررسی کنید: سلامت سرورها، توزیع درخواست‌ها و تنظیمات Affinity.",
+      "en": "Check the ARR page: server health, request distribution and affinity settings."
+    },
+    {
+      "fa": "CPU و صف سرورهای App را روی خط زمانی مشترک مقایسه کنید.",
+      "en": "Compare the App servers' CPU and queue on the shared timeline."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "ArrImbalance",
+      "weight": 0.5
+    },
+    {
+      "detector": "ArrNodeUnhealthy",
+      "weight": 0.5
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [
+    "farm[*].distribution_deviation_pct"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

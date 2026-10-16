@@ -1,0 +1,44 @@
+{
+  "id": "SLOW-DISK-DATA",
+  "layer": "Sql",
+  "title": {
+    "fa": "تأخیر دیسک روی درایوهای داده SQL Server",
+    "en": "Disk latency on the SQL Server data volumes"
+  },
+  "explanation": {
+    "fa": "خواندن از فایل‌های داده کند است و پرس‌وجوها منتظر ذخیره‌ساز می‌مانند.",
+    "en": "Reads from the data files are slow; queries wait for the storage."
+  },
+  "nextSteps": [
+    {
+      "fa": "درایو و پایگاه دادهٔ کند را در صفحه‌های SQL و ویندوز مشخص کنید و تأخیر آرایهٔ ذخیره‌سازی در آن زمان را از تیم ذخیره‌سازی بپرسید.",
+      "en": "Check which volume and database are slow on the SQL and Windows pages; ask the storage team for the array's latency at that time."
+    },
+    {
+      "fa": "Scanهای پرخواندن (ایندکس گم‌شده) و I/O دیگر روی همان درایو (پشتیبان‌گیری، آنتی‌ویروس) را بررسی کنید.",
+      "en": "Look for scans that read a lot (missing indexes) and for other I/O on the same volume (backups, antivirus)."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "DiskLatencySqlData",
+      "weight": 0.4
+    },
+    {
+      "detector": "DiskReadLatencyOs",
+      "weight": 0.3
+    },
+    {
+      "detector": "IoDataWaitShare",
+      "weight": 0.3
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [
+    "volume[*].read_ms"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SLOW-BLOCKING",
+  "layer": "Sql",
+  "title": {
+    "fa": "زنجیرهٔ قفل (Blocking)",
+    "en": "Blocking chain"
+  },
+  "explanation": {
+    "fa": "نشست‌ها منتظر قفل‌هایی هستند که نشست دیگری (سر زنجیره) نگه داشته است.",
+    "en": "Sessions are waiting for locks held by another session (the head blocker)."
+  },
+  "nextSteps": [
+    {
+      "fa": "در صفحهٔ پرس‌وجوها و قفل‌ها، دستور، میزبان و برنامهٔ سر زنجیره و مدت باز بودن تراکنش آن را مشخص کنید.",
+      "en": "Open Queries & Blocking: identify the head blocker's statement, host and program, and how long its transaction has been open."
+    },
+    {
+      "fa": "از صاحب آن نشست بخواهید کار را تمام یا لغو کند؛ RSM هرگز نشستی را Kill نمی‌کند.",
+      "en": "Ask the owner of that session to finish or cancel it; RSM never kills sessions."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "BlockingChain",
+      "weight": 0.6,
+      "required": true
+    },
+    {
+      "detector": "LockWaitShare",
+      "weight": 0.4
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [
+    "sql.blocking.head_summary",
+    "sql.blocking.head_session",
+    "sql.tran.max_age_s"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

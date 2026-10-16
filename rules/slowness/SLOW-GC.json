@@ -1,0 +1,43 @@
+{
+  "id": "SLOW-GC",
+  "layer": "Iis",
+  "title": {
+    "fa": "زمان بالای GC دات‌نت در برنامه",
+    "en": "High .NET garbage-collection time in the application"
+  },
+  "explanation": {
+    "fa": "برنامه بخش بزرگی از زمان خود را صرف جمع‌آوری زباله (GC) می‌کند که پردازش درخواست‌ها را متوقف می‌کند.",
+    "en": "The application spends a large share of its time in garbage collection, which pauses request processing."
+  },
+  "nextSteps": [
+    {
+      "fa": "رشد Heap و نرخ استثناها را در صفحهٔ Runtime دات‌نت بررسی کنید.",
+      "en": "Check the .NET runtime page for heap size growth and exception rate."
+    },
+    {
+      "fa": "در صورت تداوم، پس از هماهنگی توقف یا خارج‌کردن سرور از ARR، طبق KB سیستم‌گروه با ProcDump از w3wp دامپ بگیرید و برای پشتیبانی سیستم‌گروه بفرستید.",
+      "en": "If it persists, capture a memory dump of w3wp with ProcDump per the Systemgroup KB after coordinating downtime or removing the server from ARR; send it to Systemgroup support."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "GcPressure",
+      "weight": 0.6,
+      "required": true
+    },
+    {
+      "detector": "AppCpuHigh",
+      "weight": 0.2
+    },
+    {
+      "detector": "ThreadPoolStarvation",
+      "weight": 0.2
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

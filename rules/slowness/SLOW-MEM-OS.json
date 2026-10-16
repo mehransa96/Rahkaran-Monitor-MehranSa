@@ -1,0 +1,41 @@
+{
+  "id": "SLOW-MEM-OS",
+  "layer": "Os",
+  "title": {
+    "fa": "فشار حافظه روی سرور",
+    "en": "Memory pressure on the server"
+  },
+  "explanation": {
+    "fa": "حافظهٔ آزاد بسیار کم است و ویندوز صفحه‌بندی می‌کند؛ SQL Server و IIS بر سر RAM رقابت می‌کنند.",
+    "en": "Available memory is very low and Windows is paging; SQL Server and IIS compete for RAM."
+  },
+  "nextSteps": [
+    {
+      "fa": "مقدار Max Server Memory را با RAM باقی‌مانده برای ویندوز و سرویس‌های دیگر مقایسه کنید (راهنمای ستاد فنی).",
+      "en": "Compare SQL Server max server memory with the RAM left for Windows and other services (ستاد فنی guidance)."
+    },
+    {
+      "fa": "فرایندهای با بیشترین حافظهٔ خصوصی را در صفحهٔ ویندوز شناسایی کنید.",
+      "en": "Identify the processes with the largest private memory on the Windows page."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "MemoryPressureOs",
+      "weight": 0.6,
+      "required": true
+    },
+    {
+      "detector": "Paging",
+      "weight": 0.4
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [
+    "sql.config.max_server_memory_mb"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "SLOW-CPU-APP",
+  "layer": "Iis",
+  "title": {
+    "fa": "فرایندهای w3wp بیشترین CPU را مصرف می‌کنند",
+    "en": "IIS worker processes are using most of the CPU"
+  },
+  "explanation": {
+    "fa": "لایهٔ برنامهٔ راهکاران (w3wp) گرفتار CPU است؛ حتی وقتی SQL Server بیکار است درخواست‌ها کند می‌شوند.",
+    "en": "The Rahkaran application tier (w3wp) is CPU-bound; requests slow down even when SQL Server is idle."
+  },
+  "nextSteps": [
+    {
+      "fa": "کندترین آدرس‌ها را در صفحهٔ IIS در بازهٔ کندی پیدا کنید.",
+      "en": "Find the slowest URLs on the IIS page during the slow period."
+    },
+    {
+      "fa": "در صورت تداوم، طبق KB سیستم‌گروه با ProcDump از w3wp دامپ کامل حافظه بگیرید؛ ابتدا زمان توقف را هماهنگ کنید یا سرور را از ARR خارج کنید. RSM خودش این کار را انجام نمی‌دهد.",
+      "en": "If it persists, capture a full memory dump of w3wp with ProcDump as described in the Systemgroup KB; coordinate downtime or take the server out of ARR first. RSM never does this itself."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "AppCpuHigh",
+      "weight": 0.5,
+      "required": true
+    },
+    {
+      "detector": "HostCpuSaturated",
+      "weight": 0.3
+    },
+    {
+      "detector": "GcPressure",
+      "weight": 0.2
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [
+    "iis.requests.slowest_url"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

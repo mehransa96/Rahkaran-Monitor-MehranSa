@@ -1,0 +1,44 @@
+{
+  "id": "SLOW-NETWORK",
+  "layer": "Os",
+  "title": {
+    "fa": "اشباع شبکه یا زمان رفت‌وبرگشت بالا تا SQL",
+    "en": "Network saturation or high SQL round-trip time"
+  },
+  "explanation": {
+    "fa": "شبکهٔ بین لایه‌ها اشباع یا کند است و هر فراخوانی SQL تأخیر اضافه می‌پردازد.",
+    "en": "The network between the tiers is saturated or slow; every SQL call pays the extra latency."
+  },
+  "nextSteps": [
+    {
+      "fa": "استفاده و خطاهای کارت شبکه را در صفحهٔ ویندوز هر گره بررسی کنید.",
+      "en": "Check adapter utilisation and errors on the Windows page of each node."
+    },
+    {
+      "fa": "مسیر بین سرورهای App و Data را از تیم شبکه پیگیری کنید (Duplex، Teaming، بازرسی فایروال).",
+      "en": "Ask the network team about the path between App and Data servers (duplex, teaming, firewall inspection)."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "NetworkSaturation",
+      "weight": 0.5
+    },
+    {
+      "detector": "SqlRttHigh",
+      "weight": 0.5
+    }
+  ],
+  "excludes": [
+    {
+      "detector": "AsyncNetworkIo",
+      "above": 0.5,
+      "factor": 0.6
+    }
+  ],
+  "contextFacts": [],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

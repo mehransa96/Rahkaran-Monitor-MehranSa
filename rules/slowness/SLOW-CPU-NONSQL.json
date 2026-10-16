@@ -1,0 +1,52 @@
+{
+  "id": "SLOW-CPU-NONSQL",
+  "layer": "Os",
+  "title": {
+    "fa": "CPU سرور توسط فرایندی غیر از SQL Server اشباع شده است",
+    "en": "Host CPU saturated by a process other than SQL Server"
+  },
+  "explanation": {
+    "fa": "CPU سرور مشغول است و مصرف‌کنندهٔ اصلی SQL Server نیست؛ همهٔ درخواست‌ها منتظر زمان CPU می‌مانند.",
+    "en": "The server's CPU is busy, and SQL Server is not the main consumer. Every request waits for CPU time."
+  },
+  "nextSteps": [
+    {
+      "fa": "در صفحهٔ ویندوز، فرایندهای پرمصرف CPU (win.process.top_cpu) در بازهٔ کندی را شناسایی کنید.",
+      "en": "Open the Windows page and identify the top CPU processes (win.process.top_cpu) during the slow period."
+    },
+    {
+      "fa": "کارهای زمان‌بندی‌شده، اسکن آنتی‌ویروس و عامل‌های پشتیبان‌گیری در آن زمان را بررسی و به خارج از ساعت کاری منتقل کنید.",
+      "en": "Check scheduled jobs, antivirus scans and backup agents running at that time; move them out of working hours."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "HostCpuSaturated",
+      "weight": 0.6,
+      "required": true
+    },
+    {
+      "detector": "NonSqlCpu",
+      "weight": 0.4
+    }
+  ],
+  "excludes": [
+    {
+      "detector": "SqlCpuHigh",
+      "above": 0.5,
+      "factor": 0.5
+    },
+    {
+      "detector": "AppCpuHigh",
+      "above": 0.5,
+      "factor": 0.6
+    }
+  ],
+  "contextFacts": [
+    "win.process.top_cpu"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

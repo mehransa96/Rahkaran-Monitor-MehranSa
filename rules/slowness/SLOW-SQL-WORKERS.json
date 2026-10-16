@@ -1,0 +1,39 @@
+{
+  "id": "SLOW-SQL-WORKERS",
+  "layer": "Sql",
+  "title": {
+    "fa": "SQL Server با کمبود Worker Thread مواجه است",
+    "en": "SQL Server is running out of worker threads"
+  },
+  "explanation": {
+    "fa": "وظایف منتظر Worker آزادند (انتظار THREADPOOL)، معمولاً چون نشست‌های زیادی قفل شده یا موازی‌اند.",
+    "en": "Tasks wait for a free worker (THREADPOOL waits), usually because many sessions are blocked or parallel."
+  },
+  "nextSteps": [
+    {
+      "fa": "زنجیرهٔ قفل و پرس‌وجوهای با موازی‌سازی بالا را بررسی کنید.",
+      "en": "Look for a blocking chain and for queries with high parallelism."
+    },
+    {
+      "fa": "بدون نظر ستاد فنی مقدار Max Worker Threads را افزایش ندهید.",
+      "en": "Do not raise max worker threads without ستاد فنی advice."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "SqlWorkerStarvation",
+      "weight": 0.7,
+      "required": true
+    },
+    {
+      "detector": "BlockingChain",
+      "weight": 0.3
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

@@ -1,0 +1,673 @@
+[
+  {
+    "id": "HostCpuSaturated",
+    "label": {
+      "fa": "CPU کل سرور اشباع است",
+      "en": "Host CPU saturated"
+    },
+    "metric": "win.cpu.total_pct",
+    "stat": "P50",
+    "from": 70,
+    "to": 95,
+    "unit": "%",
+    "minSamples": 3,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "NonSqlCpu",
+    "label": {
+      "fa": "مصرف CPU توسط فرایندهای غیر از SQL Server",
+      "en": "CPU used by processes other than SQL Server"
+    },
+    "metric": "sql.cpu.other_pct",
+    "stat": "P50",
+    "from": 30,
+    "to": 70,
+    "unit": "%",
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "SqlCpuHigh",
+    "label": {
+      "fa": "مصرف CPU سرویس SQL Server بالاست",
+      "en": "SQL Server CPU high"
+    },
+    "metric": "sql.cpu.sql_pct",
+    "stat": "P50",
+    "from": 60,
+    "to": 90,
+    "unit": "%",
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "SignalWaitsHigh",
+    "label": {
+      "fa": "سهم Signal Wait بالا (فشار CPU)",
+      "en": "High signal-wait share (CPU pressure)"
+    },
+    "metric": "sql.waits.signal_pct",
+    "stat": "Avg",
+    "from": 15,
+    "to": 40,
+    "unit": "%",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "CpuThrottled",
+    "label": {
+      "fa": "CPU در حالت مشغول با فرکانسی کمتر از اسمی کار می‌کند",
+      "en": "CPU running below nominal frequency while busy"
+    },
+    "stat": "P50",
+    "fact": "win.cpu.throttled_samples",
+    "from": 0,
+    "to": 5,
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "PowerPlanFinding",
+    "label": {
+      "fa": "یافتهٔ طرح انرژی یا کاهش فرکانس",
+      "en": "Power plan / throttling finding"
+    },
+    "stat": "P50",
+    "findings": [
+      "OS-001",
+      "OS-002"
+    ],
+    "from": 0,
+    "to": 1,
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "MemoryPressureOs",
+    "label": {
+      "fa": "حافظهٔ آزاد سیستم‌عامل کم است",
+      "en": "Low available memory"
+    },
+    "metric": "win.mem.available_mb",
+    "stat": "Min",
+    "from": 2048,
+    "to": 256,
+    "unit": "MB",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "Paging",
+    "label": {
+      "fa": "صفحه‌بندی (Paging) سنگین",
+      "en": "Heavy paging"
+    },
+    "metric": "win.mem.pages_sec",
+    "stat": "Avg",
+    "from": 500,
+    "to": 5000,
+    "unit": "/s",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "MemoryGrantsPending",
+    "label": {
+      "fa": "پرس‌وجوهای منتظر اعطای حافظه",
+      "en": "Queries waiting for memory grants"
+    },
+    "metric": "sql.perf.memory_grants_pending",
+    "stat": "Max",
+    "from": 0.5,
+    "to": 5,
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "PleDrop",
+    "label": {
+      "fa": "افت Page Life Expectancy",
+      "en": "Page life expectancy dropped"
+    },
+    "metric": "sql.perf.ple_s",
+    "stat": "DropPct",
+    "from": 30,
+    "to": 80,
+    "unit": "%",
+    "minSamples": 3,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "GcPressure",
+    "label": {
+      "fa": "درصد بالای زمان صرف‌شده در GC دات‌نت",
+      "en": "High % time in .NET garbage collection"
+    },
+    "metric": "dotnet.time_in_gc_pct",
+    "stat": "Avg",
+    "from": 10,
+    "to": 40,
+    "unit": "%",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "AppCpuHigh",
+    "label": {
+      "fa": "مصرف CPU بالای فرایندهای w3wp",
+      "en": "IIS worker processes (w3wp) use much CPU"
+    },
+    "metric": "win.process.cpu_pct",
+    "instance": "w3wp",
+    "stat": "P50",
+    "from": 40,
+    "to": 85,
+    "unit": "%",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "DiskLatencySqlData",
+    "label": {
+      "fa": "خواندن کند فایل‌های داده در SQL Server",
+      "en": "Slow data-file reads in SQL Server"
+    },
+    "metric": "sql.io.data_read_ms",
+    "instance": "*",
+    "stat": "P50",
+    "from": 20,
+    "to": 100,
+    "unit": "ms",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "DiskReadLatencyOs",
+    "label": {
+      "fa": "خواندن کند دیسک (ویندوز)",
+      "en": "Slow disk reads (Windows)"
+    },
+    "metric": "win.disk.read_ms",
+    "instance": "*",
+    "stat": "P50",
+    "from": 20,
+    "to": 100,
+    "unit": "ms",
+    "minSamples": 3,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "DiskWriteLatencyOs",
+    "label": {
+      "fa": "نوشتن کند دیسک (ویندوز)",
+      "en": "Slow disk writes (Windows)"
+    },
+    "metric": "win.disk.write_ms",
+    "instance": "*",
+    "stat": "P50",
+    "from": 20,
+    "to": 100,
+    "unit": "ms",
+    "minSamples": 3,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "IoDataWaitShare",
+    "label": {
+      "fa": "انتظارهای I/O فایل داده غالب است",
+      "en": "Data-file I/O waits dominate"
+    },
+    "metric": "sql.waits.ms_per_sec",
+    "instance": "IoData",
+    "stat": "Avg",
+    "shareOf": {
+      "metric": "sql.waits.ms_per_sec",
+      "instance": "_Total"
+    },
+    "from": 20,
+    "to": 60,
+    "unit": "%",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "LogWriteLatency",
+    "label": {
+      "fa": "نوشتن کند لاگ تراکنش",
+      "en": "Slow transaction-log writes"
+    },
+    "metric": "sql.io.log_write_ms",
+    "instance": "*",
+    "stat": "P50",
+    "from": 5,
+    "to": 30,
+    "unit": "ms",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "WritelogShare",
+    "label": {
+      "fa": "انتظارهای WRITELOG غالب است",
+      "en": "WRITELOG waits dominate"
+    },
+    "metric": "sql.waits.ms_per_sec",
+    "instance": "IoLog",
+    "stat": "Avg",
+    "shareOf": {
+      "metric": "sql.waits.ms_per_sec",
+      "instance": "_Total"
+    },
+    "from": 20,
+    "to": 60,
+    "unit": "%",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "BlockingChain",
+    "label": {
+      "fa": "زنجیرهٔ قفل (Blocking)",
+      "en": "Blocking chain"
+    },
+    "metric": "sql.blocking.max_wait_s",
+    "stat": "Max",
+    "from": 5,
+    "to": 60,
+    "unit": "s",
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "LockWaitShare",
+    "label": {
+      "fa": "انتظارهای قفل غالب است",
+      "en": "Lock waits dominate"
+    },
+    "metric": "sql.waits.ms_per_sec",
+    "instance": "Locking",
+    "stat": "Avg",
+    "shareOf": {
+      "metric": "sql.waits.ms_per_sec",
+      "instance": "_Total"
+    },
+    "from": 20,
+    "to": 60,
+    "unit": "%",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "LongRunningRequest",
+    "label": {
+      "fa": "درخواست SQL طولانی",
+      "en": "Long-running SQL request"
+    },
+    "stat": "P50",
+    "fact": "sql.req.longest_running_s",
+    "from": 30,
+    "to": 300,
+    "unit": "s",
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "PlanRegression",
+    "label": {
+      "fa": "Query Store پرس‌وجوهای پس‌رفت‌کرده گزارش می‌کند",
+      "en": "Query Store reports regressed queries"
+    },
+    "stat": "P50",
+    "fact": "db[*].qds.regressed_count",
+    "from": 0,
+    "to": 5,
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "TempdbContention",
+    "label": {
+      "fa": "رقابت تخصیص در tempdb",
+      "en": "tempdb allocation contention"
+    },
+    "metric": "sql.tempdb.alloc_contention_waiters",
+    "stat": "Max",
+    "from": 1,
+    "to": 10,
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "AsyncNetworkIo",
+    "label": {
+      "fa": "انتظارهای ASYNC_NETWORK_IO غالب است",
+      "en": "ASYNC_NETWORK_IO waits dominate"
+    },
+    "metric": "sql.waits.ms_per_sec",
+    "instance": "Network",
+    "stat": "Avg",
+    "shareOf": {
+      "metric": "sql.waits.ms_per_sec",
+      "instance": "_Total"
+    },
+    "from": 20,
+    "to": 60,
+    "unit": "%",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "SqlWorkerStarvation",
+    "label": {
+      "fa": "انتظار برای Worker Thread در SQL Server (THREADPOOL)",
+      "en": "SQL Server worker-thread waits (THREADPOOL)"
+    },
+    "metric": "sql.waits.ms_per_sec",
+    "instance": "Worker",
+    "stat": "Avg",
+    "shareOf": {
+      "metric": "sql.waits.ms_per_sec",
+      "instance": "_Total"
+    },
+    "from": 5,
+    "to": 30,
+    "unit": "%",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "NetworkSaturation",
+    "label": {
+      "fa": "کارت شبکه اشباع است",
+      "en": "Network adapter saturated"
+    },
+    "metric": "win.net.util_pct",
+    "instance": "*",
+    "stat": "P50",
+    "from": 60,
+    "to": 90,
+    "unit": "%",
+    "minSamples": 3,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "SqlRttHigh",
+    "label": {
+      "fa": "زمان رفت‌وبرگشت بالا تا SQL Server",
+      "en": "High round-trip time to SQL Server"
+    },
+    "metric": "rsm.sql_rtt_ms",
+    "stat": "P50",
+    "from": 5,
+    "to": 50,
+    "unit": "ms",
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "IisQueue",
+    "label": {
+      "fa": "صف درخواست HTTP.sys در حال پر شدن",
+      "en": "HTTP.sys request queue backing up"
+    },
+    "metric": "win.iis.queue.size",
+    "instance": "*",
+    "stat": "Max",
+    "from": 1,
+    "to": 50,
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "ThreadPoolStarvation",
+    "label": {
+      "fa": "صف Thread Pool دات‌نت در حال رشد",
+      "en": ".NET thread-pool queue growing"
+    },
+    "metric": "dotnet.threadpool_queue",
+    "stat": "P50",
+    "from": 10,
+    "to": 500,
+    "minSamples": 2,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "Http503Burst",
+    "label": {
+      "fa": "انفجار خطای ۵۰۳ یا درخواست‌های ردشده توسط HTTP.sys",
+      "en": "HTTP 503 burst / requests dropped by HTTP.sys"
+    },
+    "stat": "P50",
+    "findings": [
+      "IIS-ERR-002",
+      "IIS-ERR-004",
+      "IIS-Q-001"
+    ],
+    "from": 0,
+    "to": 1,
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "Http5xxRate",
+    "label": {
+      "fa": "نرخ خطای 5xx در لاگ IIS",
+      "en": "5xx error rate in the IIS log"
+    },
+    "metric": "iis.log.err5xx_pct_15m",
+    "instance": "*",
+    "stat": "Last",
+    "from": 1,
+    "to": 10,
+    "unit": "%",
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "RecentRecycleOrRapidFail",
+    "label": {
+      "fa": "استخر برنامه اخیراً بازیافت یا Rapid-Fail شده است",
+      "en": "Application pool recycled or rapid-failed recently"
+    },
+    "stat": "P50",
+    "findings": [
+      "IIS-POOL-002",
+      "IIS-POOL-003",
+      "IIS-POOL-001"
+    ],
+    "from": 0,
+    "to": 1,
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "ArrImbalance",
+    "label": {
+      "fa": "عدم توازن بار ARR بین سرورهای App",
+      "en": "ARR load imbalance between App servers"
+    },
+    "stat": "P50",
+    "fact": "farm[*].distribution_deviation_pct",
+    "from": 30,
+    "to": 80,
+    "unit": "%",
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "ArrNodeUnhealthy",
+    "label": {
+      "fa": "عضو مزرعهٔ ARR غیرفعال یا ناسالم است",
+      "en": "ARR farm member disabled or unhealthy"
+    },
+    "stat": "P50",
+    "findings": [
+      "ARR-001",
+      "ARR-002"
+    ],
+    "from": 0,
+    "to": 1,
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "RedisLatency",
+    "label": {
+      "fa": "جهش تأخیر در Redis",
+      "en": "Redis latency spikes"
+    },
+    "stat": "P50",
+    "fact": "redis.latency_max_ms",
+    "from": 20,
+    "to": 200,
+    "unit": "ms",
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "RedisEvictions",
+    "label": {
+      "fa": "Redis در حال حذف کلیدها (Eviction)",
+      "en": "Redis evicting keys"
+    },
+    "stat": "P50",
+    "findings": [
+      "RDS-002",
+      "RDS-006"
+    ],
+    "from": 0,
+    "to": 1,
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  },
+  {
+    "id": "RedisRestart",
+    "label": {
+      "fa": "Redis اخیراً راه‌اندازی مجدد شده یا در دسترس نیست",
+      "en": "Redis restarted recently or unreachable"
+    },
+    "stat": "P50",
+    "findings": [
+      "RDS-001",
+      "RDS-005",
+      "RDS-007"
+    ],
+    "from": 0,
+    "to": 1,
+    "minSamples": 1,
+    "source": {
+      "kind": "General",
+      "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+    }
+  }
+]

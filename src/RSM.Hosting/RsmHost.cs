@@ -111,6 +111,8 @@ public static class RsmHost
             return recorder;
         });
         services.AddSingleton<LiveMonitorService>();
+        services.AddSingleton<RSM.Storage.Investigations.InvestigationStore>();
+        services.AddSingleton<SlownessInvestigationService>();
         services.AddSingleton<RSM.Reporting.ReportExporter>();
         services.AddSingleton<ReportService>();
     }

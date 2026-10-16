@@ -1,0 +1,42 @@
+{
+  "id": "SLOW-HTTP-503",
+  "layer": "Iis",
+  "title": {
+    "fa": "خطاهای ۵۰۳ HTTP یا درخواست‌های ردشده",
+    "en": "HTTP 503 errors or dropped requests"
+  },
+  "explanation": {
+    "fa": "HTTP.sys درخواست‌ها را رد می‌کند (صف پر یا استخر متوقف) یا سایت خطاهای 5xx زیادی برمی‌گرداند.",
+    "en": "HTTP.sys rejects requests (queue full or pool down) or the site returns many 5xx errors."
+  },
+  "nextSteps": [
+    {
+      "fa": "لاگ HTTPERR و وضعیت استخر را در صفحهٔ IIS بررسی کنید.",
+      "en": "Check the HTTPERR log and pool state on the IIS page."
+    },
+    {
+      "fa": "خط زمانی رویدادها و خطاها را حوالی اولین ۵۰۳ (WAS، ANCM، خطاهای برنامه) بخوانید.",
+      "en": "Read the Events & Errors timeline around the first 503 (WAS, ANCM, application errors)."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "Http503Burst",
+      "weight": 0.5
+    },
+    {
+      "detector": "Http5xxRate",
+      "weight": 0.3
+    },
+    {
+      "detector": "RecentRecycleOrRapidFail",
+      "weight": 0.2
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

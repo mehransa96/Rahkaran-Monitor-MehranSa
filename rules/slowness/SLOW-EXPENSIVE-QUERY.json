@@ -1,0 +1,50 @@
+{
+  "id": "SLOW-EXPENSIVE-QUERY",
+  "layer": "Sql",
+  "title": {
+    "fa": "پرس‌وجوهای سنگین در حال اجرا یا طرح اجرای پس‌رفت‌کرده",
+    "en": "Expensive queries running now or regressed plans"
+  },
+  "explanation": {
+    "fa": "پرس‌وجوهای طولانی و پرمصرف یا طرح‌های اجرایی بدترشده (Query Store) منابع سرور را مصرف می‌کنند.",
+    "en": "Long-running, CPU-heavy queries or plans that got worse (Query Store) consume the server."
+  },
+  "nextSteps": [
+    {
+      "fa": "درخواست‌های در حال اجرا و پرس‌وجوهای برتر را بررسی و طرح فعلی را با طرح قبلی در Query Store مقایسه کنید.",
+      "en": "Review the running requests and the top queries; compare the current plan with the previous one in Query Store."
+    },
+    {
+      "fa": "اگر دستور متعلق به راهکاران است، آن را همراه طرح اجرا به پشتیبانی سیستم‌گروه گزارش دهید.",
+      "en": "Report the statement with its plan to Systemgroup support if it is a Rahkaran query."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "LongRunningRequest",
+      "weight": 0.4
+    },
+    {
+      "detector": "SqlCpuHigh",
+      "weight": 0.3
+    },
+    {
+      "detector": "PlanRegression",
+      "weight": 0.3
+    }
+  ],
+  "excludes": [
+    {
+      "detector": "BlockingChain",
+      "above": 0.5,
+      "factor": 0.4
+    }
+  ],
+  "contextFacts": [
+    "sql.qs.top_cpu_statement"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

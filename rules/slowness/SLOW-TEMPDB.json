@@ -1,0 +1,31 @@
+{
+  "id": "SLOW-TEMPDB",
+  "layer": "Sql",
+  "title": {
+    "fa": "رقابت تخصیص در tempdb",
+    "en": "tempdb allocation contention"
+  },
+  "explanation": {
+    "fa": "وظایف زیادی منتظر صفحه‌های تخصیص tempdb (PFS/GAM/SGAM) هستند.",
+    "en": "Many tasks wait on tempdb allocation pages (PFS/GAM/SGAM)."
+  },
+  "nextSteps": [
+    {
+      "fa": "تعداد و هم‌اندازه بودن فایل‌های دادهٔ tempdb را با توصیهٔ ستاد فنی مقایسه کنید.",
+      "en": "Check the tempdb data-file count and equal sizes against the ستاد فنی recommendation."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "TempdbContention",
+      "weight": 1,
+      "required": true
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

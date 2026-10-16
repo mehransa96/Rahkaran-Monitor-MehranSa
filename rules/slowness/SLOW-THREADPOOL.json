@@ -1,0 +1,39 @@
+{
+  "id": "SLOW-THREADPOOL",
+  "layer": "Iis",
+  "title": {
+    "fa": "کمبود Thread در Thread Pool دات‌نت",
+    "en": ".NET thread-pool starvation"
+  },
+  "explanation": {
+    "fa": "کارها سریع‌تر از آزاد شدن Threadها در Thread Pool دات‌نت صف می‌شوند (اغلب به دلیل فراخوانی‌های مسدودکننده).",
+    "en": "Work items queue in the .NET thread pool faster than threads become available (often blocking calls)."
+  },
+  "nextSteps": [
+    {
+      "fa": "با قفل‌های SQL، تأخیر Redis و فراخوانی‌های کند بیرونی روی خط زمانی مشترک تطبیق دهید.",
+      "en": "Correlate with SQL blocking, Redis latency and slow external calls on the shared timeline."
+    },
+    {
+      "fa": "پس از هماهنگی توقف یا خارج‌کردن سرور از ARR، طبق KB سیستم‌گروه با ProcDump از w3wp دامپ بگیرید و برای پشتیبانی سیستم‌گروه بفرستید.",
+      "en": "Capture a w3wp dump with ProcDump per the Systemgroup KB for Systemgroup support, after coordinating downtime or removing the server from ARR."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "ThreadPoolStarvation",
+      "weight": 0.7,
+      "required": true
+    },
+    {
+      "detector": "IisQueue",
+      "weight": 0.3
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

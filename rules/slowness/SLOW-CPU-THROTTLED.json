@@ -1,0 +1,39 @@
+{
+  "id": "SLOW-CPU-THROTTLED",
+  "layer": "Os",
+  "title": {
+    "fa": "CPU توسط طرح انرژی یا Firmware محدود شده است",
+    "en": "CPU is throttled by the power plan or firmware"
+  },
+  "explanation": {
+    "fa": "پردازنده‌ها در حالت مشغول با فرکانسی کمتر از اسمی کار می‌کنند و هر عملیات زمان بیشتری می‌برد.",
+    "en": "The processors run below their nominal frequency while busy, so every operation takes longer."
+  },
+  "nextSteps": [
+    {
+      "fa": "طرح انرژی ویندوز را High Performance کنید و پروفایل انرژی BIOS/Firmware را (Static High Performance) بررسی کنید.",
+      "en": "Set the Windows power plan to High Performance and check the BIOS/firmware power profile (static high performance)."
+    },
+    {
+      "fa": "روی ماشین مجازی، مدیریت انرژی و رزرو CPU میزبان را از تیم مجازی‌سازی پیگیری کنید.",
+      "en": "On a virtual machine, ask the virtualization team to check host power management and CPU reservation."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "CpuThrottled",
+      "weight": 0.6,
+      "required": true
+    },
+    {
+      "detector": "PowerPlanFinding",
+      "weight": 0.4
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

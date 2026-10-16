@@ -1,0 +1,55 @@
+{
+  "id": "SLOW-IIS-QUEUE",
+  "layer": "Iis",
+  "title": {
+    "fa": "صف درخواست‌های IIS در حال پر شدن است",
+    "en": "IIS request queue is backing up"
+  },
+  "explanation": {
+    "fa": "درخواست‌ها پیش از رسیدن به برنامه در صف HTTP.sys می‌مانند؛ کاربران صفحه‌های کند یا خطا می‌بینند.",
+    "en": "Requests queue in HTTP.sys before the application can take them; users see slow or failed pages."
+  },
+  "nextSteps": [
+    {
+      "fa": "درخواست‌های طولانی و کندترین آدرس‌ها را در صفحهٔ IIS پیدا کنید.",
+      "en": "Find long-running requests and the slowest URLs on the IIS page."
+    },
+    {
+      "fa": "روی خط زمانی مشترک بررسی کنید برنامه منتظر SQL Server، Redis یا Thread Pool است یا نه.",
+      "en": "Check whether the application is waiting on SQL Server, Redis or the thread pool on the shared timeline."
+    },
+    {
+      "fa": "اگر استخر قفل شده است، پیش از هر بازیافت طبق KB سیستم‌گروه با ProcDump از w3wp دامپ بگیرید؛ ابتدا زمان توقف را هماهنگ کنید یا سرور را از ARR خارج کنید.",
+      "en": "If the pool hangs, capture a w3wp dump with ProcDump per the Systemgroup KB before any recycle; coordinate downtime or take the server out of ARR first."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "IisQueue",
+      "weight": 0.5,
+      "required": true
+    },
+    {
+      "detector": "ThreadPoolStarvation",
+      "weight": 0.2
+    },
+    {
+      "detector": "Http503Burst",
+      "weight": 0.15
+    },
+    {
+      "detector": "AppCpuHigh",
+      "weight": 0.15
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [
+    "pool[*].queue_size",
+    "iis.requests.slowest_url",
+    "iis.requests.over30s"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

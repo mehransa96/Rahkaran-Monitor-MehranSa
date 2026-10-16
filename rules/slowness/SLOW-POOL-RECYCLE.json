@@ -1,0 +1,39 @@
+{
+  "id": "SLOW-POOL-RECYCLE",
+  "layer": "Iis",
+  "title": {
+    "fa": "استخر برنامه اخیراً بازیافت یا Rapid-Fail شده است",
+    "en": "Application pool recycled or rapid-failed recently"
+  },
+  "explanation": {
+    "fa": "فرایند تازه سرد شروع می‌شود (حافظهٔ نهان خالی) و خرابی‌ها کار کاربران را قطع می‌کند.",
+    "en": "A fresh worker process starts cold (caches empty), and crashes interrupt users."
+  },
+  "nextSteps": [
+    {
+      "fa": "رویدادهای WAS (۵۰۰۲، ۵۰۰۹، ۵۰۱۱، ۵۰۱۳) را در صفحهٔ رویدادها و خطاها بخوانید تا علت بازیافت مشخص شود.",
+      "en": "Read the WAS events (5002, 5009, 5011, 5013) on the Events & Errors page to find why it recycled."
+    },
+    {
+      "fa": "تنظیمات بازیافت را با توصیه‌های ستاد فنی مقایسه کنید.",
+      "en": "Review the recycling settings against the ستاد فنی recommendations."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "RecentRecycleOrRapidFail",
+      "weight": 0.7,
+      "required": true
+    },
+    {
+      "detector": "Http5xxRate",
+      "weight": 0.3
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

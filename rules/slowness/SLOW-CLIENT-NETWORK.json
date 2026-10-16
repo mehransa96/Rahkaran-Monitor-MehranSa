@@ -1,0 +1,56 @@
+{
+  "id": "SLOW-CLIENT-NETWORK",
+  "layer": "Os",
+  "title": {
+    "fa": "کلاینت یا شبکه در خواندن نتایج SQL کند است",
+    "en": "Client or network slow to read SQL results"
+  },
+  "explanation": {
+    "fa": "ASYNC_NETWORK_IO غالب است اما سرورهای App مشغول نیستند: مسیر شبکه یا یک کلاینت کند محتمل است.",
+    "en": "ASYNC_NETWORK_IO dominates but the App servers are not busy: the network path or a slow client is likely."
+  },
+  "nextSteps": [
+    {
+      "fa": "استفاده و خطاهای شبکه در دو طرف و زمان رفت‌وبرگشت تا SQL Server را بررسی کنید.",
+      "en": "Check network utilisation and errors on both ends and the round-trip time to SQL Server."
+    },
+    {
+      "fa": "مشخص کنید نشست‌های منتظر از کدام میزبان هستند (نشست‌ها به تفکیک میزبان).",
+      "en": "Find which host the waiting sessions come from (sessions by host)."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "AsyncNetworkIo",
+      "weight": 0.5,
+      "required": true
+    },
+    {
+      "detector": "NetworkSaturation",
+      "weight": 0.25
+    },
+    {
+      "detector": "SqlRttHigh",
+      "weight": 0.25
+    }
+  ],
+  "excludes": [
+    {
+      "detector": "AppCpuHigh",
+      "above": 0.5,
+      "factor": 0.5
+    },
+    {
+      "detector": "GcPressure",
+      "above": 0.5,
+      "factor": 0.5
+    }
+  ],
+  "contextFacts": [
+    "sql.sessions.by_host"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

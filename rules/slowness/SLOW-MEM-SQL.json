@@ -1,0 +1,42 @@
+{
+  "id": "SLOW-MEM-SQL",
+  "layer": "Sql",
+  "title": {
+    "fa": "فشار حافظه در SQL Server (انتظار اعطای حافظه، افت PLE)",
+    "en": "SQL Server memory pressure (grants pending, PLE drop)"
+  },
+  "explanation": {
+    "fa": "پرس‌وجوها منتظر اعطای حافظه‌اند یا Buffer Pool تخلیه می‌شود و خواندن از دیسک بیشتر می‌شود.",
+    "en": "Queries wait for memory grants or the buffer pool is being flushed, forcing more disk reads."
+  },
+  "nextSteps": [
+    {
+      "fa": "پرس‌وجوهای با Memory Grant بزرگ (Sort، Hash) را در صفحهٔ پرس‌وجوها پیدا کنید.",
+      "en": "Look for queries with large memory grants (sorts, hashes) on the Queries page."
+    },
+    {
+      "fa": "Max Server Memory را با توصیهٔ ستاد فنی برای RAM این سرور مقایسه کنید.",
+      "en": "Review max server memory against the ستاد فنی recommendation for this server's RAM."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "MemoryGrantsPending",
+      "weight": 0.5
+    },
+    {
+      "detector": "PleDrop",
+      "weight": 0.3
+    },
+    {
+      "detector": "MemoryPressureOs",
+      "weight": 0.2
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}

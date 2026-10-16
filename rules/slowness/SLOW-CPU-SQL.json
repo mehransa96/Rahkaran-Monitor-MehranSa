@@ -1,0 +1,45 @@
+{
+  "id": "SLOW-CPU-SQL",
+  "layer": "Sql",
+  "title": {
+    "fa": "مصرف CPU در SQL Server بالاست و Signal Wait زیاد است",
+    "en": "SQL Server CPU is high, with high signal waits"
+  },
+  "explanation": {
+    "fa": "خود SQL Server بیشترین CPU را مصرف می‌کند و پرس‌وجوها برای گرفتن Scheduler در صف می‌مانند.",
+    "en": "SQL Server itself consumes most of the CPU; queries queue for a scheduler."
+  },
+  "nextSteps": [
+    {
+      "fa": "پرس‌وجوهای پرمصرف CPU در صفحهٔ پرس‌وجوها و طرح اجرای آن‌ها (ایندکس گم‌شده، Scan، موازی‌سازی) را بررسی کنید.",
+      "en": "Review the top CPU queries on the Queries page and their plans (missing indexes, scans, parallelism)."
+    },
+    {
+      "fa": "MAXDOP و Cost Threshold for Parallelism را با توصیه‌های ستاد فنی مقایسه کنید.",
+      "en": "Check MAXDOP and cost threshold for parallelism against the ستاد فنی recommendations."
+    }
+  ],
+  "evidence": [
+    {
+      "detector": "SqlCpuHigh",
+      "weight": 0.5,
+      "required": true
+    },
+    {
+      "detector": "SignalWaitsHigh",
+      "weight": 0.3
+    },
+    {
+      "detector": "HostCpuSaturated",
+      "weight": 0.2
+    }
+  ],
+  "excludes": [],
+  "contextFacts": [
+    "sql.qs.top_cpu_statement"
+  ],
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft documentation / common DBA and IIS practice)"
+  }
+}
