@@ -73,11 +73,17 @@ public sealed class FullDiagnosisTests(ITestOutputHelper output) : IDisposable
         [
             "sql.inventory", "sql.configuration", "sql.storage", "sql.errorlog", "sql.agent", "sql.security", "sql.databases",
             "sql.perf", "sql.cpu", "sql.activity", "sql.deadlocks", "sql.querystats", "sql.ha", "rsm.overhead.sql", "sql.querystore", "ssrs",
+            "sql.querypacks",
         ]);
         result.Collectors.Should().NotContain(c => c.Status.Kind == CollectorStatusKind.Error, "missing permissions must degrade, never fail");
         result.RuleErrors.Should().BeEmpty();
         result.Facts["rk.detected_by"].Should().Be("setting");
         result.Facts["db[Rahkaran].recovery_model"].Should().Be("SIMPLE");
+
+        // The documented example query pack (copied next to the test binaries) ran in the Rahkaran DB.
+        result.Facts["pack.loaded"].Should().Be(1);
+        result.Facts["pack[example-table-sizes.top-tables].ok"].Should().Be(true);
+        result.Facts["pack[example-table-sizes.top-tables].database"].Should().Be("Rahkaran");
 
         var fired = result.Findings.Select(f => f.Instance is null ? f.RuleId : $"{f.RuleId}[{f.Instance}]").ToList();
         fired.Should().Contain(

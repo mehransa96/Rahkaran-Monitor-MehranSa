@@ -28,6 +28,14 @@ public sealed class SqlQueryRunner(SafeSqlExecutor executor, SqlNodeSession sess
         return result.IsOk ? result.Rows : null;
     }
 
+    /// <summary>Runs one accepted query-pack query (re-guarded by the executor); returns null (and records why) when it could not run.</summary>
+    public async Task<SqlQueryResult<IReadOnlyDictionary<string, object?>>> QueryPackAsync(QueryPackCatalog packs, QueryKey key, string database)
+    {
+        var result = await executor.QueryPackAsync(Session, packs, key, database, CancellationToken).ConfigureAwait(false);
+        _outcomes.Add(new QueryOutcome(key.Value, database, result.Status, result.Rows.Count, result.Duration, result.Message));
+        return result;
+    }
+
     /// <summary>
     /// Runs a query whose failure is an expected outcome (e.g. "no more error-log archives"): failures are not
     /// recorded and do not degrade the collector status.

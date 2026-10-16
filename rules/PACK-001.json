@@ -1,0 +1,102 @@
+{
+  "id": "PACK-001",
+  "layer": "Database",
+  "appliesTo": [],
+  "forEach": "pack",
+  "when": "coalesce(pack.breached, false)",
+  "severity": "Info",
+  "escalate": [
+    {
+      "when": "pack.breach_severity == 'Warning'",
+      "severity": "Warning"
+    },
+    {
+      "when": "pack.breach_severity == 'Critical'",
+      "severity": "Critical"
+    }
+  ],
+  "title": {
+    "fa": "{pack.title_fa}: آستانه تعریف‌شده رد شد",
+    "en": "{pack.title_en}: threshold exceeded"
+  },
+  "explanation": {
+    "fa": "{pack.breach_message_fa} — {pack.breach_count} مورد در پایگاه داده {pack.database}. این کوئری و آستانه آن را تیم در بسته کوئری اضافه کرده است (تأییدنشده؛ منبع: {pack.source}).",
+    "en": "{pack.breach_message_en} — {pack.breach_count} hit(s) in database {pack.database}. The query and its threshold come from a team query pack (unverified; source: {pack.source})."
+  },
+  "recommendation": {
+    "fa": "نتیجه را در صفحه «بسته‌های کوئری» ببینید و با ستاد فنی بررسی کنید.",
+    "en": "See the result on the Query packs page and review it with ستاد فنی."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance — threshold and source declared in the query pack manifest (user-supplied, unverified)"
+  },
+  "verified": false,
+  "confidence": 0.6,
+  "examples": [
+    {
+      "facts": {
+        "pack[team.users].title_fa": "بسته تیم — کاربران",
+        "pack[team.users].title_en": "Team pack — users",
+        "pack[team.users].database": "RK",
+        "pack[team.users].ok": true,
+        "pack[team.users].status": "Ok",
+        "pack[team.users].rows": 3,
+        "pack[team.users].breached": true,
+        "pack[team.users].breach_count": 2,
+        "pack[team.users].breach_severity": "Warning",
+        "pack[team.users].breach_message_fa": "کاربران فعال زیاد",
+        "pack[team.users].breach_message_en": "Too many active users",
+        "pack[team.users].source": "general"
+      },
+      "expect": "Warning"
+    },
+    {
+      "facts": {
+        "pack[team.users].title_fa": "بسته تیم — کاربران",
+        "pack[team.users].title_en": "Team pack — users",
+        "pack[team.users].database": "RK",
+        "pack[team.users].ok": true,
+        "pack[team.users].status": "Ok",
+        "pack[team.users].rows": 3,
+        "pack[team.users].breached": true,
+        "pack[team.users].breach_count": 1,
+        "pack[team.users].breach_severity": "Critical",
+        "pack[team.users].breach_message_fa": "x",
+        "pack[team.users].breach_message_en": "x",
+        "pack[team.users].source": "stad-fanni:doc§1"
+      },
+      "expect": "Critical"
+    },
+    {
+      "facts": {
+        "pack[team.users].title_fa": "بسته تیم — کاربران",
+        "pack[team.users].title_en": "Team pack — users",
+        "pack[team.users].database": "RK",
+        "pack[team.users].ok": true,
+        "pack[team.users].status": "Ok",
+        "pack[team.users].rows": 3,
+        "pack[team.users].breached": true,
+        "pack[team.users].breach_count": 1,
+        "pack[team.users].breach_severity": "Info",
+        "pack[team.users].breach_message_fa": "x",
+        "pack[team.users].breach_message_en": "x",
+        "pack[team.users].source": "general"
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "pack[team.users].title_fa": "بسته تیم — کاربران",
+        "pack[team.users].title_en": "Team pack — users",
+        "pack[team.users].database": "RK",
+        "pack[team.users].ok": true,
+        "pack[team.users].status": "Ok",
+        "pack[team.users].rows": 3,
+        "pack[team.users].breached": false,
+        "pack[team.users].breach_count": 0
+      },
+      "expect": null
+    }
+  ]
+}

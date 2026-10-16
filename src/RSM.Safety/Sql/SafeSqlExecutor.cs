@@ -156,6 +156,84 @@ public sealed class SafeSqlExecutor(QueryCatalog catalog)
     }
 
     /// <summary>
+    /// Runs one accepted query-pack query by its key (<c>pack.&lt;pack&gt;.&lt;key&gt;</c>), re-checked with the query-pack
+    /// SqlGuard profile, in <paramref name="database"/>, without parameters, reading at most the pack's <c>maxRows</c>.
+    /// Values are reduced to display-safe scalars (strings ≤ 500 characters, binary shown as its length).
+    /// </summary>
+    public async Task<SqlQueryResult<IReadOnlyDictionary<string, object?>>> QueryPackAsync(SqlNodeSession session, QueryPackCatalog packs, QueryKey key, string database, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(packs);
+        var query = packs.Find(key) ?? throw new ArgumentException($"Query pack key '{key}' is not loaded.", nameof(key));
+        if (string.IsNullOrWhiteSpace(database))
+        {
+            throw new ArgumentException("A target database is required for a query pack.", nameof(database));
+        }
+
+        if (session.ServerVersion is { } version && version.Major < query.Definition.MinVersion)
+        {
+            return new SqlQueryResult<IReadOnlyDictionary<string, object?>>(SqlQueryStatus.VersionTooLow, [], TimeSpan.Zero,
+                $"requires SQL Server major version {query.Definition.MinVersion} or later");
+        }
+
+        var batch = query.BatchText;
+        if (!_guardCache.GetOrAdd("pack:" + batch, static text => SqlGuard.Check(text[5..], SqlGuardProfile.QueryPack).IsAllowed))
+        {
+            throw new InvalidOperationException($"SqlGuard rejected query pack '{key}'.");
+        }
+
+        var started = Stopwatch.GetTimestamp();
+        await session.Gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await using var connection = new SqlConnection(session.BuildConnectionString(database));
+            await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+            await using var command = new SqlCommand(batch, connection) { CommandType = CommandType.Text, CommandTimeout = query.Definition.TimeoutSeconds };
+            await using var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleResult, cancellationToken).ConfigureAwait(false);
+            var rows = new List<IReadOnlyDictionary<string, object?>>();
+            var truncated = false;
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                if (rows.Count >= query.Definition.MaxRows)
+                {
+                    truncated = true;
+                    command.Cancel();
+                    break;
+                }
+
+                var row = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+                for (var i = 0; i < reader.FieldCount; i++)
+                {
+                    var name = reader.GetName(i);
+                    row[string.IsNullOrEmpty(name) ? $"column{i + 1}" : name] = DisplayValue(reader.GetValue(i));
+                }
+
+                rows.Add(row);
+            }
+
+            return new SqlQueryResult<IReadOnlyDictionary<string, object?>>(SqlQueryStatus.Ok, rows, Stopwatch.GetElapsedTime(started),
+                truncated ? $"first {query.Definition.MaxRows} rows" : null);
+        }
+        catch (SqlException ex)
+        {
+            return new SqlQueryResult<IReadOnlyDictionary<string, object?>>(Classify(ex.Number), [], Stopwatch.GetElapsedTime(started), ex.Message, ex.Number);
+        }
+        finally
+        {
+            session.Gate.Release();
+        }
+    }
+
+    internal static object? DisplayValue(object? value) => value switch
+    {
+        null or DBNull => null,
+        string s => s.Length > 500 ? s[..500] + "…" : s,
+        byte[] bytes => $"<binary {bytes.Length} bytes>",
+        bool or byte or short or int or long or decimal or double or float or DateTime or DateTimeOffset or Guid or TimeSpan => value,
+        _ => Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture) is { } text && text.Length > 500 ? text[..500] + "…" : Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture),
+    };
+
+    /// <summary>
     /// The header's <c>database</c> decides where a query runs. Fixed databases (master/msdb/tempdb) ignore nothing:
     /// passing a different database is a programming error. Per-database queries (each/rk/rs) require one.
     /// </summary>

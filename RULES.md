@@ -299,6 +299,13 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 | RK-002 | SQL sessions per App host deviate > 30 % from even/weighted share | I | GEN |
 | RK-003 | Report node and Data node are the same machine while site profile says separate | I | ARCH |
 
+## 11. Query packs (§8.7, user-supplied) — P4
+
+| ID | Check | Sev | Source |
+|---|---|---|---|
+| PACK-001 | A query-pack threshold is exceeded (severity Info/Warning/Critical and source as declared in the manifest; ⚠U) | I/W/C | GEN (per manifest) |
+| PACK-002 | A query-pack query could not run (missing object, permission, timeout) ⚠U | I | GEN |
+
 ---
 
 ## Implementation status

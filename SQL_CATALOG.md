@@ -313,6 +313,14 @@ query-pack profile** (tables/views only, no UDF calls, no cross-DB names) or is 
 shown in Settings → Query packs. Packs ship **empty**; Rahkaran-specific table names are added only by the
 team once confirmed.
 
+*As built (P4):* `QueryPacks/<pack>/manifest.json` (`id`, `title {fa,en}`, `database` = `rk` | name, `queries[]` with
+`key`, `file`, `title`, `columns`, `thresholds[]` {`column`, `op`, `value`, `severity`, `message {fa,en}`, `source` =
+`general` | `stad-fanni:…`}, `timeoutSeconds` ≤ 60, `maxRows` ≤ 1000, `minVersion`); unknown manifest members are
+refused. Accepted files run only by key `pack.<pack>.<key>` through `SafeSqlExecutor.QueryPackAsync` (hardening prefix,
+query-pack guard re-checked, no parameters, row cap, display-safe values). Collector `sql.querypacks` → facts
+`pack[<pack>.<key>].*` → PACK-001/002. A documented example that reads only catalog views lives in
+`docs/query-packs/example-table-sizes/` (CI runs it under the least-privilege login).
+
 ---
 
 ## 23. Things deliberately NOT queried

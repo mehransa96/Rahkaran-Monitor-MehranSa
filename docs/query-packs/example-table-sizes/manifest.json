@@ -1,0 +1,28 @@
+{
+  // Example query pack (copy the folder into QueryPacks/ next to RSM.exe to use it).
+  // It reads only SQL Server catalog views, so it assumes nothing about Rahkaran's own tables.
+  "id": "example-table-sizes",
+  "title": { "fa": "نمونه: بزرگ‌ترین جدول‌ها", "en": "Example: largest tables" },
+  "database": "rk",
+  "queries": [
+    {
+      "key": "top-tables",
+      "file": "top-tables.sql",
+      "title": { "fa": "۲۰ جدول بزرگ پایگاه داده راهکاران", "en": "20 largest tables of the Rahkaran database" },
+      "columns": [
+        { "name": "TableName", "title": { "fa": "جدول", "en": "Table" } },
+        { "name": "RowCount", "title": { "fa": "تعداد ردیف", "en": "Rows" } },
+        { "name": "ReservedMb", "title": { "fa": "فضای رزرو (MB)", "en": "Reserved (MB)" } }
+      ],
+      "thresholds": [
+        {
+          "column": "ReservedMb", "op": ">", "value": 102400, "severity": "Info",
+          "message": { "fa": "جدولی بزرگ‌تر از ۱۰۰ گیگابایت", "en": "A table larger than 100 GB" },
+          "source": "general"
+        }
+      ],
+      "timeoutSeconds": 10,
+      "maxRows": 20
+    }
+  ]
+}

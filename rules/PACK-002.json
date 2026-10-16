@@ -1,0 +1,54 @@
+{
+  "id": "PACK-002",
+  "layer": "Database",
+  "appliesTo": [],
+  "forEach": "pack",
+  "when": "exists(pack.ok) && !pack.ok",
+  "severity": "Info",
+  "title": {
+    "fa": "{pack.title_fa}: کوئری اجرا نشد",
+    "en": "{pack.title_en}: the query could not run"
+  },
+  "explanation": {
+    "fa": "وضعیت: {pack.status} در پایگاه داده {pack.database}. معمولاً یعنی نام جدول/ستون در این نسخه راهکاران فرق دارد یا کاربر RSM دسترسی خواندن ندارد.",
+    "en": "Status: {pack.status} in database {pack.database}. Usually the table/column names differ in this Rahkaran version or the RSM login lacks read access."
+  },
+  "recommendation": {
+    "fa": "فایل بسته کوئری را با ستاد فنی بازبینی کنید.",
+    "en": "Review the query pack file with ستاد فنی."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance — threshold and source declared in the query pack manifest (user-supplied, unverified)"
+  },
+  "verified": false,
+  "confidence": 0.6,
+  "examples": [
+    {
+      "facts": {
+        "pack[team.users].title_fa": "بسته تیم — کاربران",
+        "pack[team.users].title_en": "Team pack — users",
+        "pack[team.users].database": "RK",
+        "pack[team.users].ok": false,
+        "pack[team.users].status": "ObjectMissing",
+        "pack[team.users].rows": 0,
+        "pack[team.users].breached": false,
+        "pack[team.users].breach_count": 0
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "pack[team.users].title_fa": "بسته تیم — کاربران",
+        "pack[team.users].title_en": "Team pack — users",
+        "pack[team.users].database": "RK",
+        "pack[team.users].ok": true,
+        "pack[team.users].status": "Ok",
+        "pack[team.users].rows": 3,
+        "pack[team.users].breached": false,
+        "pack[team.users].breach_count": 0
+      },
+      "expect": null
+    }
+  ]
+}

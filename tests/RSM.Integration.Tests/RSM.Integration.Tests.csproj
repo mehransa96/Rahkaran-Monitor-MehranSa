@@ -4,4 +4,8 @@
     <ProjectReference Include="..\..\src\RSM.Hosting\RSM.Hosting.csproj" />
     <ProjectReference Include="..\..\src\RSM.Collectors.Iis\RSM.Collectors.Iis.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- The documented example query pack runs against the CI server under the least-privilege login. -->
+    <None Include="..\..\docs\query-packs\**\*" LinkBase="QueryPacks" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
