@@ -46,6 +46,12 @@ public sealed record SiteSettings
     /// <summary>Thursday (index 5) ends earlier.</summary>
     public TimeOnly ThursdayEnd { get; init; } = new(13, 0);
 
+    /// <summary>
+    /// Unverified: a file inside the Rahkaran application folder (relative path, e.g. a main assembly) whose content
+    /// fingerprint identifies the deployed build on each App node (RK-001). Empty = compare only app path segments.
+    /// </summary>
+    public string? RahkaranVersionFile { get; init; }
+
     /// <summary>Data size from which a database counts as "large" (log 10 GB guideline; diff + weekly full allowed).</summary>
     public int LargeDatabaseThresholdGb { get; init; } = 200;
 }

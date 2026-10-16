@@ -79,6 +79,8 @@ public sealed class IisConfigCollector : IisCollectorBase<NoIisState>
             webConfigs.Add(new SiteWebConfig(site.Name, app.Path, app.PhysicalPath, summary, appProblems.Count == 0 ? null : string.Join("; ", appProblems)));
         }
 
+        await FingerprintVersionFileAsync(node.Site.Settings.RahkaranVersionFile, config, transport.Files, output, problems, cancellationToken).ConfigureAwait(false);
+
         var certificates = new List<BindingCertificate>();
         foreach (var (site, binding) in config.Sites.SelectMany(s => s.Bindings.Where(b => b.CertificateHash is not null).Select(b => (s, b))))
         {
@@ -111,6 +113,52 @@ public sealed class IisConfigCollector : IisCollectorBase<NoIisState>
         Apply(config, webConfigs, certificates, transport.Certificates is not null, Clock.GetUtcNow(), output);
     }
 
+    /// <summary>
+    /// RK-001 input: the configured (unverified) version file, looked up under each application folder; the first one
+    /// found is fingerprinted (SHA-256 prefix) so App nodes can be compared without assuming a version format.
+    /// </summary>
+    internal static async Task FingerprintVersionFileAsync(string? relativeFile, ApplicationHostConfig config, IServerFiles files, LiveOutput output, List<string> problems, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(relativeFile))
+        {
+            return;
+        }
+
+        var relative = relativeFile.Trim().Replace('/', '\\').TrimStart('\\');
+        if (relative.Contains("..", StringComparison.Ordinal) || relative.Contains(':', StringComparison.Ordinal) || relative.StartsWith('%'))
+        {
+            problems.Add("version file setting must be a relative path inside the application folder");
+            return;
+        }
+
+        output.Fact("rk.version_file", relative);
+        foreach (var app in config.Sites.SelectMany(s => s.Applications).Where(a => a.PhysicalPath is not null))
+        {
+            var access = files.Map(ServerPaths.Combine(app.PhysicalPath, relative));
+            if (access is null || !files.Exists(access))
+            {
+                continue;
+            }
+
+            try
+            {
+                if (await files.Sha256Async(access, cancellationToken).ConfigureAwait(false) is { } hash)
+                {
+                    output.Fact("rk.version_file_found", true);
+                    output.Fact("rk.version_fingerprint", hash[..16]);
+                    return;
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                problems.Add($"version file: {ex.GetType().Name}");
+                return;
+            }
+        }
+
+        output.Fact("rk.version_file_found", false);
+    }
+
     /// <summary>"Processor Information" instances are "&lt;node&gt;,&lt;cpu&gt;": the number of distinct nodes.</summary>
     internal static int? NumaNodes(IEnumerable<string> instances)
     {
@@ -137,6 +185,10 @@ public sealed class IisConfigCollector : IisCollectorBase<NoIisState>
         output.Fact("iis.arr_proxy_enabled", config.ArrProxyEnabled);
         output.Fact("iis.farm_count", config.WebFarms.Count);
         output.Fact("iis.app_segments", string.Join("|", config.Sites.SelectMany(s => s.Applications).Select(a => a.Path.Trim('/').Split('/')[0]).Where(p => p.Length > 0)
+            .Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.OrdinalIgnoreCase)));
+
+        var rahkaranSites = config.Sites.Where(s => s.RahkaranRole is "Aux" or null).ToList();
+        output.Fact("rk.app_segments", string.Join("|", rahkaranSites.SelectMany(s => s.Applications).Select(a => a.Path.Trim('/').Split('/')[0]).Where(p => p.Length > 0)
             .Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.OrdinalIgnoreCase)));
 
         foreach (var site in config.Sites)

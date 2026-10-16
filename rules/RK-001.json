@@ -1,0 +1,59 @@
+{
+  "id": "RK-001",
+  "layer": "Rahkaran",
+  "appliesTo": [
+    "App"
+  ],
+  "when": "coalesce(rk.version_drift, false)",
+  "severity": "Warning",
+  "title": {
+    "fa": "نسخه راهکاران روی سرورهای برنامه یکسان نیست",
+    "en": "Rahkaran build differs across App nodes"
+  },
+  "explanation": {
+    "fa": "مقایسه بر اساس {rk.version_source}: {rk.version_drift_detail}. سرورهای پشت ARR باید دقیقاً یک نسخه داشته باشند؛ در غیر این صورت کاربران بسته به سروری که به آن می‌رسند رفتار متفاوتی می‌بینند.",
+    "en": "Compared by {rk.version_source}: {rk.version_drift_detail}. Servers behind ARR must run exactly the same build; otherwise users see different behaviour depending on the server they reach."
+  },
+  "recommendation": {
+    "fa": "به‌روزرسانی ناقص را با ستاد فنی بررسی کنید (فایل نسخه یک تنظیم تأییدنشده است).",
+    "en": "Review the incomplete update with ستاد فنی (the version file is an unverified setting)."
+  },
+  "source": {
+    "kind": "Architecture",
+    "citation": "Rahkaran architecture (spec §3)"
+  },
+  "verified": false,
+  "confidence": 0.7,
+  "examples": [
+    {
+      "facts": {
+        "rk.version_drift": true,
+        "rk.version_source": "file",
+        "rk.version_drift_detail": "app01: 1A2B…; app02: 9F8E…"
+      },
+      "expect": "Warning",
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {
+        "rk.version_drift": false,
+        "rk.version_source": "path segment",
+        "rk.version_drift_detail": "app01: Rahkaran73; app02: Rahkaran73"
+      },
+      "expect": null,
+      "roles": [
+        "App"
+      ]
+    },
+    {
+      "facts": {},
+      "expect": null,
+      "roles": [
+        "App"
+      ],
+      "note": "single App node: nothing to compare"
+    }
+  ]
+}

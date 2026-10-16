@@ -256,6 +256,10 @@ public sealed class RedisCollector : ILiveCollector, IRequiresTransport
         }
 
         output.Fact("redis.client_hosts", state.Clients.Select(c => (object?)c.Address).ToList());
+        foreach (var client in state.Clients.Take(50))
+        {
+            output.Fact($"redisclient[{client.Address}].connections", client.Connections);
+        }
         output.Sample("redis.used_memory_mb", null, info.UsedMemory / 1048576.0, now);
         output.Sample("redis.ops_per_sec", null, info.OpsPerSec, now);
         output.Sample("redis.connected_clients", null, info.ConnectedClients, now);

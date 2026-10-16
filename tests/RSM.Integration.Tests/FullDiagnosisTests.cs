@@ -73,7 +73,7 @@ public sealed class FullDiagnosisTests(ITestOutputHelper output) : IDisposable
         [
             "sql.inventory", "sql.configuration", "sql.storage", "sql.errorlog", "sql.agent", "sql.security", "sql.databases",
             "sql.perf", "sql.cpu", "sql.activity", "sql.deadlocks", "sql.querystats", "sql.ha", "rsm.overhead.sql", "sql.querystore", "ssrs",
-            "sql.querypacks",
+            "sql.querypacks", "topo.sql",
         ]);
         result.Collectors.Should().NotContain(c => c.Status.Kind == CollectorStatusKind.Error, "missing permissions must degrade, never fail");
         result.RuleErrors.Should().BeEmpty();

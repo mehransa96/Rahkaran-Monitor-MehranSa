@@ -1,0 +1,53 @@
+{
+  "id": "RK-002",
+  "layer": "Rahkaran",
+  "appliesTo": [
+    "Data"
+  ],
+  "forEach": "apphost",
+  "when": "apphost.share_deviation_pct > params.max_pct",
+  "severity": "Info",
+  "title": {
+    "fa": "سهم نشست‌های SQL سرور {instance} با سهم مورد انتظار فاصله دارد",
+    "en": "SQL sessions of App host {instance} deviate from its expected share"
+  },
+  "explanation": {
+    "fa": "{instance}: {apphost.sql_sessions} نشست ({apphost.sql_share_pct}٪) در برابر سهم مورد انتظار {apphost.expected_share_pct}٪ (مبنا: {apphost.share_basis}). عدم توازن معمولاً یعنی ARR بار را یکنواخت پخش نمی‌کند یا یک سرور از مدار خارج شده است.",
+    "en": "{instance}: {apphost.sql_sessions} sessions ({apphost.sql_share_pct} %) against an expected {apphost.expected_share_pct} % (basis: {apphost.share_basis}). An imbalance usually means ARR does not spread the load evenly or a server dropped out."
+  },
+  "recommendation": {
+    "fa": "سلامت و وزن سرورها در فارم ARR و صفحه توپولوژی را بررسی کنید.",
+    "en": "Check server health and weights in the ARR farm and the topology page."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max_pct": 30
+  },
+  "examples": [
+    {
+      "facts": {
+        "apphost[app02].share_deviation_pct": 60,
+        "apphost[app02].sql_sessions": 20,
+        "apphost[app02].sql_share_pct": 20,
+        "apphost[app02].expected_share_pct": 50,
+        "apphost[app02].share_basis": "even"
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "apphost[app02].share_deviation_pct": 10,
+        "apphost[app02].sql_sessions": 45,
+        "apphost[app02].sql_share_pct": 45,
+        "apphost[app02].expected_share_pct": 50,
+        "apphost[app02].share_basis": "even"
+      },
+      "expect": null
+    }
+  ]
+}

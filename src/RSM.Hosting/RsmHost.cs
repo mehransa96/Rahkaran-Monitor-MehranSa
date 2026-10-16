@@ -88,6 +88,8 @@ public static class RsmHost
         // Phase 4: Redis, SSRS, RabbitMQ, query packs, .NET runtime.
         services.AddSingleton<ICollector, RedisCollector>();
         services.AddSingleton<ICollector, RabbitMqCollector>();
+        services.AddSingleton<ICollector, RSM.Collectors.Sql.Live.SqlClientsCollector>();
+        services.AddSingleton<RSM.Core.Rules.ISiteAnalyzer, RahkaranSiteAnalyzer>();
 
         // §8.7 query packs next to the exe (empty by default): loaded once, every file guarded or refused with the reason.
         services.AddSingleton(_ => RSM.Safety.Sql.QueryPackCatalog.LoadAsync(Path.Combine(AppContext.BaseDirectory, "QueryPacks"), CancellationToken.None).GetAwaiter().GetResult());

@@ -13,7 +13,8 @@ public sealed record WindowsInventory(
     IReadOnlyList<CimRow>? PowerPlans,
     CimRow? TimeZone,
     RegistrySnapshot? Registry,
-    DateTimeOffset AtUtc);
+    DateTimeOffset AtUtc,
+    IReadOnlyList<CimRow>? Adapters = null);
 
 /// <summary>Whitelisted registry values read for the inventory (null fields = not readable).</summary>
 public sealed record RegistrySnapshot(
@@ -44,7 +45,7 @@ public sealed class WindowsInventoryCollector : WindowsCollectorBase<NoWindowsSt
         var os = await TryQueryAsync(cim, new CimQuery("Win32_OperatingSystem",
             ["Caption", "Version", "BuildNumber", "OSArchitecture", "ProductType", "LastBootUpTime", "TotalVisibleMemorySize", "FreePhysicalMemory", "SystemDrive"]), problems, cancellationToken).ConfigureAwait(false);
         var cs = await TryQueryAsync(cim, new CimQuery("Win32_ComputerSystem",
-            ["Manufacturer", "Model", "NumberOfProcessors", "NumberOfLogicalProcessors", "TotalPhysicalMemory", "HypervisorPresent", "AutomaticManagedPagefile", "Domain"]), problems, cancellationToken).ConfigureAwait(false);
+            ["Manufacturer", "Model", "NumberOfProcessors", "NumberOfLogicalProcessors", "TotalPhysicalMemory", "HypervisorPresent", "AutomaticManagedPagefile", "Domain", "Name", "DNSHostName"]), problems, cancellationToken).ConfigureAwait(false);
         var cpus = await TryQueryAsync(cim, new CimQuery("Win32_Processor",
             ["Name", "NumberOfCores", "NumberOfLogicalProcessors", "MaxClockSpeed", "CurrentClockSpeed", "VirtualizationFirmwareEnabled"]), problems, cancellationToken).ConfigureAwait(false);
         var pageFiles = await TryQueryAsync(cim, new CimQuery("Win32_PageFileSetting", ["Name", "InitialSize", "MaximumSize"]), problems, cancellationToken).ConfigureAwait(false);
@@ -52,9 +53,11 @@ public sealed class WindowsInventoryCollector : WindowsCollectorBase<NoWindowsSt
             ["Name", "Label", "BlockSize", "Capacity", "FreeSpace", "FileSystem", "DriveType", "BootVolume", "SystemVolume", "PageFilePresent"], "DriveType = 3"), problems, cancellationToken).ConfigureAwait(false);
         var plans = await TryQueryAsync(cim, new CimQuery("Win32_PowerPlan", ["InstanceID", "ElementName", "IsActive"], null, @"root\cimv2\power"), [], cancellationToken).ConfigureAwait(false);
         var tz = await TryQueryAsync(cim, new CimQuery("Win32_TimeZone", ["Caption", "StandardName", "DaylightName", "DaylightMonth", "Bias"]), problems, cancellationToken).ConfigureAwait(false);
+        // Addresses identify this node in other nodes' views (SQL client_net_address, Redis CLIENT LIST, ARR farm servers).
+        var adapters = await TryQueryAsync(cim, new CimQuery("Win32_NetworkAdapterConfiguration", ["IPAddress"], "IPEnabled = TRUE"), [], cancellationToken).ConfigureAwait(false);
         var registry = ReadRegistry(transport.Registry, problems);
 
-        Analyze(new WindowsInventory(os?.FirstOrDefault(), cs?.FirstOrDefault(), cpus, pageFiles, volumes, plans, tz?.FirstOrDefault(), registry, Clock.GetUtcNow()), output);
+        Analyze(new WindowsInventory(os?.FirstOrDefault(), cs?.FirstOrDefault(), cpus, pageFiles, volumes, plans, tz?.FirstOrDefault(), registry, Clock.GetUtcNow(), adapters), output);
     }
 
     internal static RegistrySnapshot? ReadRegistry(IRegistryValues? registry, List<string> problems)
@@ -115,6 +118,21 @@ public sealed class WindowsInventoryCollector : WindowsCollectorBase<NoWindowsSt
 
     internal static void Analyze(WindowsInventory inv, LiveOutput output)
     {
+        if (inv.Adapters is { } adapters)
+        {
+            var addresses = adapters.SelectMany(a => a["IPAddress"] switch
+                {
+                    string single => [single],
+                    IEnumerable<string> many => many,
+                    System.Collections.IEnumerable items => items.Cast<object?>().Select(i => Convert.ToString(i, CultureInfo.InvariantCulture) ?? string.Empty),
+                    _ => [],
+                })
+                .Where(a => a.Length > 0 && !a.StartsWith("fe80:", StringComparison.OrdinalIgnoreCase))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            output.Fact("os.ip_addresses", string.Join("|", addresses));
+        }
+
         if (inv.Os is { } os)
         {
             output.Fact("os.caption", os.String("Caption"));
@@ -133,6 +151,9 @@ public sealed class WindowsInventoryCollector : WindowsCollectorBase<NoWindowsSt
         {
             var manufacturer = cs.String("Manufacturer") ?? string.Empty;
             var model = cs.String("Model") ?? string.Empty;
+            output.Fact("os.computer_name", cs.String("Name"));
+            output.Fact("os.dns_host_name", cs.String("DNSHostName") is { Length: > 0 } dns && cs.String("Domain") is { Length: > 0 } domain && !domain.Equals("WORKGROUP", StringComparison.OrdinalIgnoreCase)
+                ? $"{dns}.{domain}" : cs.String("DNSHostName"));
             output.Fact("os.manufacturer", manufacturer);
             output.Fact("os.model", model);
             output.Fact("os.is_hpe", manufacturer.Contains("HPE", StringComparison.OrdinalIgnoreCase) || manufacturer.Contains("Hewlett", StringComparison.OrdinalIgnoreCase));

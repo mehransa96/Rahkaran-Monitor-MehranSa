@@ -1,0 +1,49 @@
+{
+  "id": "RK-003",
+  "layer": "Rahkaran",
+  "appliesTo": [
+    "Report"
+  ],
+  "when": "coalesce(rk.report_data_same_machine, false)",
+  "severity": "Info",
+  "title": {
+    "fa": "سرور گزارش و سرور داده در عمل یک ماشین هستند",
+    "en": "Report and Data nodes are the same machine"
+  },
+  "explanation": {
+    "fa": "در پروفایل سایت، سرور گزارش جدا از سرور داده ({rk.report_data_same_machine_with}) تعریف شده ولی هر دو به یک ماشین می‌رسند (نام یا آدرس یکسان). SSRS و SQL منابع یک سرور را به اشتراک می‌گذارند.",
+    "en": "The site profile defines the Report node separately from the Data node ({rk.report_data_same_machine_with}), but both resolve to the same machine (same name or address). SSRS and SQL share one server's resources."
+  },
+  "recommendation": {
+    "fa": "پروفایل سایت را اصلاح کنید یا جدا بودن سرورها را با ستاد فنی بررسی کنید.",
+    "en": "Correct the site profile or review the separation with ستاد فنی."
+  },
+  "source": {
+    "kind": "Architecture",
+    "citation": "Rahkaran architecture (spec §3)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "rk.report_data_same_machine": true,
+        "rk.report_data_same_machine_with": "db01"
+      },
+      "expect": "Info",
+      "roles": [
+        "Report"
+      ]
+    },
+    {
+      "facts": {
+        "rk.report_data_same_machine": false,
+        "rk.report_data_same_machine_with": ""
+      },
+      "expect": null,
+      "roles": [
+        "Report"
+      ]
+    }
+  ]
+}

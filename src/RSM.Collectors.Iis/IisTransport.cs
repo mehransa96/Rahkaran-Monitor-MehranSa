@@ -87,6 +87,9 @@ public interface IServerFiles
     IReadOnlyList<ServerFileInfo> List(string accessDirectory, string pattern, int max = 1000);
 
     bool Exists(string accessPath);
+
+    /// <summary>SHA-256 (hex) of a file read with FileAccess.Read, or null when not supported.</summary>
+    Task<string?> Sha256Async(string accessPath, CancellationToken cancellationToken) => Task.FromResult<string?>(null);
 }
 
 /// <summary><see cref="IServerFiles"/> over <see cref="ReadOnlyFile"/> (FileAccess.Read, FileShare.ReadWrite | Delete).</summary>
@@ -105,6 +108,12 @@ public sealed class ServerFiles(string? remoteHost, string systemDrive = "C:", s
     public IReadOnlyList<ServerFileInfo> List(string accessDirectory, string pattern, int max = 1000) => ReadOnlyFile.ListInfo(accessDirectory, pattern, max);
 
     public bool Exists(string accessPath) => ReadOnlyFile.Exists(accessPath);
+
+    public async Task<string?> Sha256Async(string accessPath, CancellationToken cancellationToken)
+    {
+        await using var stream = ReadOnlyFile.OpenRead(accessPath);
+        return Convert.ToHexString(await System.Security.Cryptography.SHA256.HashDataAsync(stream, cancellationToken).ConfigureAwait(false));
+    }
 }
 
 public sealed record PoolRuntime(string Name, string? State);
