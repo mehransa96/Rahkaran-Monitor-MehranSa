@@ -1,0 +1,59 @@
+{
+  "id": "RMQ-002",
+  "layer": "RabbitMq",
+  "appliesTo": [
+    "Workflow"
+  ],
+  "when": "rmq.reachable && rmq.stuck_queues > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "{rmq.stuck_queues} صف RabbitMQ پیام دارد ولی مصرف‌کننده ندارد",
+    "en": "{rmq.stuck_queues} RabbitMQ queues have messages but no consumer"
+  },
+  "explanation": {
+    "fa": "صف‌ها (تعداد پیام): {rmq.stuck_queue_names}. بیش از ۱۰۰ پیام بدون مصرف‌کننده یعنی سرویس گردش کار پیام‌ها را برنمی‌دارد (گردش کار گیر کرده).",
+    "en": "Queues (messages): {rmq.stuck_queue_names}. More than 100 messages with no consumer means the workflow service is not picking them up (workflow stuck)."
+  },
+  "recommendation": {
+    "fa": "وضعیت سرویس گردش کار راهکاران و اتصال آن به RabbitMQ را بررسی کنید.",
+    "en": "Check the Rahkaran workflow service and its connection to RabbitMQ."
+  },
+  "source": {
+    "kind": "Architecture",
+    "citation": "Rahkaran architecture (spec §3)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "rmq.reachable": true,
+        "rmq.alarm": false,
+        "rmq.alarm_nodes": "",
+        "rmq.fd_max_pct": 20,
+        "rmq.sockets_max_pct": 10,
+        "rmq.stuck_queues": 1,
+        "rmq.stuck_queue_names": "wf.tasks (540)"
+      },
+      "expect": "Warning",
+      "roles": [
+        "Workflow"
+      ]
+    },
+    {
+      "facts": {
+        "rmq.reachable": true,
+        "rmq.alarm": false,
+        "rmq.alarm_nodes": "",
+        "rmq.fd_max_pct": 20,
+        "rmq.sockets_max_pct": 10,
+        "rmq.stuck_queues": 0,
+        "rmq.stuck_queue_names": ""
+      },
+      "expect": null,
+      "roles": [
+        "Workflow"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "id": "RMQ-003",
+  "layer": "RabbitMq",
+  "appliesTo": [
+    "Workflow"
+  ],
+  "when": "rmq.reachable && coalesce(rmq.unacked_growing_15m, false)",
+  "severity": "Info",
+  "title": {
+    "fa": "پیام‌های تأییدنشده RabbitMQ در ۱۵ دقیقه گذشته پیوسته افزایش یافته‌اند",
+    "en": "RabbitMQ unacknowledged messages grew for 15 minutes"
+  },
+  "explanation": {
+    "fa": "اکنون {rmq.unacked} پیام تحویل‌شده ولی تأییدنشده وجود دارد؛ مصرف‌کننده‌ها پیام‌ها را می‌گیرند ولی پردازش آن‌ها تمام نمی‌شود.",
+    "en": "{rmq.unacked} messages are delivered but not acknowledged; consumers take messages but do not finish processing them."
+  },
+  "recommendation": {
+    "fa": "کندی یا خطای سرویس گردش کار (و پایگاه داده‌ای که به آن وابسته است) را بررسی کنید.",
+    "en": "Look for slowness or errors in the workflow service (and the database it depends on)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "rmq.reachable": true,
+        "rmq.alarm": false,
+        "rmq.alarm_nodes": "",
+        "rmq.fd_max_pct": 20,
+        "rmq.sockets_max_pct": 10,
+        "rmq.stuck_queues": 0,
+        "rmq.stuck_queue_names": "",
+        "rmq.unacked_growing_15m": true,
+        "rmq.unacked": 320
+      },
+      "expect": "Info",
+      "roles": [
+        "Workflow"
+      ]
+    },
+    {
+      "facts": {
+        "rmq.reachable": true,
+        "rmq.alarm": false,
+        "rmq.alarm_nodes": "",
+        "rmq.fd_max_pct": 20,
+        "rmq.sockets_max_pct": 10,
+        "rmq.stuck_queues": 0,
+        "rmq.stuck_queue_names": "",
+        "rmq.unacked_growing_15m": false,
+        "rmq.unacked": 3
+      },
+      "expect": null,
+      "roles": [
+        "Workflow"
+      ]
+    },
+    {
+      "facts": {
+        "rmq.reachable": true,
+        "rmq.alarm": false,
+        "rmq.alarm_nodes": "",
+        "rmq.fd_max_pct": 20,
+        "rmq.sockets_max_pct": 10,
+        "rmq.stuck_queues": 0,
+        "rmq.stuck_queue_names": "",
+        "rmq.unacked": 3
+      },
+      "expect": null,
+      "roles": [
+        "Workflow"
+      ],
+      "note": "less than 15 minutes of history"
+    }
+  ]
+}

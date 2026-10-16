@@ -2,6 +2,7 @@ using System.Runtime.Versioning;
 using System.Security.Principal;
 using Microsoft.Extensions.Logging;
 using RSM.Collectors.Iis;
+using RSM.Collectors.Rahkaran;
 using RSM.Collectors.Redis;
 using RSM.Collectors.Sql.Capabilities;
 using RSM.Collectors.Windows;
@@ -83,7 +84,8 @@ public sealed class ConnectionTester(
             }
         }
 
-        matrix.Set(CapabilityIds.RabbitApi, node.RabbitMq is null ? CapabilityState.NotConfigured : CapabilityState.NotImplemented, "Phase 4");
+        var rabbitPassword = node.RabbitMq is { UserName: { Length: > 0 } } ? await secrets.GetAsync(site.Id, node.Id, SecretKind.RabbitPassword, cancellationToken).ConfigureAwait(false) : null;
+        await RabbitCapabilityProbe.ProbeAsync(node.RabbitMq, rabbitPassword, node.Roles, matrix, cancellationToken).ConfigureAwait(false);
         matrix.Set(CapabilityIds.DotNetEventPipe, CapabilityState.NotImplemented, "Phase 4 (optional, off by default)");
         matrix.Set(CapabilityIds.RsmElevated, Elevation.IsElevated() ? CapabilityState.Available : CapabilityState.NeedsElevation);
 

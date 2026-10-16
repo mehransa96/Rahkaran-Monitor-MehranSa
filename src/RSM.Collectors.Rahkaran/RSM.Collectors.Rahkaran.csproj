@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Rahkaran-specific layer (spec §3, §6, §11): RabbitMQ (GET-only management API through RSM.Safety.Http.RabbitGetClient),
+    topology discovery, and the optional .NET runtime counters of the Rahkaran process. Nothing product-specific is
+    hard-coded beyond spec §3; everything else is a setting labelled unverified.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>RSM.Collectors.Rahkaran</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RSM.Core\RSM.Core.csproj" />
+    <ProjectReference Include="..\RSM.Safety\RSM.Safety.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="RSM.Tests" />
+  </ItemGroup>
+</Project>

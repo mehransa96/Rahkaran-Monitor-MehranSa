@@ -1,0 +1,103 @@
+{
+  "id": "RMQ-001",
+  "layer": "RabbitMq",
+  "appliesTo": [
+    "Workflow"
+  ],
+  "when": "rmq.reachable && (rmq.alarm || rmq.fd_max_pct > params.max_pct || rmq.sockets_max_pct > params.max_pct)",
+  "severity": "Critical",
+  "title": {
+    "fa": "هشدار منابع در RabbitMQ (حافظه/دیسک یا توصیف‌گر فایل/سوکت)",
+    "en": "RabbitMQ resource alarm (memory/disk or file descriptors/sockets)"
+  },
+  "explanation": {
+    "fa": "گره‌های دارای هشدار: {rmq.alarm_nodes}. بیشترین مصرف توصیف‌گر فایل {rmq.fd_max_pct}٪ و سوکت {rmq.sockets_max_pct}٪. در حالت هشدار، RabbitMQ انتشار پیام را متوقف می‌کند و گردش کار راهکاران می‌ایستد.",
+    "en": "Nodes in alarm: {rmq.alarm_nodes}. Highest file-descriptor use {rmq.fd_max_pct} %, sockets {rmq.sockets_max_pct} %. While an alarm is set RabbitMQ blocks publishers and Rahkaran workflow stalls."
+  },
+  "recommendation": {
+    "fa": "حافظه و فضای دیسک سرور RabbitMQ و صف‌های پرحجم را بررسی کنید (RSM هیچ تغییری در RabbitMQ نمی‌دهد).",
+    "en": "Check memory and disk space on the RabbitMQ server and the largest queues (RSM changes nothing in RabbitMQ)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max_pct": 90
+  },
+  "examples": [
+    {
+      "facts": {
+        "rmq.reachable": true,
+        "rmq.alarm": true,
+        "rmq.alarm_nodes": "rabbit@wf01 (memory)",
+        "rmq.fd_max_pct": 20,
+        "rmq.sockets_max_pct": 10,
+        "rmq.stuck_queues": 0,
+        "rmq.stuck_queue_names": ""
+      },
+      "expect": "Critical",
+      "roles": [
+        "Workflow"
+      ]
+    },
+    {
+      "facts": {
+        "rmq.reachable": true,
+        "rmq.alarm": false,
+        "rmq.alarm_nodes": "",
+        "rmq.fd_max_pct": 95,
+        "rmq.sockets_max_pct": 10,
+        "rmq.stuck_queues": 0,
+        "rmq.stuck_queue_names": ""
+      },
+      "expect": "Critical",
+      "roles": [
+        "Workflow"
+      ],
+      "note": "file descriptors nearly exhausted"
+    },
+    {
+      "facts": {
+        "rmq.reachable": true,
+        "rmq.alarm": false,
+        "rmq.alarm_nodes": "",
+        "rmq.fd_max_pct": 20,
+        "rmq.sockets_max_pct": 92,
+        "rmq.stuck_queues": 0,
+        "rmq.stuck_queue_names": ""
+      },
+      "expect": "Critical",
+      "roles": [
+        "Workflow"
+      ]
+    },
+    {
+      "facts": {
+        "rmq.reachable": true,
+        "rmq.alarm": false,
+        "rmq.alarm_nodes": "",
+        "rmq.fd_max_pct": 20,
+        "rmq.sockets_max_pct": 10,
+        "rmq.stuck_queues": 0,
+        "rmq.stuck_queue_names": ""
+      },
+      "expect": null,
+      "roles": [
+        "Workflow"
+      ]
+    },
+    {
+      "facts": {
+        "rmq.reachable": false
+      },
+      "expect": null,
+      "roles": [
+        "Workflow"
+      ],
+      "note": "API unreachable: shown in the Capability Matrix, not as an alarm"
+    }
+  ]
+}

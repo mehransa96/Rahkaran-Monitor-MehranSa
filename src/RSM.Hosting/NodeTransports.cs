@@ -1,4 +1,5 @@
 using RSM.Collectors.Iis;
+using RSM.Collectors.Rahkaran;
 using RSM.Collectors.Redis;
 using RSM.Collectors.Windows;
 using RSM.Core.Capabilities;
@@ -50,6 +51,20 @@ public sealed class NodeTransportOpener(SecretStore secrets)
         {
             var password = redis.HasPassword ? await secrets.GetAsync(site.Id, node.Id, SecretKind.RedisPassword, cancellationToken).ConfigureAwait(false) : null;
             list.Add(new RedisNodeTransport(redis, password));
+        }
+
+        // RabbitMQ management API (off by default): opened only when configured; GET on three whitelisted paths.
+        if (node.RabbitMq is { } rabbit)
+        {
+            var password = string.IsNullOrEmpty(rabbit.UserName) ? null : await secrets.GetAsync(site.Id, node.Id, SecretKind.RabbitPassword, cancellationToken).ConfigureAwait(false);
+            try
+            {
+                list.Add(new RabbitNodeTransport(rabbit, password));
+            }
+            catch (RSM.Safety.Http.HttpRequestRejectedException)
+            {
+                // Invalid URL scheme: the capability probe reports it.
+            }
         }
 
         if (matrix.Has(CapabilityIds.WinCim))

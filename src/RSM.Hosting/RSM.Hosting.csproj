@@ -10,6 +10,7 @@
     <ProjectReference Include="..\RSM.Storage\RSM.Storage.csproj" />
     <ProjectReference Include="..\RSM.Collectors.Sql\RSM.Collectors.Sql.csproj" />
     <ProjectReference Include="..\RSM.Collectors.Redis\RSM.Collectors.Redis.csproj" />
+    <ProjectReference Include="..\RSM.Collectors.Rahkaran\RSM.Collectors.Rahkaran.csproj" />
     <ProjectReference Include="..\RSM.Collectors.Database\RSM.Collectors.Database.csproj" />
     <ProjectReference Include="..\RSM.Collectors.Windows\RSM.Collectors.Windows.csproj" />
     <ProjectReference Include="..\RSM.Collectors.Iis\RSM.Collectors.Iis.csproj" />

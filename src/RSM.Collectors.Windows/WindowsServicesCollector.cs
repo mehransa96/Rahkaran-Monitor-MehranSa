@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.IO.Enumeration;
 using RSM.Core.Model;
 using RSM.Core.Profiles;
@@ -60,6 +61,10 @@ public sealed class WindowsServicesCollector : WindowsCollectorBase<NoServiceSta
     private static readonly CimQuery ServiceQuery = new("Win32_Service", ["Name", "DisplayName", "State", "StartMode", "StartName", "ProcessId"]);
     private static readonly CimQuery ProcessQuery = new("Win32_Process", ["ProcessId", "CreationDate"]);
 
+    /// <summary>Listening TCP endpoints of one process (MSFT_NetTCPConnection.State 2 = Listen); the PID is an integer from CIM.</summary>
+    internal static CimQuery ListenQuery(int pid) =>
+        new("MSFT_NetTCPConnection", ["LocalAddress", "LocalPort"], string.Create(CultureInfo.InvariantCulture, $"State = 2 AND OwningProcess = {pid}"), @"root\StandardCimv2");
+
     /// <summary>Built-in watch list (product service names stated in spec §9.7 / §11); site settings add the rest.</summary>
     public static IReadOnlyList<WatchedService> BuiltIn { get; } =
     [
@@ -116,6 +121,30 @@ public sealed class WindowsServicesCollector : WindowsCollectorBase<NoServiceSta
         }
 
         Apply(watched.Select(s => s with { StartedUtc = s.ProcessId is { } pid && started.TryGetValue(pid, out var at) ? at : null }).ToList(), Clock.GetUtcNow(), output);
+
+        // §11 CodeMeter: the port the running CodeMeter Runtime listens on (display; no licence API is called).
+        var codeMeterPids = watched.Where(s => s.Category == ServiceCategory.CodeMeter && s.IsRunning && s.ProcessId is > 0).Select(s => s.ProcessId!.Value).Distinct().ToList();
+        if (codeMeterPids.Count > 0)
+        {
+            var endpoints = new List<string>();
+            foreach (var pid in codeMeterPids)
+            {
+                if (await TryQueryAsync(transport.Cim, ListenQuery(pid), problems, cancellationToken).ConfigureAwait(false) is { } listen)
+                {
+                    endpoints.AddRange(listen.Select(r => $"{r.String("LocalAddress")}:{r.Number("LocalPort")?.ToString(CultureInfo.InvariantCulture)}"));
+                }
+            }
+
+            ApplyCodeMeterPorts(endpoints, output);
+        }
+    }
+
+    internal static void ApplyCodeMeterPorts(IReadOnlyList<string> endpoints, LiveOutput output)
+    {
+        var distinct = endpoints.Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(e => e, StringComparer.Ordinal).ToList();
+        output.Payload["codemeter_listen"] = distinct;
+        output.Fact("svc.codemeter_listening", distinct.Count > 0);
+        output.Fact("svc.codemeter_listen_ports", string.Join(", ", distinct));
     }
 
     /// <summary>Watched services among all <c>Win32_Service</c> rows; a pattern matches the service name or display name.</summary>

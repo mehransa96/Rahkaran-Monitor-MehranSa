@@ -40,6 +40,9 @@ jobs:
       redis:
         image: redis:7
         ports: ["6379:6379"]
+      rabbitmq:
+        image: rabbitmq:3.13-management
+        ports: ["15672:15672"]
     env:
       SA_PASSWORD: ${{ format('Ci-{0}-Sa1!', github.run_id) }}
       RSM_IT_PASSWORD: ${{ format('Ci-{0}-Rsm1!', github.run_id) }}
@@ -73,6 +76,8 @@ jobs:
         env:
           RSM_IT_SQL: Server=localhost,1433;User ID=rsm_monitor;Password=${{ env.RSM_IT_PASSWORD }};TrustServerCertificate=True;Encrypt=Optional
           RSM_IT_REDIS: 127.0.0.1:6379
+          # RabbitMQ management API (guest is allowed from localhost only — the mapped port is local).
+          RSM_IT_RABBIT: http://127.0.0.1:15672/
           RSM_IT_SEEDED: "1"
           # Admin connection used only by the test's demo "application" (blocking/deadlock, always rolled back).
           RSM_IT_SQL_ADMIN: Server=localhost,1433;User ID=sa;Password=${{ env.SA_PASSWORD }};TrustServerCertificate=True;Encrypt=Optional

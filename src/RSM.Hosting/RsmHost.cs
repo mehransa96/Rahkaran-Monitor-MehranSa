@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RSM.Collectors.Iis;
+using RSM.Collectors.Rahkaran;
 using RSM.Collectors.Redis;
 using RSM.Collectors.Database;
 using RSM.Collectors.Sql.Capabilities;
@@ -86,6 +87,7 @@ public static class RsmHost
 
         // Phase 4: Redis, SSRS, RabbitMQ, query packs, .NET runtime.
         services.AddSingleton<ICollector, RedisCollector>();
+        services.AddSingleton<ICollector, RabbitMqCollector>();
         services.AddSingleton<ICollector, SsrsCollector>();
         services.AddSingleton<RSM.Core.Rules.ISiteAnalyzer, IisSiteAnalyzer>();
         services.AddSingleton<RSM.Core.Rules.ISiteAnalyzer, WindowsNodeAnalyzer>();

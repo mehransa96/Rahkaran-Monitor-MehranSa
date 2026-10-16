@@ -39,7 +39,7 @@ RSM.sln
 │  ├─ RSM.Collectors.Windows      net8.0          PDH/CIM/EventLogReader/registry(read); services via CIM
 │  ├─ RSM.Collectors.Iis          net8.0          IIS files (local or admin share) + MWA read-only (local)
 │  ├─ RSM.Collectors.Redis        net8.0          uses RSM.Safety.RespWhitelistClient
-│  ├─ RSM.Collectors.Rahkaran     net8.0-windows  topology, version drift, SSRS, CodeMeter, RabbitMQ,
+│  ├─ RSM.Collectors.Rahkaran     net8.0          topology, version drift, SSRS, CodeMeter, RabbitMQ,
 │  │                                              EventPipe runtime counters (optional, local only)
 │  ├─ RSM.Storage                 net8.0          SQLite schema, migrations, downsampling, baselines
 │  ├─ RSM.Reporting               net8.0          Scriban HTML, PDF, JSON bundle, masking, import/merge
