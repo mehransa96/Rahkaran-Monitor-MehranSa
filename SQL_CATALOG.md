@@ -292,11 +292,12 @@ assumed. The user can override the selection per site.
 
 | Key | Purpose | Objects | Ver | Perm | Cost | DB |
 |---|---|---|---|---|---|---|
-| `ssrs.detect` | Find ReportServer DBs that expose `ExecutionLog3` | `sys.databases` (`name LIKE N'ReportServer%'`), `OBJECT_ID(...)` | 13 | public | C | master |
-| `ssrs.exec.summary` | Per report: runs, failures, avg/p95 TimeDataRetrieval vs TimeProcessing vs TimeRendering (last @days) | `dbo.ExecutionLog3` | 13 | SELECT on view | M | rs |
-| `ssrs.exec.slowest` | Top 50 slowest executions | `dbo.ExecutionLog3` | 13 | same | M | rs |
-| `ssrs.exec.hourly` | Executions per hour / top users | `dbo.ExecutionLog3` | 13 | same | M | rs |
-| `ssrs.subscriptions` | Subscriptions with last status/run | `dbo.Subscriptions`, `dbo.Catalog` | 13 | SELECT on both (*verify per SSRS version*) | C | rs |
+| `ssrs.detect` | ReportServer DBs the login can open (TempDB excluded) | `sys.databases` (`name LIKE N'ReportServer%'`), `HAS_DBACCESS` | 13 | public | C | master |
+| `ssrs.exec.recent` | Executions of the last `@Hours` (≤ `@MaxRows`, newest first): item, user, request type, format, source, status, age, hour, total/data/processing/rendering ms, rows, bytes — aggregated in RSM (`ExecutionLogAggregator`: per-report p50/p95, data vs render, by hour/user/status) | `dbo.ExecutionLog3` (no `Parameters` column) | 13 | SELECT on view | M | rs |
+| `ssrs.subscriptions` | Subscriptions with report path, delivery type, last status text, minutes since last run | `dbo.Subscriptions`, `dbo.Catalog` | 13 | SELECT on both (*verify per SSRS version*) | C | rs |
+
+*As built (P4):* the planned `ssrs.exec.summary` / `slowest` / `hourly` became one row query plus aggregation in RSM,
+so percentiles use the same nearest-rank definition as the IIS logs and the aggregation is unit-tested.
 
 ## 21. Topology (§6) — P4
 

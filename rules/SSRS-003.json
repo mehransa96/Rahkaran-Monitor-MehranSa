@@ -1,0 +1,53 @@
+{
+  "id": "SSRS-003",
+  "layer": "Ssrs",
+  "appliesTo": [
+    "Report"
+  ],
+  "when": "ssrs.installed && ssrs.slow_reports > 0",
+  "severity": "Info",
+  "title": {
+    "fa": "{ssrs.slow_reports} گزارش با p95 بیش از ۶۰ ثانیه",
+    "en": "{ssrs.slow_reports} reports with p95 over 60 s"
+  },
+  "explanation": {
+    "fa": "کندترین‌ها: {ssrs.slow_reports_top}. {ssrs.slow_reports_data_bound} مورد بیشتر زمان را در بازیابی داده (SQL) صرف می‌کنند؛ بقیه در پردازش/رندر.",
+    "en": "Slowest: {ssrs.slow_reports_top}. {ssrs.slow_reports_data_bound} of them spend most time retrieving data (SQL); the rest in processing/rendering."
+  },
+  "recommendation": {
+    "fa": "برای گزارش‌های «Data» کوئری‌های آن‌ها را در صفحه Queries ببینید؛ برای «Rendering» قالب خروجی و حجم داده را بررسی کنید.",
+    "en": "For \"Data\" reports look at their queries on the Queries page; for \"Rendering\" check the output format and data volume."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "ssrs.installed": true,
+        "ssrs.slow_reports": 2,
+        "ssrs.slow_reports_data_bound": 1,
+        "ssrs.slow_reports_top": "/Finance/Ledger p95 95 s (Data)"
+      },
+      "expect": "Info",
+      "roles": [
+        "Report"
+      ]
+    },
+    {
+      "facts": {
+        "ssrs.installed": true,
+        "ssrs.slow_reports": 0,
+        "ssrs.slow_reports_data_bound": 0,
+        "ssrs.slow_reports_top": ""
+      },
+      "expect": null,
+      "roles": [
+        "Report"
+      ]
+    }
+  ]
+}

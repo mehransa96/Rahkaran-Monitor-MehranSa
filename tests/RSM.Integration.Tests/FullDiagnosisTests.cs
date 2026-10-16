@@ -72,7 +72,7 @@ public sealed class FullDiagnosisTests(ITestOutputHelper output) : IDisposable
         result.Collectors.Select(c => c.CollectorId).Should().BeEquivalentTo(
         [
             "sql.inventory", "sql.configuration", "sql.storage", "sql.errorlog", "sql.agent", "sql.security", "sql.databases",
-            "sql.perf", "sql.cpu", "sql.activity", "sql.deadlocks", "sql.querystats", "sql.ha", "rsm.overhead.sql", "sql.querystore",
+            "sql.perf", "sql.cpu", "sql.activity", "sql.deadlocks", "sql.querystats", "sql.ha", "rsm.overhead.sql", "sql.querystore", "ssrs",
         ]);
         result.Collectors.Should().NotContain(c => c.Status.Kind == CollectorStatusKind.Error, "missing permissions must degrade, never fail");
         result.RuleErrors.Should().BeEmpty();

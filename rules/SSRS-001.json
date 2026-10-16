@@ -1,0 +1,60 @@
+{
+  "id": "SSRS-001",
+  "layer": "Ssrs",
+  "appliesTo": [
+    "Report"
+  ],
+  "when": "svc.ssrs_present && !svc.ssrs_running",
+  "severity": "Critical",
+  "title": {
+    "fa": "سرویس Reporting Services اجرا نمی‌شود",
+    "en": "Reporting Services is not running"
+  },
+  "explanation": {
+    "fa": "سرویس SSRS روی این سرور نصب است ولی در حال اجرا نیست؛ گزارش‌های راهکاران باز نمی‌شوند.",
+    "en": "The SSRS service is installed on this server but not running; Rahkaran reports do not open."
+  },
+  "recommendation": {
+    "fa": "علت توقف را در رخدادهای سرویس و لاگ SSRS بررسی کنید (RSM سرویس را اجرا نمی‌کند).",
+    "en": "Check service events and the SSRS log (RSM never starts services)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "svc.ssrs_present": true,
+        "svc.ssrs_running": false
+      },
+      "expect": "Critical",
+      "roles": [
+        "Report"
+      ]
+    },
+    {
+      "facts": {
+        "svc.ssrs_present": true,
+        "svc.ssrs_running": true
+      },
+      "expect": null,
+      "roles": [
+        "Report"
+      ]
+    },
+    {
+      "facts": {
+        "svc.ssrs_present": false,
+        "svc.ssrs_running": false
+      },
+      "expect": null,
+      "roles": [
+        "Report"
+      ],
+      "note": "SSRS not installed on this node"
+    }
+  ]
+}

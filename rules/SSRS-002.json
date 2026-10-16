@@ -1,0 +1,70 @@
+{
+  "id": "SSRS-002",
+  "layer": "Ssrs",
+  "appliesTo": [
+    "Report"
+  ],
+  "when": "ssrs.installed && ssrs.executions_24h >= params.min_runs && ssrs.failure_pct_24h > params.max_pct",
+  "severity": "Warning",
+  "title": {
+    "fa": "{ssrs.failure_pct_24h}٪ اجرای گزارش‌ها در ۲۴ ساعت گذشته ناموفق بوده است",
+    "en": "{ssrs.failure_pct_24h} % of report executions failed in 24 h"
+  },
+  "explanation": {
+    "fa": "{ssrs.failures_24h} اجرای ناموفق از {ssrs.executions_24h}. وضعیت‌های خطا را در صفحه SSRS ببینید.",
+    "en": "{ssrs.failures_24h} failed executions out of {ssrs.executions_24h}. See the failure statuses on the SSRS page."
+  },
+  "recommendation": {
+    "fa": "گزارش‌ها و کاربرانی که خطا دارند را با ستاد فنی بررسی کنید.",
+    "en": "Review the failing reports and users with ستاد فنی."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "params": {
+    "max_pct": 5,
+    "min_runs": 20
+  },
+  "examples": [
+    {
+      "facts": {
+        "ssrs.installed": true,
+        "ssrs.executions_24h": 400,
+        "ssrs.failures_24h": 40,
+        "ssrs.failure_pct_24h": 10
+      },
+      "expect": "Warning",
+      "roles": [
+        "Report"
+      ]
+    },
+    {
+      "facts": {
+        "ssrs.installed": true,
+        "ssrs.executions_24h": 400,
+        "ssrs.failures_24h": 4,
+        "ssrs.failure_pct_24h": 1
+      },
+      "expect": null,
+      "roles": [
+        "Report"
+      ]
+    },
+    {
+      "facts": {
+        "ssrs.installed": true,
+        "ssrs.executions_24h": 5,
+        "ssrs.failures_24h": 2,
+        "ssrs.failure_pct_24h": 40
+      },
+      "expect": null,
+      "roles": [
+        "Report"
+      ],
+      "note": "too few runs to judge"
+    }
+  ]
+}

@@ -176,6 +176,8 @@ public sealed class WindowsServicesCollector : WindowsCollectorBase<NoServiceSta
         output.Fact("svc.attendance_present", services.Any(s => s.Category == ServiceCategory.Attendance));
         output.Fact("svc.attendance_stopped", services.Any(s => s.Category == ServiceCategory.Attendance && !s.IsRunning));
         output.Fact("svc.sqlbrowser_running", Running(ServiceCategory.SqlBrowser) ?? false);
+        output.Fact("svc.ssrs_present", services.Any(s => s.Category == ServiceCategory.Ssrs));
+        output.Fact("svc.ssrs_running", Running(ServiceCategory.Ssrs) ?? false);
         output.Fact("svc.sql_instance_count", services.Count(s => s.Category == ServiceCategory.SqlServer));
         output.Fact("svc.sql_named_instance_count", services.Count(s => s.Category == ServiceCategory.SqlServer && s.Name.Contains('$', StringComparison.Ordinal)));
     }

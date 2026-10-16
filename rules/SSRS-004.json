@@ -1,0 +1,51 @@
+{
+  "id": "SSRS-004",
+  "layer": "Ssrs",
+  "appliesTo": [
+    "Report"
+  ],
+  "when": "ssrs.installed && ssrs.subscriptions_failed > 0",
+  "severity": "Warning",
+  "title": {
+    "fa": "{ssrs.subscriptions_failed} اشتراک گزارش با خطا اجرا شده است",
+    "en": "{ssrs.subscriptions_failed} report subscriptions failed"
+  },
+  "explanation": {
+    "fa": "آخرین وضعیت این اشتراک‌ها خطاست: {ssrs.subscriptions_failed_names}.",
+    "en": "The last status of these subscriptions is a failure: {ssrs.subscriptions_failed_names}."
+  },
+  "recommendation": {
+    "fa": "متن خطا را در صفحه SSRS ببینید (معمولاً تنظیمات ایمیل یا مسیر اشتراک فایل).",
+    "en": "See the error text on the SSRS page (usually mail settings or the file share path)."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance (Microsoft IIS / Windows documentation, common practice)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "examples": [
+    {
+      "facts": {
+        "ssrs.installed": true,
+        "ssrs.subscriptions_failed": 1,
+        "ssrs.subscriptions_failed_names": "Daily sales"
+      },
+      "expect": "Warning",
+      "roles": [
+        "Report"
+      ]
+    },
+    {
+      "facts": {
+        "ssrs.installed": true,
+        "ssrs.subscriptions_failed": 0,
+        "ssrs.subscriptions_failed_names": ""
+      },
+      "expect": null,
+      "roles": [
+        "Report"
+      ]
+    }
+  ]
+}
