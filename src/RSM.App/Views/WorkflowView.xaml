@@ -1,0 +1,70 @@
+<UserControl x:Class="RSM.App.Views.WorkflowView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:views="clr-namespace:RSM.App.Views">
+  <!-- DataContext: WorkflowPageViewModel. RabbitMQ: GET on /api/overview, /api/nodes, /api/queues only. CodeMeter: service state and listening port, no licence API. -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+      <TextBlock Style="{StaticResource Text.Title}" Text="{Binding Title}" />
+      <views:LiveToolbar DataContext="{Binding Live}" />
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Rabbit_Title], Source={x:Static loc:Loc.Instance}}" />
+      <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Margin="0,0,0,4" Text="{Binding RabbitStatus}" />
+      <UniformGrid Columns="2">
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding QueueChart}" Margin="0,0,8,0" />
+      </UniformGrid>
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Nodes}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="200">
+          <DataGrid.RowStyle>
+            <Style TargetType="DataGridRow">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding Alarm}" Value="True">
+                  <Setter Property="Foreground" Value="{DynamicResource Brush.Critical}" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </DataGrid.RowStyle>
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Node]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Running}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Running]}" />
+            <DataGridTextColumn Width="200" Binding="{Binding Memory}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_MemoryMb]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding Disk}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_DiskFree]}" />
+            <DataGridTextColumn Width="170" Binding="{Binding Fd}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_FileDescriptors]}" />
+            <DataGridTextColumn Width="170" Binding="{Binding Sockets}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Sockets]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Rabbit_Queues], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Queues}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="400">
+          <DataGrid.RowStyle>
+            <Style TargetType="DataGridRow">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding Stuck}" Value="True">
+                  <Setter Property="Foreground" Value="{DynamicResource Brush.Critical}" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </DataGrid.RowStyle>
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Queue]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding VHost}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_VHost]}" />
+            <DataGridTextColumn Width="100" Binding="{Binding Messages}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Messages]}" />
+            <DataGridTextColumn Width="100" Binding="{Binding Unacked}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Unacked]}" />
+            <DataGridTextColumn Width="100" Binding="{Binding Consumers}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Consumers]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding State}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_State]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [CodeMeter_Title], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding CodeMeter}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="160">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Fact_Name]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Value}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Fact_Value]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -1,0 +1,53 @@
+<UserControl x:Class="RSM.App.Views.QueryPacksView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:views="clr-namespace:RSM.App.Views">
+  <!-- DataContext: QueryPacksPageViewModel. Packs are files next to RSM.exe, checked by SqlGuard when loaded; RSM has no SQL editor. -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+      <TextBlock Style="{StaticResource Text.Title}" Text="{Binding Title}" />
+      <views:LiveToolbar DataContext="{Binding Live}" />
+      <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Margin="0,0,0,4" Text="{Binding [Packs_Explain], Source={x:Static loc:Loc.Instance}}" />
+      <TextBox Style="{StaticResource TextBox.Ltr}" IsReadOnly="True" Text="{Binding Folder, Mode=OneWay}" Margin="0,0,0,8" />
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Packs_Loaded], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Packs}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="200">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="140" Binding="{Binding Id}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Pack]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Title}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Title]}" />
+            <DataGridTextColumn Width="120" Binding="{Binding Database}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Database]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Accepted}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Accepted]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Refused}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Refused]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Packs_Refused], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Refusals}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="240">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="140" Binding="{Binding Pack}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Pack]}" />
+            <DataGridTextColumn Width="140" Binding="{Binding File}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_File]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Reason}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Reason]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Packs_Results], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Results}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="240" SelectedItem="{Binding SelectedResult}">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="160" Binding="{Binding Pack}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Pack]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Query}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Query]}" />
+            <DataGridTextColumn Width="120" Binding="{Binding Database}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Database]}" />
+            <DataGridTextColumn Width="100" Binding="{Binding Status}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Status]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding Rows}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Rows]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Breaches}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Breaches]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding SelectedRows}" IsReadOnly="True" AutoGenerateColumns="True" HeadersVisibility="Column" MaxHeight="360" FlowDirection="LeftToRight" />
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

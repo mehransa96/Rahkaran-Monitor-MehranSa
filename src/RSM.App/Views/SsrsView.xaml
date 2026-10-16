@@ -1,0 +1,91 @@
+<UserControl x:Class="RSM.App.Views.SsrsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:views="clr-namespace:RSM.App.Views">
+  <!-- DataContext: SsrsPageViewModel. ExecutionLog3 is read in RSM (no report parameters are shown). -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+      <TextBlock Style="{StaticResource Text.Title}" Text="{Binding Title}" />
+      <views:LiveToolbar DataContext="{Binding Live}" />
+      <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Margin="0,0,0,4" Text="{Binding Status}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Summary}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="140">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Fact_Name]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Value}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Fact_Value]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Ssrs_Reports], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Reports}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="400">
+          <DataGrid.RowStyle>
+            <Style TargetType="DataGridRow">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding Slow}" Value="True">
+                  <Setter Property="Foreground" Value="{DynamicResource Brush.Critical}" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </DataGrid.RowStyle>
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="*" Binding="{Binding Path}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Report]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Executions}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Executions]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding Failures}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Failures]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding P50}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_P50]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding P95}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_P95]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding Max}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Max]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding Phase}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Phase]}" />
+            <DataGridTextColumn Width="140" Binding="{Binding TopUser}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_TopUser]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <UniformGrid Columns="2">
+        <StackPanel Margin="0,0,8,0">
+          <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Ssrs_ByHour], Source={x:Static loc:Loc.Instance}}" />
+          <Border Style="{StaticResource Card}">
+            <DataGrid ItemsSource="{Binding ByHour}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="240">
+              <DataGrid.Columns>
+                <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Hour]}" />
+                <DataGridTextColumn Width="*" Binding="{Binding Value}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Executions]}" />
+              </DataGrid.Columns>
+            </DataGrid>
+          </Border>
+        </StackPanel>
+        <StackPanel>
+          <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Ssrs_FailureStatuses], Source={x:Static loc:Loc.Instance}}" />
+          <Border Style="{StaticResource Card}">
+            <DataGrid ItemsSource="{Binding FailureStatuses}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="240">
+              <DataGrid.Columns>
+                <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Status]}" />
+                <DataGridTextColumn Width="100" Binding="{Binding Value}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Count]}" />
+              </DataGrid.Columns>
+            </DataGrid>
+          </Border>
+        </StackPanel>
+      </UniformGrid>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Ssrs_Subscriptions], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Subscriptions}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="300">
+          <DataGrid.RowStyle>
+            <Style TargetType="DataGridRow">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding Failed}" Value="True">
+                  <Setter Property="Foreground" Value="{DynamicResource Brush.Critical}" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </DataGrid.RowStyle>
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="*" Binding="{Binding Report}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Report]}" />
+            <DataGridTextColumn Width="200" Binding="{Binding Description}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Description]}" />
+            <DataGridTextColumn Width="120" Binding="{Binding Delivery}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Delivery]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding LastStatus}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_LastStatus]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding LastRun}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_LastRun]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -82,7 +82,10 @@ public partial class RepositoryConsistencyTests
             .Concat(Enum.GetNames<RSM.Core.Model.Severity>().Select(n => "Severity_" + n))
             .Concat(Enum.GetNames<RSM.Core.Model.Layer>().Select(n => "LayerName_" + n))
             .Concat(Enum.GetNames<RSM.Collectors.Windows.ServiceCategory>().Select(n => "ServiceCategory_" + n))
-            .Concat(Enumerable.Range(1, 7).Select(n => "WasState_" + n));
+            .Concat(Enumerable.Range(1, 7).Select(n => "WasState_" + n))
+            .Concat(Enum.GetNames<RSM.Parsers.Ssrs.ReportPhase>().Select(n => "ReportPhase_" + n))
+            .Concat(Enum.GetNames<RSM.Collectors.Rahkaran.TopologyEdgeKind>().Select(n => "TopoEdge_" + n))
+            .Concat(Enum.GetNames<RSM.Core.Model.NodeRoles>().Where(n => n != "None").Select(n => "Role_" + n));
         foreach (var key in keys)
         {
             en.Should().ContainKey(key);

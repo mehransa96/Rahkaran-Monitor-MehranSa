@@ -83,6 +83,21 @@ public sealed partial class SitesViewModel : ObservableObject
         }
     }
 
+    /// <summary>The .NET counters attach to production processes: switching them on needs an explicit confirmation.</summary>
+    [RelayCommand]
+    private void ToggleDotNetCounters()
+    {
+        if (SelectedSite is not { } site)
+        {
+            return;
+        }
+
+        if (site.DotNetRuntimeCounters || _dialogs.Confirm(Loc.Instance["Sites_DotNetWarning"]))
+        {
+            site.DotNetRuntimeCounters = !site.DotNetRuntimeCounters;
+        }
+    }
+
     [RelayCommand]
     private void NewSite()
     {
@@ -212,6 +227,19 @@ public sealed partial class SiteItemViewModel(string id) : ObservableObject
     [ObservableProperty]
     private string _stadFanniJobPatterns = string.Empty;
 
+    /// <summary>Unverified version file (relative path) for RK-001.</summary>
+    [ObservableProperty]
+    private string _versionFile = string.Empty;
+
+    /// <summary>Optional EventPipe counters (off by default); switched on only after the warning is confirmed.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DotNetStateText), nameof(DotNetButtonText))]
+    private bool _dotNetRuntimeCounters;
+
+    public string DotNetStateText => Loc.Instance[DotNetRuntimeCounters ? "Sites_DotNetOn" : "Sites_DotNetOff"];
+
+    public string DotNetButtonText => Loc.Instance[DotNetRuntimeCounters ? "Sites_DotNetDisable" : "Sites_DotNetEnable"];
+
     private SiteSettings _settings = new();
 
     public static SiteItemViewModel From(SiteProfile profile)
@@ -223,6 +251,8 @@ public sealed partial class SiteItemViewModel(string id) : ObservableObject
             _settings = profile.Settings,
             RahkaranDatabases = string.Join(", ", profile.Settings.RahkaranDatabases),
             StadFanniJobPatterns = string.Join(Environment.NewLine, profile.Settings.StadFanniToolJobPatterns),
+            VersionFile = profile.Settings.RahkaranVersionFile ?? string.Empty,
+            DotNetRuntimeCounters = profile.Settings.DotNetRuntimeCounters,
         };
         foreach (var node in profile.Nodes)
         {
@@ -249,6 +279,8 @@ public sealed partial class SiteItemViewModel(string id) : ObservableObject
         {
             RahkaranDatabases = Split(RahkaranDatabases, ','),
             StadFanniToolJobPatterns = Split(StadFanniJobPatterns, '\n').Where(IsValidPattern).ToList(),
+            RahkaranVersionFile = string.IsNullOrWhiteSpace(VersionFile) ? null : VersionFile.Trim(),
+            DotNetRuntimeCounters = DotNetRuntimeCounters,
         },
         Nodes = Nodes.Select(n => n.ToProfile()).ToList(),
     };

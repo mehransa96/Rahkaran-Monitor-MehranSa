@@ -479,4 +479,133 @@
   <data name="ServiceCategory_ProactiveMonitor" xml:space="preserve"><value>Proactive monitor ⚠ unverified</value></data>
   <data name="ServiceCategory_WindowsUpdate" xml:space="preserve"><value>Windows Update</value></data>
   <data name="ServiceCategory_Antivirus" xml:space="preserve"><value>Antivirus</value></data>
+  <data name="Nav_Workflow" xml:space="preserve"><value>RabbitMQ &amp; CodeMeter</value></data>
+  <data name="Nav_DotNet" xml:space="preserve"><value>.NET runtime</value></data>
+  <data name="Nav_Topology" xml:space="preserve"><value>Topology</value></data>
+  <data name="Nav_QueryPacks" xml:space="preserve"><value>Query packs</value></data>
+  <data name="Chart_AspNetRequests" xml:space="preserve"><value>ASP.NET Core requests/s</value></data>
+  <data name="Chart_GcHeap" xml:space="preserve"><value>GC heap (MB)</value></data>
+  <data name="Chart_RabbitMessages" xml:space="preserve"><value>Messages in queues</value></data>
+  <data name="Chart_RedisMemory" xml:space="preserve"><value>Redis used memory (MB)</value></data>
+  <data name="Chart_RedisOps" xml:space="preserve"><value>Operations/s and clients</value></data>
+  <data name="Chart_ThreadPoolQueue" xml:space="preserve"><value>Thread pool queue</value></data>
+  <data name="Chart_TimeInGc" xml:space="preserve"><value>% time in GC</value></data>
+  <data name="Series_Clients" xml:space="preserve"><value>Clients</value></data>
+  <data name="Series_Messages" xml:space="preserve"><value>Messages</value></data>
+  <data name="Series_OpsPerSec" xml:space="preserve"><value>Ops/s</value></data>
+  <data name="Series_Process" xml:space="preserve"><value>Process</value></data>
+  <data name="Series_Unacked" xml:space="preserve"><value>Unacknowledged</value></data>
+  <data name="Series_UsedMemoryMb" xml:space="preserve"><value>Used memory (MB)</value></data>
+  <data name="CodeMeter_NoPorts" xml:space="preserve"><value>not listening / unknown</value></data>
+  <data name="CodeMeter_Ports" xml:space="preserve"><value>Listening on</value></data>
+  <data name="CodeMeter_Title" xml:space="preserve"><value>CodeMeter (licence)</value></data>
+  <data name="Col_Accepted" xml:space="preserve"><value>Accepted</value></data>
+  <data name="Col_Breaches" xml:space="preserve"><value>Thresholds exceeded</value></data>
+  <data name="Col_ClientNames" xml:space="preserve"><value>Client names</value></data>
+  <data name="Col_Command" xml:space="preserve"><value>Command</value></data>
+  <data name="Col_Connections" xml:space="preserve"><value>Connections</value></data>
+  <data name="Col_Consumers" xml:space="preserve"><value>Consumers</value></data>
+  <data name="Col_Delivery" xml:space="preserve"><value>Delivery</value></data>
+  <data name="Col_Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Col_Detail" xml:space="preserve"><value>Detail</value></data>
+  <data name="Col_DiskFree" xml:space="preserve"><value>Disk free</value></data>
+  <data name="Col_DurationMs" xml:space="preserve"><value>Duration (ms)</value></data>
+  <data name="Col_Event" xml:space="preserve"><value>Event</value></data>
+  <data name="Col_ExceptionsPerSec" xml:space="preserve"><value>Exceptions/s</value></data>
+  <data name="Col_Failures" xml:space="preserve"><value>Failures</value></data>
+  <data name="Col_File" xml:space="preserve"><value>File</value></data>
+  <data name="Col_FileDescriptors" xml:space="preserve"><value>File descriptors</value></data>
+  <data name="Col_From" xml:space="preserve"><value>From</value></data>
+  <data name="Col_GcHeapMb" xml:space="preserve"><value>GC heap (MB)</value></data>
+  <data name="Col_Gen2PerMin" xml:space="preserve"><value>Gen2/min</value></data>
+  <data name="Col_Hour" xml:space="preserve"><value>Hour</value></data>
+  <data name="Col_Kind" xml:space="preserve"><value>Kind</value></data>
+  <data name="Col_LastRun" xml:space="preserve"><value>Last run</value></data>
+  <data name="Col_LastStatus" xml:space="preserve"><value>Last status</value></data>
+  <data name="Col_LatestMs" xml:space="preserve"><value>Latest (ms)</value></data>
+  <data name="Col_Max" xml:space="preserve"><value>Max</value></data>
+  <data name="Col_MemoryMb" xml:space="preserve"><value>Memory (MB)</value></data>
+  <data name="Col_Messages" xml:space="preserve"><value>Messages</value></data>
+  <data name="Col_Pack" xml:space="preserve"><value>Pack</value></data>
+  <data name="Col_Phase" xml:space="preserve"><value>Dominant phase</value></data>
+  <data name="Col_Query" xml:space="preserve"><value>Query</value></data>
+  <data name="Col_Refused" xml:space="preserve"><value>Refused</value></data>
+  <data name="Col_Report" xml:space="preserve"><value>Report</value></data>
+  <data name="Col_RequestsPerSec" xml:space="preserve"><value>Requests/s</value></data>
+  <data name="Col_Rows" xml:space="preserve"><value>Rows</value></data>
+  <data name="Col_Running" xml:space="preserve"><value>Running</value></data>
+  <data name="Col_Sockets" xml:space="preserve"><value>Sockets</value></data>
+  <data name="Col_ThreadPool" xml:space="preserve"><value>Thread pool queue / threads</value></data>
+  <data name="Col_TimeInGc" xml:space="preserve"><value>% time in GC</value></data>
+  <data name="Col_Title" xml:space="preserve"><value>Title</value></data>
+  <data name="Col_To" xml:space="preserve"><value>To</value></data>
+  <data name="Col_TopUser" xml:space="preserve"><value>Top user</value></data>
+  <data name="Col_Unacked" xml:space="preserve"><value>Unacknowledged</value></data>
+  <data name="Col_VHost" xml:space="preserve"><value>Virtual host</value></data>
+  <data name="DotNet_Explain" xml:space="preserve"><value>Optional, local only, off by default (site settings). RSM opens an EventPipe session limited to the System.Runtime and ASP.NET Core counters of the w3wp (in-process) or dotnet (out-of-process) processes. It never takes dumps, attaches profilers or changes the process.</value></data>
+  <data name="DotNet_NoData" xml:space="preserve"><value>No data yet: connect the live view on the App server itself.</value></data>
+  <data name="DotNet_Processes" xml:space="preserve"><value>Processes</value></data>
+  <data name="DotNet_Status" xml:space="preserve"><value>Not collected: {0}</value></data>
+  <data name="Packs_Explain" xml:space="preserve"><value>Team query packs live in this folder next to RSM.exe (one sub-folder per pack: manifest.json + *.sql). Every file is checked by SqlGuard when RSM starts; a refused file is never run and its reason is listed below. RSM has no SQL editor.</value></data>
+  <data name="Packs_Loaded" xml:space="preserve"><value>Loaded packs</value></data>
+  <data name="Packs_Refused" xml:space="preserve"><value>Refused files and reasons</value></data>
+  <data name="Packs_Results" xml:space="preserve"><value>Latest results</value></data>
+  <data name="Rabbit_NotConfigured" xml:space="preserve"><value>The RabbitMQ management API is off (not configured for this node). The RabbitMQ service state is on the Services page.</value></data>
+  <data name="Rabbit_Queues" xml:space="preserve"><value>Queues</value></data>
+  <data name="Rabbit_Title" xml:space="preserve"><value>RabbitMQ (workflow)</value></data>
+  <data name="Rabbit_Unreachable" xml:space="preserve"><value>Management API not reachable: {0}</value></data>
+  <data name="Rabbit_Version" xml:space="preserve"><value>RabbitMQ {0}, Erlang {1}</value></data>
+  <data name="Redis_AppNodesMissing" xml:space="preserve"><value>No connection from these App nodes: {0}</value></data>
+  <data name="Redis_Clients" xml:space="preserve"><value>Connections by host (CLIENT LIST)</value></data>
+  <data name="Redis_Info" xml:space="preserve"><value>Summary (INFO)</value></data>
+  <data name="Redis_Latency" xml:space="preserve"><value>Latency events (LATENCY LATEST)</value></data>
+  <data name="Redis_NotConfigured" xml:space="preserve"><value>Redis is not configured for this node.</value></data>
+  <data name="Redis_PersistenceError" xml:space="preserve"><value>error</value></data>
+  <data name="Redis_Slowlog" xml:space="preserve"><value>Slow commands (SLOWLOG, command and key only)</value></data>
+  <data name="Redis_Unreachable" xml:space="preserve"><value>Redis not reachable: {0}</value></data>
+  <data name="Redis_Version" xml:space="preserve"><value>Version</value></data>
+  <data name="Redis_Role" xml:space="preserve"><value>Role</value></data>
+  <data name="Redis_Uptime" xml:space="preserve"><value>Uptime (d.hh:mm)</value></data>
+  <data name="Redis_UsedMemory" xml:space="preserve"><value>Used memory</value></data>
+  <data name="Redis_MaxMemory" xml:space="preserve"><value>maxmemory</value></data>
+  <data name="Redis_UsedPct" xml:space="preserve"><value>Used of maxmemory</value></data>
+  <data name="Redis_Policy" xml:space="preserve"><value>Eviction policy</value></data>
+  <data name="Redis_Fragmentation" xml:space="preserve"><value>Fragmentation ratio</value></data>
+  <data name="Redis_HitRatio" xml:space="preserve"><value>Hit ratio</value></data>
+  <data name="Redis_Evicted" xml:space="preserve"><value>Evicted keys</value></data>
+  <data name="Redis_Rejected" xml:space="preserve"><value>Rejected connections</value></data>
+  <data name="Redis_Keys" xml:space="preserve"><value>Keys</value></data>
+  <data name="Redis_Persistence" xml:space="preserve"><value>Persistence (RDB/AOF)</value></data>
+  <data name="ReportPhase_Data" xml:space="preserve"><value>Data (SQL)</value></data>
+  <data name="ReportPhase_Processing" xml:space="preserve"><value>Processing</value></data>
+  <data name="ReportPhase_Rendering" xml:space="preserve"><value>Rendering</value></data>
+  <data name="Ssrs_ByHour" xml:space="preserve"><value>Executions per hour</value></data>
+  <data name="Ssrs_Database" xml:space="preserve"><value>ReportServer database</value></data>
+  <data name="Ssrs_Executions" xml:space="preserve"><value>Executions (24 h)</value></data>
+  <data name="Ssrs_FailureStatuses" xml:space="preserve"><value>Failure statuses</value></data>
+  <data name="Ssrs_Failures" xml:space="preserve"><value>Failures</value></data>
+  <data name="Ssrs_NotFound" xml:space="preserve"><value>No ReportServer database found (or not accessible) on this node.</value></data>
+  <data name="Ssrs_Reports" xml:space="preserve"><value>Reports (slow ones in red: p95 over 60 s)</value></data>
+  <data name="Ssrs_Subscriptions" xml:space="preserve"><value>Subscriptions</value></data>
+  <data name="Ssrs_Truncated" xml:space="preserve"><value>Only the latest {0} executions were analysed.</value></data>
+  <data name="Topo_Declared" xml:space="preserve"><value>declared</value></data>
+  <data name="Topo_Edges" xml:space="preserve"><value>Connections</value></data>
+  <data name="Topo_Explain" xml:space="preserve"><value>Discovered read-only from ARR farms, SQL sessions (per client host) and Redis CLIENT LIST of every node. Numbers are farm weights, SQL sessions and Redis connections. Dashed links come from the site profile only.</value></data>
+  <data name="Topo_Observed" xml:space="preserve"><value>observed</value></data>
+  <data name="Topo_Others" xml:space="preserve"><value>{0} other clients</value></data>
+  <data name="Topo_Unprofiled" xml:space="preserve"><value>not in the site profile</value></data>
+  <data name="Topo_Users" xml:space="preserve"><value>Users</value></data>
+  <data name="TopoEdge_Http" xml:space="preserve"><value>HTTP</value></data>
+  <data name="TopoEdge_ArrFarm" xml:space="preserve"><value>ARR farm</value></data>
+  <data name="TopoEdge_Sql" xml:space="preserve"><value>SQL sessions</value></data>
+  <data name="TopoEdge_Redis" xml:space="preserve"><value>Redis connections</value></data>
+  <data name="TopoEdge_Declared" xml:space="preserve"><value>Declared</value></data>
+  <data name="Sites_VersionFile" xml:space="preserve"><value>Rahkaran version file (unverified)</value></data>
+  <data name="Sites_VersionFileHint" xml:space="preserve"><value>Optional relative path inside the Rahkaran application folder whose fingerprint identifies the build on each App node (RK-001). Empty = compare app path segments only.</value></data>
+  <data name="Sites_DotNet" xml:space="preserve"><value>.NET runtime counters</value></data>
+  <data name="Sites_DotNetOn" xml:space="preserve"><value>On — EventPipe counters are read on the local App server</value></data>
+  <data name="Sites_DotNetOff" xml:space="preserve"><value>Off (default)</value></data>
+  <data name="Sites_DotNetEnable" xml:space="preserve"><value>Enable…</value></data>
+  <data name="Sites_DotNetDisable" xml:space="preserve"><value>Disable</value></data>
+  <data name="Sites_DotNetWarning" xml:space="preserve"><value>RSM will attach a diagnostics session (EventPipe, counters only) to the w3wp/dotnet processes of the Rahkaran pools on the server where RSM runs. It does not take dumps or change the process, but it adds a small overhead to the production process. Enable?</value></data>
 </root>

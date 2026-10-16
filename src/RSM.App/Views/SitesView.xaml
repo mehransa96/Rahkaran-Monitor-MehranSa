@@ -204,6 +204,7 @@
               <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
               </Grid.RowDefinitions>
               <StackPanel Grid.Column="0">
                 <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sites_Name], Source={x:Static loc:Loc.Instance}}" />
@@ -223,6 +224,19 @@
                 <TextBox Text="{Binding StadFanniJobPatterns, UpdateSourceTrigger=PropertyChanged}" FlowDirection="LeftToRight"
                          AcceptsReturn="True" MinHeight="48" VerticalScrollBarVisibility="Auto" />
                 <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" FontSize="11" Text="{Binding [Sites_JobPatternsHint], Source={x:Static loc:Loc.Instance}}" />
+              </StackPanel>
+              <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,10,0,0">
+                <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sites_VersionFile], Source={x:Static loc:Loc.Instance}}" />
+                <TextBox Text="{Binding VersionFile, UpdateSourceTrigger=PropertyChanged}" FlowDirection="LeftToRight" />
+                <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" FontSize="11" Text="{Binding [Sites_VersionFileHint], Source={x:Static loc:Loc.Instance}}" />
+              </StackPanel>
+              <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,10,0,0">
+                <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sites_DotNet], Source={x:Static loc:Loc.Instance}}" />
+                <DockPanel>
+                  <Button DockPanel.Dock="Right" Content="{Binding DotNetButtonText}"
+                          Command="{Binding DataContext.ToggleDotNetCountersCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                  <TextBlock Text="{Binding DotNetStateText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+                </DockPanel>
               </StackPanel>
             </Grid>
             <StackPanel Orientation="Horizontal" Margin="0,12,0,0">

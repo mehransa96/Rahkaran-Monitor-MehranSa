@@ -20,7 +20,8 @@ public sealed partial class NavItem(string titleKey, Func<object> createPage) : 
 
 public sealed partial class MainViewModel : ObservableObject
 {
-    public MainViewModel(SitesViewModel sites, SettingsViewModel settings, DiagnosisViewModel diagnosis, LiveViewModel live, StatusBarViewModel status, IUserDialogs dialogs)
+    public MainViewModel(SitesViewModel sites, SettingsViewModel settings, DiagnosisViewModel diagnosis, LiveViewModel live, StatusBarViewModel status, IUserDialogs dialogs,
+        RSM.Safety.Sql.QueryPackCatalog queryPacks)
     {
         Status = status;
         Live = live;
@@ -33,11 +34,15 @@ public sealed partial class MainViewModel : ObservableObject
             new NavItem("Nav_Windows", () => new WindowsPageViewModel(live)),
             new NavItem("Nav_Iis", () => new IisPageViewModel(live, dialogs)),
             new NavItem("Nav_Arr", () => new ArrPageViewModel(live)),
-            new NavItem("Nav_Redis", () => new PlaceholderViewModel("Nav_Redis", 4)),
-            new NavItem("Nav_Ssrs", () => new PlaceholderViewModel("Nav_Ssrs", 4)),
+            new NavItem("Nav_Redis", () => new RedisPageViewModel(live)),
+            new NavItem("Nav_Ssrs", () => new SsrsPageViewModel(live)),
+            new NavItem("Nav_Workflow", () => new WorkflowPageViewModel(live)),
+            new NavItem("Nav_DotNet", () => new DotNetPageViewModel(live)),
+            new NavItem("Nav_Topology", () => new TopologyPageViewModel(live)),
             new NavItem("Nav_Services", () => new ServicesPageViewModel(live)),
             new NavItem("Nav_Events", () => new EventsPageViewModel(live)),
             new NavItem("Nav_Slowness", () => new PlaceholderViewModel("Nav_Slowness", 5)),
+            new NavItem("Nav_QueryPacks", () => new QueryPacksPageViewModel(live, queryPacks)),
             new NavItem("Nav_Reports", () => diagnosis),
             new NavItem("Nav_History", () => new PlaceholderViewModel("Nav_History", 5)),
             new NavItem("Nav_Sites", () => sites),

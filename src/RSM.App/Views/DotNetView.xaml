@@ -1,0 +1,43 @@
+<UserControl x:Class="RSM.App.Views.DotNetView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:views="clr-namespace:RSM.App.Views">
+  <!-- DataContext: DotNetPageViewModel. Counters only (EventPipe, local, off by default): no dumps, no profilers, nothing is changed in the process. -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+      <TextBlock Style="{StaticResource Text.Title}" Text="{Binding Title}" />
+      <views:LiveToolbar DataContext="{Binding Live}" />
+      <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Margin="0,0,0,4" Text="{Binding [DotNet_Explain], Source={x:Static loc:Loc.Instance}}" />
+      <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Margin="0,0,0,4" Text="{Binding Status}" />
+      <UniformGrid Columns="2">
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding HeapChart}" Margin="0,0,8,0" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding GcChart}" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding ThreadPoolChart}" Margin="0,0,8,0" />
+        <views:LiveChart Live="{Binding Live}" Spec="{Binding RequestsChart}" />
+      </UniformGrid>
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [DotNet_Processes], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Processes}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="300">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="*" Binding="{Binding Process}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Process]}" />
+            <DataGridTextColumn Width="70" Binding="{Binding Pid}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_ProcessId]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding Hosting}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Hosting]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding HeapMb}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_GcHeapMb]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding TimeInGc}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_TimeInGc]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Gen2PerMin}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Gen2PerMin]}" />
+            <DataGridTextColumn Width="110" Binding="{Binding ThreadPool}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_ThreadPool]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Exceptions}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_ExceptionsPerSec]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Requests}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_RequestsPerSec]}" />
+            <DataGridTextColumn Width="100" Binding="{Binding WorkingSetMb}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_WorkingSetMb]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+      <ItemsControl ItemsSource="{Binding Skipped}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate><TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Text="{Binding}" /></DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

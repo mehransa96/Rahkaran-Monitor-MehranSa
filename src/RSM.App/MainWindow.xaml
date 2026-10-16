@@ -24,6 +24,12 @@
     <DataTemplate DataType="{x:Type vm:ArrPageViewModel}"><views:ArrView /></DataTemplate>
     <DataTemplate DataType="{x:Type vm:ServicesPageViewModel}"><views:ServicesView /></DataTemplate>
     <DataTemplate DataType="{x:Type vm:EventsPageViewModel}"><views:EventsView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:RedisPageViewModel}"><views:RedisView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:SsrsPageViewModel}"><views:SsrsView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:WorkflowPageViewModel}"><views:WorkflowView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:DotNetPageViewModel}"><views:DotNetView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:TopologyPageViewModel}"><views:TopologyView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:QueryPacksPageViewModel}"><views:QueryPacksView /></DataTemplate>
   </Window.Resources>
   <DockPanel>
     <!-- Status bar -->
