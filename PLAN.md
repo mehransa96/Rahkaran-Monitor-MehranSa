@@ -112,11 +112,12 @@ EventPipe runtime counters (optional, local, off by default — Q8); query packs
 profile; rules `RULES.md` §8–10.
 
 **Acceptance**
-- [ ] Topology map correct for a 3-node lab (ARR → 2 App → Data/Redis).
-- [ ] GC / threadpool counters shown for an ASP.NET Core test app under IIS (in-process and
-      out-of-process).
-- [ ] RESP/INFO parser and ExecutionLog aggregation unit-tested; a query pack with `UPDATE` is refused
-      with a visible reason.
+- [ ] Topology map correct for a 3-node lab (ARR → 2 App → Data/Redis). *(modelled in `TopologyTests` with the
+      lab's facts; confirmation on the real lab pending)*
+- [x] GC / threadpool counters shown for an ASP.NET Core test app under IIS (in-process and
+      out-of-process). *(CI Windows job, `DotNetRuntimeLiveTests`)*
+- [x] RESP/INFO parser and ExecutionLog aggregation unit-tested; a query pack with `UPDATE` is refused
+      with a visible reason. *(`RedisCollectorTests`, `SsrsTests`, `QueryPackTests` — SG010 at line 2)*
 
 ## Phase 5 — History, baseline, slowness wizard, PDF, bundles, polish
 

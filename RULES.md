@@ -391,6 +391,33 @@ Behaviour notes (sources and thresholds as in the tables above):
 - **OS-016** counts `MSFT_NetTCPConnection` rows in TimeWait against `MSFT_NetTCPSetting.DynamicPortRangeNumberOfPorts`
   every minute; older systems without the NetTCPIP provider leave it *unknown*.
 
+### Phase 4 (Redis, SSRS, RabbitMQ, .NET runtime, topology, query packs)
+
+29 rules added (→ 194): §8 RDS-001…009, SSRS-001…004, RMQ-001…003; §9 NET-001…006; §10 RK-001…003; §11 PACK-001/002.
+
+Behaviour notes (sources and thresholds as in the tables above):
+- **RDS-\*** are judged only when Redis answered (`redis.reachable`); an unreachable Redis or a failed AUTH is RDS-001
+  alone. Increasing counters (RDS-002, RDS-007) need two samples of the live view. RDS-009 resolves the site's App
+  nodes by DNS and compares with the source addresses in `CLIENT LIST` (RSM's own connection excluded).
+- **SSRS-002** needs ≥ 20 executions in 24 h; **SSRS-003** needs ≥ 5 runs of a report and labels it *data* when
+  `TimeDataRetrieval` dominates (the SQL side), otherwise processing/rendering. At most 20 000 ExecutionLog3 rows are
+  read; report parameters are never read.
+- **RMQ-\*** need the RabbitMQ management API (off by default). RMQ-003 needs 15 minutes of live samples in which the
+  total of unacknowledged messages never fell and ended higher.
+- **NET-\*** need the optional .NET runtime counters (site setting, local App server only). "Sustained" means every
+  sample in the window (collected every 30 s): NET-001 60 s above 20 % time in GC, NET-002 3 minutes above one Gen2
+  collection per minute or a GC heap above 80 % of RAM, NET-003 30 s of a non-empty thread-pool queue with a rising
+  thread count. NET-004 compares with the median of the same monitoring session (≥ 10 samples). NET-005 uses the
+  working set (EventPipe has no private-bytes counter). NET-006 computes the failed-request rate from the change of
+  the ASP.NET Core `failed-requests` total between samples.
+- **RK-001** compares the fingerprint (SHA-256 prefix) of the *unverified* version-file setting across App nodes, or —
+  when that is not set or not found — the application path segments of the Rahkaran sites. **RK-002** needs two or
+  more App nodes and ≥ 20 SQL sessions from them; the expected share follows the ARR farm weights when one farm
+  covers every App node, otherwise an even split. **RK-003** is judged only when both nodes report a machine name
+  or addresses.
+- **PACK-001** takes severity and source from the pack manifest (Info/Warning/Critical; `general` or
+  `stad-fanni:…`) and is always labelled unverified; **PACK-002** reports a pack query that could not run.
+
 ## Rule hygiene
 
 - Every rule JSON has a fixture test: a facts file that must fire it, and one that must not.

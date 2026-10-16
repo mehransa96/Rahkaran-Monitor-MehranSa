@@ -4,7 +4,7 @@ A portable, **strictly read-only** Windows tool that support engineers run on (o
 servers to see the health of SQL Server, databases, Windows, IIS/ARR, Redis, SSRS and services, find the cause of
 slowness, and export a diagnostic report — in Persian or English.
 
-**Status: Phase 3 (live SQL Server, Windows, IIS/ARR, services, event logs).** Define sites and servers, run *Test connection* to get the Capability
+**Status: Phase 4 (live SQL Server, Windows, IIS/ARR, services, event logs, Redis, SSRS, RabbitMQ/CodeMeter, topology, .NET counters, query packs).** Define sites and servers, run *Test connection* to get the Capability
 Matrix, then *Reports → Diagnose now* for a read-only health check of SQL Server, its databases and Windows against the
 ستاد فنی baseline (Persian or English HTML report, JSON bundle, optional masking). *Connect live view* on the Overview,
 SQL Server, Queries & Blocking or Windows page watches the servers in real time: CPU (SQL vs other processes), waits,
@@ -14,8 +14,12 @@ counters, file and disk latency, blocking chains with the head blocker, open tra
 shows sites, pools, worker processes, the requests executing right now, latency percentiles per URL from the W3C
 logs, HTTP.sys errors, masked web.config and certificates; the ARR page shows farms and URL Rewrite rules (including
 "application path changed after an update"); Services lists the watched services (display only); Errors & Events puts
-SQL, Windows and IIS events on one timeline with ±5-minute correlation and a Persian/English knowledge base. Redis,
-SSRS, history and the slowness wizard arrive in Phases 4–5 (`PLAN.md`).
+SQL, Windows and IIS events on one timeline with ±5-minute correlation and a Persian/English knowledge base. Phase 4
+adds Redis (INFO, slow commands, latency, connections per App host), SSRS (slow reports split into data vs rendering,
+failures, subscriptions), RabbitMQ (GET-only management API: alarms, stuck queues) and CodeMeter (service and port),
+a topology map discovered from ARR farms, SQL sessions and Redis clients, optional .NET runtime counters of the
+Rahkaran pools (EventPipe, local, off by default) and team query packs that SqlGuard checks before they can run.
+History and the slowness wizard arrive in Phase 5 (`PLAN.md`).
 
 ## Read-only by construction
 
@@ -26,6 +30,8 @@ RSM cannot change, restart or execute anything on a server:
 - dangerous .NET APIs (process start, service control, IIS commit/recycle, WMI methods, registry/event-log writes,
   file deletes, raw sockets/HTTP …) are **compile errors** (banned-API analyzer, warnings as errors);
 - Redis and RabbitMQ are reached only through clients that can send a fixed whitelist of read commands;
+- the optional .NET counters use a diagnostics session that can carry counters only — dumps, profilers and
+  environment access are compile errors;
 - the UI has no kill / recycle / restart / shrink / rebuild buttons — recommendations are text only;
 - no internet access, telemetry or auto-update.
 

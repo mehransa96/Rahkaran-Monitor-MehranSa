@@ -31,6 +31,7 @@ RSM.sln
 │  │                                              expression evaluator, slowness engine, KB loader
 │  ├─ RSM.Safety                  net8.0          SqlGuard (ScriptDom), QueryCatalog, SafeSqlExecutor,
 │  │                                              RespWhitelistClient, RabbitGetClient, ReadOnlyFile,
+│  │                                              QueryPackCatalog, RuntimeCounterSource (EventPipe, counters only),
 │  │                                              Audited/* (the only allowed exceptions, §6.4)
 │  ├─ RSM.Parsers                 net8.0          W3C/HTTPERR/errorlog/deadlock/showplan/RESP-INFO/
 │  │                                              ExecutionLog/web.config parsers (pure, unit-tested on Linux)
@@ -49,7 +50,7 @@ RSM.sln
 ├─ rules/                         *.json rule definitions (copied next to exe; user-editable)
 ├─ kb/                            event-ID / error-number / wait-type knowledge base (fa/en JSON)
 ├─ known-builds.json              SQL Server build → CU map (shipped, editable, no internet)
-├─ QueryPacks/                    empty by default; team drops *.sql + manifest.json here
+├─ QueryPacks/                    empty by default; team drops <pack>/manifest.json + *.sql here (example in docs/query-packs)
 └─ tests/
    ├─ RSM.Safety.Tests            SqlGuard corpus, catalog read-only, RESP whitelist, file guard
    ├─ RSM.ArchTests               NetArchTest dependency/usage rules
@@ -235,7 +236,7 @@ interval values come from a 5 s baseline taken inside that run.
 | 2 | Query catalog (build time) | `RSM.Collectors.*/Queries/**/*.sql` embedded | string-built SQL (executor only accepts `QueryKey`) |
 | 3 | SqlGuard (load + run time) | `RSM.Safety` | any non read-only T-SQL, even inside catalog/query packs |
 | 4 | SafeSqlExecutor (run time) | `RSM.Safety` | timeouts, hardening prefix, concurrency, own-session exclusion, version gating |
-| 5 | Whitelisted protocol clients | `RSM.Safety` | Redis/RabbitMQ commands outside whitelist |
+| 5 | Whitelisted protocol clients | `RSM.Safety` | Redis/RabbitMQ commands outside whitelist; .NET diagnostics IPC other than a counters-only EventPipe session (every public `DiagnosticsClient` method is allowed or banned — `RSM.ArchTests`) |
 | 6 | Read-only handles | IIS `ServerManager(readOnly)`, `RegistryKey.OpenSubKey(writable:false)`, `FileAccess.Read` | accidental writes through otherwise-allowed objects |
 | 7 | Architecture tests | `RSM.ArchTests` | dependency direction, who may reference transports, audited exceptions pinned |
 | 8 | Least-privilege accounts | `PERMISSIONS.md` (DBA runs scripts) | anything the first 7 layers miss is denied by the server |

@@ -100,7 +100,25 @@ never committed, and there is no control for services, pools or sites.
 - **Redis:** network access to the Redis port (default 6379) and the Redis password if one is set. RSM sends only
   `AUTH`, `PING`, `INFO`, `DBSIZE`, `SLOWLOG GET|LEN`, `LATENCY LATEST`, `CLIENT LIST`, `CONFIG GET maxmemory*`.
 - **RabbitMQ management API (off by default):** a user with the `monitoring` tag; RSM sends `GET` to
-  `/api/overview`, `/api/queues`, `/api/nodes` only.
+  `/api/overview`, `/api/queues`, `/api/nodes` only. HTTP 401/403 shows as *Permission denied* with that hint.
+- **CodeMeter:** nothing extra — the service and its listening port come from CIM queries (`Win32_Service`,
+  `MSFT_NetTCPConnection`); no licence API is called.
+
+## 6a. .NET runtime counters (Phase 4, optional, off by default)
+
+- Switched on per site (Sites → *.NET runtime counters*, with a warning) and read **only on the machine where RSM
+  runs** (local-per-server mode on each App server).
+- RSM must run as the pool identity or as a member of **Administrators** (elevated) to open the diagnostics endpoint
+  of `w3wp.exe` (in-process hosting) or of the `dotnet.exe` child of `w3wp` (out-of-process hosting).
+- The session carries the `System.Runtime` and `Microsoft.AspNetCore.Hosting` EventCounters only — no dumps,
+  profilers, startup hooks, environment reads or other providers (compile-time bans + tests). .NET Framework pools
+  have no endpoint and are reported as not covered.
+
+## 6b. Query packs (Phase 4)
+
+- Pack queries run with the same `rsm_monitor` login, in the Rahkaran database (or the database named in the
+  manifest): the login needs `SELECT` on the tables/views a pack reads (`db_datareader` in that database, or
+  object-level grants) — added only when the team installs a pack.
 
 ## 7. What RSM shows if you use `sysadmin`
 
