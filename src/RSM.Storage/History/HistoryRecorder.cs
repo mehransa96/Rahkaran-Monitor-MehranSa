@@ -6,16 +6,21 @@ namespace RSM.Storage.History;
 /// <summary>
 /// Feeds the live view's samples into <see cref="HistoryStore"/>: buffers them per node, flushes every
 /// <c>flushInterval</c> (default 30 s) and runs roll-up + retention every <c>maintainInterval</c> (default 10 min).
-/// Write failures are logged by the caller's handler and never stop the live view.
+/// After each maintenance pass the node baselines are refreshed when older than a day. Write failures are reported
+/// through <see cref="Failed"/> and never stop the live view.
 /// </summary>
-public sealed class HistoryRecorder(HistoryStore store, TimeProvider? time = null)
+public sealed class HistoryRecorder(HistoryStore store, BaselineStore? baselines = null, TimeProvider? time = null)
 {
     private readonly HistoryStore _store = store;
+    private readonly BaselineStore? _baselines = baselines;
     private readonly TimeProvider _time = time ?? TimeProvider.System;
 
     public TimeSpan FlushInterval { get; init; } = TimeSpan.FromSeconds(30);
 
     public TimeSpan MaintainInterval { get; init; } = TimeSpan.FromMinutes(10);
+
+    /// <summary>Hour-of-week slots follow this zone (the operator's local time by default).</summary>
+    public TimeZoneInfo Zone { get; init; } = TimeZoneInfo.Local;
 
     /// <summary>Raised when a flush or maintenance pass fails (disk full, access denied); recording continues.</summary>
     public event Action<Exception>? Failed;
@@ -74,6 +79,13 @@ public sealed class HistoryRecorder(HistoryStore store, TimeProvider? time = nul
                     {
                         lastMaintain = now;
                         await GuardAsync(() => _owner._store.MaintainAsync(now, cancellationToken)).ConfigureAwait(false);
+                        if (_owner._baselines is { } baselines)
+                        {
+                            foreach (var node in _session.Nodes.Select(n => n.Id))
+                            {
+                                await GuardAsync(() => baselines.RefreshIfStaleAsync(_siteId, node, now, _owner.Zone, cancellationToken)).ConfigureAwait(false);
+                            }
+                        }
                     }
                 }
             }

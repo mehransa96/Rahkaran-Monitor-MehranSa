@@ -102,9 +102,10 @@ public static class RsmHost
         services.AddSingleton<SnapshotStore>();
         services.AddSingleton<SnapshotService>();
         services.AddSingleton<RSM.Storage.History.HistoryStore>(sp => new RSM.Storage.History.HistoryStore(sp.GetRequiredService<IDataFolder>()));
+        services.AddSingleton(sp => new RSM.Storage.History.BaselineStore(sp.GetRequiredService<RSM.Storage.History.HistoryStore>(), sp.GetRequiredService<IDataFolder>()));
         services.AddSingleton(sp =>
         {
-            var recorder = new RSM.Storage.History.HistoryRecorder(sp.GetRequiredService<RSM.Storage.History.HistoryStore>());
+            var recorder = new RSM.Storage.History.HistoryRecorder(sp.GetRequiredService<RSM.Storage.History.HistoryStore>(), sp.GetRequiredService<RSM.Storage.History.BaselineStore>());
             var log = sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<RSM.Storage.History.HistoryRecorder>>();
             recorder.Failed += ex => Microsoft.Extensions.Logging.LoggerExtensions.LogWarning(log, "History write failed: {Error}", ex.Message);
             return recorder;

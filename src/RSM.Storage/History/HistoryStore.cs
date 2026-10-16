@@ -253,39 +253,58 @@ public sealed partial class HistoryStore(IDataFolder folder, HistoryRetention? r
             .OrderBy(f => f.Start)
             .ToList();
 
+    /// <summary>Tier used when none is given: ≤ 6 h raw, ≤ 3 days 1-minute, else 15-minute.</summary>
+    public static HistoryTier TierFor(TimeSpan span) => span <= TimeSpan.FromHours(6) ? HistoryTier.Raw : span <= TimeSpan.FromDays(3) ? HistoryTier.OneMinute : HistoryTier.FifteenMinutes;
+
     /// <summary>
-    /// Reads one series between two instants. <paramref name="tier"/> null = by span (≤ 6 h raw, ≤ 3 days 1-min,
-    /// else 15-min). Points not rolled up yet are aggregated on the fly from the finer tier.
+    /// Reads one series between two instants. <paramref name="tier"/> null = <see cref="TierFor"/> the span. Points not
+    /// rolled up yet are aggregated on the fly from the finer tier, so there is no gap at "now".
     /// </summary>
     public async Task<IReadOnlyList<HistoryPoint>> ReadAsync(string siteId, string nodeId, string key, string? instance, DateTimeOffset fromUtc, DateTimeOffset toUtc,
         HistoryTier? tier, CancellationToken cancellationToken)
     {
+        var all = await ReadManyAsync(siteId, nodeId, s => s.Key == key && s.Instance == instance, fromUtc, toUtc, tier, cancellationToken).ConfigureAwait(false);
+        return all.Count == 0 ? [] : all.Single().Value;
+    }
+
+    /// <summary>Reads every series matching <paramref name="filter"/> in one pass over the segment files.</summary>
+    public async Task<IReadOnlyDictionary<HistorySeries, IReadOnlyList<HistoryPoint>>> ReadManyAsync(string siteId, string nodeId, Func<HistorySeries, bool> filter,
+        DateTimeOffset fromUtc, DateTimeOffset toUtc, HistoryTier? tier, CancellationToken cancellationToken)
+    {
         var node = NodeFolder(siteId, nodeId);
-        var chosen = tier ?? ((toUtc - fromUtc) <= TimeSpan.FromHours(6) ? HistoryTier.Raw : (toUtc - fromUtc) <= TimeSpan.FromDays(3) ? HistoryTier.OneMinute : HistoryTier.FifteenMinutes);
+        var chosen = tier ?? TierFor(toUtc - fromUtc);
         await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            if (!(await RegistryAsync(node, cancellationToken).ConfigureAwait(false)).TryGetValue((key, instance), out var id))
+            var series = (await RegistryAsync(node, cancellationToken).ConfigureAwait(false))
+                .Select(r => new HistorySeries(r.Value, r.Key.Key, r.Key.Instance)).Where(filter).ToDictionary(s => s.Id);
+            if (series.Count == 0)
             {
-                return [];
+                return new Dictionary<HistorySeries, IReadOnlyList<HistoryPoint>>();
             }
 
+            var ids = series.Keys.ToHashSet();
             var state = await StateAsync(node, cancellationToken).ConfigureAwait(false);
-            var raw = await ReadRawRangeAsync(node, id, fromUtc, toUtc, chosen == HistoryTier.Raw ? null : state.LastRawHour ?? DateTimeOffset.MinValue, cancellationToken).ConfigureAwait(false);
+            var raw = await ReadRawRangeAsync(node, ids, fromUtc, toUtc, chosen == HistoryTier.Raw ? null : state.LastRawHour ?? DateTimeOffset.MinValue, cancellationToken).ConfigureAwait(false);
+            IEnumerable<(long Ticks, int Series, double Avg, double Min, double Max, int N)> points;
             if (chosen == HistoryTier.Raw)
             {
-                return raw.Select(r => new HistoryPoint(new DateTimeOffset(r.Ticks, TimeSpan.Zero), r.Value, r.Value, r.Value, 1)).ToList();
+                points = raw.Select(r => (r.Ticks, r.Series, r.Value, r.Value, r.Value, 1));
+            }
+            else
+            {
+                var m1 = (await ReadAggRangeAsync(node, "m1", ids, fromUtc, toUtc, chosen == HistoryTier.OneMinute ? null : state.LastM1Day ?? DateTimeOffset.MinValue, cancellationToken).ConfigureAwait(false))
+                    .Concat(Aggregate(raw.Select(r => (r.Ticks, r.Series, r.Value, r.Value, r.Value, 1)), TimeSpan.FromMinutes(1)))
+                    .ToList();
+                points = chosen == HistoryTier.OneMinute
+                    ? m1
+                    : (await ReadAggRangeAsync(node, "m15", ids, fromUtc, toUtc, null, cancellationToken).ConfigureAwait(false)).Concat(Aggregate(m1, TimeSpan.FromMinutes(15)));
             }
 
-            var m1 = (await ReadAggRangeAsync(node, "m1", id, fromUtc, toUtc, chosen == HistoryTier.OneMinute ? null : state.LastM1Day ?? DateTimeOffset.MinValue, cancellationToken).ConfigureAwait(false))
-                .Concat(Aggregate(raw.Select(r => (r.Ticks, r.Series, r.Value, r.Value, r.Value, 1)), TimeSpan.FromMinutes(1)))
-                .ToList();
-            var points = chosen == HistoryTier.OneMinute
-                ? m1
-                : (await ReadAggRangeAsync(node, "m15", id, fromUtc, toUtc, null, cancellationToken).ConfigureAwait(false)).Concat(Aggregate(m1, TimeSpan.FromMinutes(15))).ToList();
             return points.Where(p => p.Ticks >= fromUtc.UtcTicks && p.Ticks <= toUtc.UtcTicks)
-                .GroupBy(p => p.Ticks).Select(g => g.First()).OrderBy(p => p.Ticks)
-                .Select(p => new HistoryPoint(new DateTimeOffset(p.Ticks, TimeSpan.Zero), p.Avg, p.Min, p.Max, p.N)).ToList();
+                .GroupBy(p => p.Series)
+                .ToDictionary(g => series[g.Key], g => (IReadOnlyList<HistoryPoint>)g.GroupBy(p => p.Ticks).Select(t => t.First()).OrderBy(p => p.Ticks)
+                    .Select(p => new HistoryPoint(new DateTimeOffset(p.Ticks, TimeSpan.Zero), p.Avg, p.Min, p.Max, p.N)).ToList());
         }
         finally
         {
@@ -293,26 +312,27 @@ public sealed partial class HistoryStore(IDataFolder folder, HistoryRetention? r
         }
     }
 
-    /// <summary>Raw records of one series; with <paramref name="after"/> only hours later than that (not rolled up).</summary>
-    private async Task<List<(long Ticks, int Series, double Value)>> ReadRawRangeAsync(string node, int id, DateTimeOffset from, DateTimeOffset to, DateTimeOffset? after, CancellationToken cancellationToken)
+    /// <summary>Raw records of some series; with <paramref name="after"/> only hours later than that (not rolled up).</summary>
+    private async Task<List<(long Ticks, int Series, double Value)>> ReadRawRangeAsync(string node, HashSet<int> ids, DateTimeOffset from, DateTimeOffset to, DateTimeOffset? after,
+        CancellationToken cancellationToken)
     {
         var result = new List<(long, int, double)>();
         foreach (var (start, file) in Segments(node, "raw", "yyyyMMddHH").Where(s => s.Start + TimeSpan.FromHours(1) > from && s.Start <= to && (after is null || s.Start > after)))
         {
-            result.AddRange(ReadRaw(await folder.ReadAllBytesAsync(file, cancellationToken).ConfigureAwait(false)).Where(r => r.Series == id && r.Ticks >= from.UtcTicks && r.Ticks <= to.UtcTicks));
+            result.AddRange(ReadRaw(await folder.ReadAllBytesAsync(file, cancellationToken).ConfigureAwait(false)).Where(r => ids.Contains(r.Series) && r.Ticks >= from.UtcTicks && r.Ticks <= to.UtcTicks));
         }
 
-        return result.OrderBy(r => r.Item1).ToList();
+        return result;
     }
 
-    /// <summary>Bucket records of one series; with <paramref name="after"/> only days later than that (not rolled up).</summary>
-    private async Task<List<(long Ticks, int Series, double Avg, double Min, double Max, int N)>> ReadAggRangeAsync(string node, string tier, int id, DateTimeOffset from, DateTimeOffset to,
+    /// <summary>Bucket records of some series; with <paramref name="after"/> only days later than that (not rolled up).</summary>
+    private async Task<List<(long Ticks, int Series, double Avg, double Min, double Max, int N)>> ReadAggRangeAsync(string node, string tier, HashSet<int> ids, DateTimeOffset from, DateTimeOffset to,
         DateTimeOffset? after, CancellationToken cancellationToken)
     {
         var result = new List<(long, int, double, double, double, int)>();
         foreach (var (start, file) in Segments(node, tier, "yyyyMMdd").Where(s => s.Start + TimeSpan.FromDays(1) > from && s.Start <= to && (after is null || s.Start > after)))
         {
-            result.AddRange(ReadAgg(await folder.ReadAllBytesAsync(file, cancellationToken).ConfigureAwait(false)).Where(r => r.Series == id));
+            result.AddRange(ReadAgg(await folder.ReadAllBytesAsync(file, cancellationToken).ConfigureAwait(false)).Where(r => ids.Contains(r.Series)));
         }
 
         return result;
