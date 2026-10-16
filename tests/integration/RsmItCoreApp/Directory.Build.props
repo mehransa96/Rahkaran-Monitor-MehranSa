@@ -1,0 +1,4 @@
+<Project>
+  <!-- A web app, not a test project: take only the repository-wide settings (skip tests/Directory.Build.props). -->
+  <Import Project="$(MSBuildThisFileDirectory)../../../Directory.Build.props" />
+</Project>

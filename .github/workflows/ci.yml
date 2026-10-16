@@ -115,7 +115,7 @@ jobs:
           retention-days: 3
 
   iis:
-    name: IIS live requests, logs, services and events (Windows, read-only proof)
+    name: IIS live requests, logs, services, events and .NET counters (Windows, read-only proof)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -138,20 +138,43 @@ jobs:
           New-WebAppPool -Name RsmItPool | Out-Null
           New-Website -Name AuxWebsite1 -Port 8081 -PhysicalPath C:\rsmit\site -ApplicationPool RsmItPool | Out-Null
           Invoke-WebRequest http://localhost:8081/index.html -UseBasicParsing | Select-Object StatusCode
+      - name: Install the ASP.NET Core Hosting Bundle (ANCM)
+        shell: powershell
+        run: |
+          Invoke-WebRequest https://aka.ms/dotnet/8.0/dotnet-hosting-win.exe -OutFile $env:RUNNER_TEMP\hosting.exe -UseBasicParsing
+          Start-Process $env:RUNNER_TEMP\hosting.exe -ArgumentList '/install','/quiet','/norestart' -Wait
+          net stop was /y
+          net start w3svc
+      - name: Host the CI ASP.NET Core app in-process (8082, CoreInPool) and out-of-process (8083, CoreOutPool)
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          dotnet publish tests/integration/RsmItCoreApp -c Release -o C:\rsmit\core-in
+          Copy-Item C:\rsmit\core-in C:\rsmit\core-out -Recurse
+          $cfg = 'C:\rsmit\core-out\web.config'
+          (Get-Content $cfg) -replace 'hostingModel="inprocess"', 'hostingModel="outofprocess"' | Set-Content $cfg
+          Select-String -Path $cfg -Pattern 'hostingModel'
+          foreach ($p in 'CoreInPool', 'CoreOutPool') { New-WebAppPool -Name $p | Out-Null; Set-ItemProperty IIS:\AppPools\$p -Name managedRuntimeVersion -Value '' }
+          New-Website -Name CoreIn -Port 8082 -PhysicalPath C:\rsmit\core-in -ApplicationPool CoreInPool | Out-Null
+          New-Website -Name CoreOut -Port 8083 -PhysicalPath C:\rsmit\core-out -ApplicationPool CoreOutPool | Out-Null
+          Invoke-WebRequest http://localhost:8082/ -UseBasicParsing | Select-Object StatusCode
+          Invoke-WebRequest http://localhost:8083/ -UseBasicParsing | Select-Object StatusCode
+          Get-CimInstance Win32_Process -Filter "Name = 'w3wp.exe' OR Name = 'dotnet.exe'" | Format-Table ProcessId, ParentProcessId, Name
       - name: Fingerprint IIS configuration before RSM connects
         shell: powershell
         run: |
           (Get-FileHash $env:windir\System32\inetsrv\config\applicationHost.config).Hash | Out-File iis-before.txt
-          Get-WebAppPoolState -Name RsmItPool | Out-File -Append iis-before.txt
+          foreach ($p in 'RsmItPool', 'CoreInPool', 'CoreOutPool') { Get-WebAppPoolState -Name $p | Out-File -Append iis-before.txt }
           Get-Content iis-before.txt
-      - name: IIS integration tests (elevated, local)
+      - name: IIS and .NET runtime integration tests (elevated, local)
         env:
           RSM_IT_IIS: "1"
-        run: dotnet test tests/RSM.Integration.Tests -c Release --filter "FullyQualifiedName~IisLiveTests" --logger "console;verbosity=detailed"
+          RSM_IT_DOTNET: "1"
+        run: dotnet test tests/RSM.Integration.Tests -c Release --filter "FullyQualifiedName~IisLiveTests|FullyQualifiedName~DotNetRuntimeLiveTests" --logger "console;verbosity=detailed"
       - name: Read-only proof — IIS configuration and pool state unchanged
         shell: powershell
         run: |
           (Get-FileHash $env:windir\System32\inetsrv\config\applicationHost.config).Hash | Out-File iis-after.txt
-          Get-WebAppPoolState -Name RsmItPool | Out-File -Append iis-after.txt
+          foreach ($p in 'RsmItPool', 'CoreInPool', 'CoreOutPool') { Get-WebAppPoolState -Name $p | Out-File -Append iis-after.txt }
           if (Compare-Object (Get-Content iis-before.txt) (Get-Content iis-after.txt)) { throw "IIS state changed" }
           Write-Host "read-only proof: applicationHost.config and pool state unchanged"
