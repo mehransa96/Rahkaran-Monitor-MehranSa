@@ -31,6 +31,12 @@ public interface IDataFolder
     void Delete(string relativePath);
 
     void EnsureDirectory(string relativeDirectory);
+
+    /// <summary>Appends to a file inside the data folder (created when missing). Used by the history store's raw tier.</summary>
+    Task AppendAllBytesAsync(string relativePath, byte[] content, CancellationToken cancellationToken);
+
+    /// <summary>Sub-directories (relative paths) of a data-folder directory; empty when it does not exist.</summary>
+    IReadOnlyList<string> ListDirectories(string relativeDirectory);
 }
 
 public sealed class DataFolderEscapeException(string path) : Exception($"Path '{path}' is outside the RSM data folder.");
@@ -124,4 +130,20 @@ public sealed class DataFolder : IDataFolder
     }
 
     public void EnsureDirectory(string relativeDirectory) => Directory.CreateDirectory(Resolve(relativeDirectory));
+
+    public async Task AppendAllBytesAsync(string relativePath, byte[] content, CancellationToken cancellationToken)
+    {
+        var target = Resolve(relativePath);
+        Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+        await using var stream = new FileStream(target, FileMode.Append, FileAccess.Write, FileShare.Read, 4096, useAsync: true);
+        await stream.WriteAsync(content, cancellationToken).ConfigureAwait(false);
+    }
+
+    public IReadOnlyList<string> ListDirectories(string relativeDirectory)
+    {
+        var dir = Resolve(relativeDirectory);
+        return Directory.Exists(dir)
+            ? Directory.EnumerateDirectories(dir).Select(d => Path.GetRelativePath(Root, d)).Order(StringComparer.Ordinal).ToList()
+            : [];
+    }
 }

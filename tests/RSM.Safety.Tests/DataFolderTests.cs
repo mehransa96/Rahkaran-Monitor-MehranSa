@@ -28,6 +28,21 @@ public sealed class DataFolderTests : IDisposable
         folder.Exists(Path.Combine("sites", "a.json")).Should().BeFalse();
     }
 
+    [Fact]
+    public async Task Appends_and_lists_directories_inside_the_root_only()
+    {
+        var folder = new DataFolder(_root, isPortable: true);
+
+        await folder.AppendAllBytesAsync("history/a/raw/1.bin", [1, 2], CancellationToken.None);
+        await folder.AppendAllBytesAsync("history/a/raw/1.bin", [3], CancellationToken.None);
+
+        (await folder.ReadAllBytesAsync("history/a/raw/1.bin", CancellationToken.None)).Should().Equal(1, 2, 3);
+        folder.ListDirectories("history").Should().Equal(Path.Combine("history", "a"));
+        folder.ListDirectories("missing").Should().BeEmpty();
+        await FluentActions.Awaiting(() => folder.AppendAllBytesAsync("../x.bin", [1], CancellationToken.None)).Should().ThrowAsync<DataFolderEscapeException>();
+        FluentActions.Invoking(() => folder.ListDirectories("..")).Should().Throw<DataFolderEscapeException>();
+    }
+
     [Theory]
     [InlineData("../escape.txt")]
     [InlineData("sites/../../escape.txt")]

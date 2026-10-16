@@ -101,6 +101,14 @@ public static class RsmHost
         services.AddSingleton<RuleRepository>();
         services.AddSingleton<SnapshotStore>();
         services.AddSingleton<SnapshotService>();
+        services.AddSingleton<RSM.Storage.History.HistoryStore>(sp => new RSM.Storage.History.HistoryStore(sp.GetRequiredService<IDataFolder>()));
+        services.AddSingleton(sp =>
+        {
+            var recorder = new RSM.Storage.History.HistoryRecorder(sp.GetRequiredService<RSM.Storage.History.HistoryStore>());
+            var log = sp.GetRequiredService<Microsoft.Extensions.Logging.ILogger<RSM.Storage.History.HistoryRecorder>>();
+            recorder.Failed += ex => Microsoft.Extensions.Logging.LoggerExtensions.LogWarning(log, "History write failed: {Error}", ex.Message);
+            return recorder;
+        });
         services.AddSingleton<LiveMonitorService>();
         services.AddSingleton<RSM.Reporting.ReportExporter>();
         services.AddSingleton<ReportService>();

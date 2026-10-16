@@ -16,9 +16,11 @@ public sealed class LiveMonitorService(
     IEnumerable<ICollector> collectors,
     IEnumerable<ISiteAnalyzer> analyzers,
     RuleRepository ruleRepository,
-    ILogger<LiveMonitorService> logger) : IAsyncDisposable
+    ILogger<LiveMonitorService> logger,
+    RSM.Storage.History.HistoryRecorder? recorder = null) : IAsyncDisposable
 {
     private readonly List<NodeTransports> _transports = [];
+    private IAsyncDisposable? _recording;
 
     public LiveSession? Current { get; private set; }
 
@@ -49,12 +51,19 @@ public sealed class LiveMonitorService(
 
         Site = site;
         Current = new LiveSession(nodes, engine, analyzers: analyzers.ToList());
+        _recording = recorder?.Attach(site.Id, Current);
         Current.Start();
         return Current;
     }
 
     public async Task StopAsync()
     {
+        if (_recording is { } recording)
+        {
+            _recording = null;
+            await recording.DisposeAsync().ConfigureAwait(false);
+        }
+
         if (Current is { } session)
         {
             Current = null;
