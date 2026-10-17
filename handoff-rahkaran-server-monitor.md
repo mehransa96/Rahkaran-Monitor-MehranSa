@@ -121,14 +121,17 @@ You are continuing work from a previous chat. That chat is gone; this file is th
 | Phase notes P5 | final | `docs/phase-notes/P5.md` | includes §19 checklist |
 | Lab scripts | ready | `tests/lab/` | to be run by a human, never by RSM |
 | CI run 45 (`07a6a54`) | green | — | — |
-| Windows Server 2022 Standard target | PR (draft) | branch `claude/target-windows-server-2022-rh6v6v` | CI pinned to `windows-2022`, OS-019, facts `os.build`/`os.sku`; notes `docs/phase-notes/WS2022.md` |
+| Windows Server 2022 Standard target | merged (PR #4) | default branch `47b1767` | CI pinned to `windows-2022`, OS-019, facts `os.build`/`os.sku`; notes `docs/phase-notes/WS2022.md` |
+| PROMPT v2 Phase A (part 1) | draft PR | branch `claude/v2-dod-progress-ijxy0b` | `docs/SPEC-v2.md`, `READONLY_AUDIT.md` (no §2 violation; R1–R5), `GAP_ANALYSIS.md` (plan A–F + 5 questions), `docs/phase-notes/V2-A.md` |
 
 ## 11. Next steps
-1. **Next action:** آخرین اجرای CI روی شاخه را بررسی کن (باید سبز باشد) و منتظر درخواست کاربر بمان.
-2. منتظر کاربر بمان. فاز دیگری در PLAN نیست؛ کار تازه فقط با درخواست صریح او.
+1. **Next action:** منتظر تأیید کاربر برای ادامهٔ فاز A پرامپت v2 بمان (`GAP_ANALYSIS.md` §4): Operations Audit log، صفحهٔ Self-Test. پیش از تأیید کد عوض نکن (PROMPT v2 §0).
+2. پاسخ پنج پرسش `GAP_ANALYSIS.md` §5 را بگیر؛ تا آن موقع پیش‌فرض‌ها معتبرند.
 3. وقتی فضای artifact آزاد شد، تصاویر `ui-snapshots` را در `docs/user-guide/images/` قرار بده (نیاز به دانلود artifact توسط کاربر).
 
 ## 12. Open questions ⚠️
+- پنج پرسش `GAP_ANALYSIS.md` §5 (R1/R3/R4/R5، فایل‌محور به‌جای SQLite، `responsibleRole` در قواعد، پوشهٔ `lab/`، مسیر راهنمای فارسی).
+- گردش‌کار انتشار `rsm-latest` روی شاخهٔ `claude/project-thread-uevw4p` (`fc74d54`) است و در شاخهٔ پیش‌فرض merge نشده.
 - آیا کاربر سناریوهای `tests/lab/` را روی ماشین آزمایشگاهی اجرا کرده و علت اول درست بوده است؟
 - آیا RSM روی یک VM تمیز Windows Server 2022 Standard آزموده شده است؟ (۲۰۱۹ دیگر هدف نیست؛ همهٔ سرورهای راهکاران ۲۰۲۲ استاندارد هستند.)
 - تصاویر راهنما: فضای artifact حساب GitHub پر بود («Artifact storage quota has been hit»). کاربر artifact را دانلود می‌کند یا فضای حساب را آزاد می‌کند؟

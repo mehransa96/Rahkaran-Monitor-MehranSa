@@ -129,7 +129,7 @@ path, service patterns, module mappings).
 
 ## 5. Questions for the owner (each has a default; work continues on the default)
 
-1. **R1–R5** in `READONLY_AUDIT.md` §1: confirm as compliant? *Default: yes, no code change.*
+1. **R1, R3, R4, R5** in `READONLY_AUDIT.md` §1 (R2 is decision Q8): confirm as compliant? *Default: yes, no code change.*
 2. **Storage:** PROMPT v2 says SQLite for slowness marks and blocking history; you chose the file store in P5.
    *Default: keep the file store (no SQLite).*
 3. **Rule layout:** add `responsibleRole` and `verified` to every existing rule and put only new KB rules in

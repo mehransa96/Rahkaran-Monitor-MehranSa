@@ -162,3 +162,10 @@ with screenshots); single-file publish.
 Other defaults: Brotli (BCL) instead of zstd; in-house rule expression language; extra projects `RSM.Parsers` (P1) and
 `RSM.Hosting`; plain styled WPF instead of WPF-UI until its RTL rendering is verified on Windows; FluentAssertions pinned to
 6.12 (v7+ is commercial).
+
+---
+
+## PROMPT v2 (`docs/SPEC-v2.md`)
+
+Phases A–F of PROMPT v2 follow the same rules (one phase at a time, owner's OK before the next). Status, plan and
+open questions: `GAP_ANALYSIS.md` §3–§5; read-only audit: `READONLY_AUDIT.md`; notes: `docs/phase-notes/V2-*.md`.

@@ -3,7 +3,8 @@
 RSM is a **strictly read-only** diagnostic and monitoring desktop tool (.NET 8 WPF, single-file exe) for
 servers that run Rahkaran (Systemgroup ERP) on Windows Server + IIS + SQL Server.
 
-- Full spec: `docs/SPEC.md` (the original build prompt; authoritative).
+- Full spec: `docs/SPEC.md` (the original build prompt; authoritative). Specialization pass: `docs/SPEC-v2.md`
+  (PROMPT v2, phases A–F; its §2 is `docs/SPEC.md` §2 unchanged) — status in `GAP_ANALYSIS.md`, audit in `READONLY_AUDIT.md`.
 - Design: `ARCHITECTURE.md` · Query list: `SQL_CATALOG.md` · Health rules: `RULES.md` · Phases: `PLAN.md`.
 
 ## Workflow rules
