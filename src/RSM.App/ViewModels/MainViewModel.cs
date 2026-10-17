@@ -21,7 +21,8 @@ public sealed partial class NavItem(string titleKey, Func<object> createPage) : 
 public sealed partial class MainViewModel : ObservableObject
 {
     public MainViewModel(SitesViewModel sites, SettingsViewModel settings, DiagnosisViewModel diagnosis, LiveViewModel live, StatusBarViewModel status, IUserDialogs dialogs,
-        RSM.Safety.Sql.QueryPackCatalog queryPacks)
+        RSM.Safety.Sql.QueryPackCatalog queryPacks, Hosting.SlownessInvestigationService slowness, Storage.Investigations.InvestigationStore investigations,
+        Hosting.ReportService reports, Storage.History.HistoryStore history, Storage.History.BaselineStore baselines, Microsoft.Extensions.Logging.ILoggerFactory loggers)
     {
         Status = status;
         Live = live;
@@ -41,10 +42,10 @@ public sealed partial class MainViewModel : ObservableObject
             new NavItem("Nav_Topology", () => new TopologyPageViewModel(live)),
             new NavItem("Nav_Services", () => new ServicesPageViewModel(live)),
             new NavItem("Nav_Events", () => new EventsPageViewModel(live)),
-            new NavItem("Nav_Slowness", () => new PlaceholderViewModel("Nav_Slowness", 5)),
+            new NavItem("Nav_Slowness", () => new SlownessPageViewModel(live, slowness, investigations, reports, status, Microsoft.Extensions.Logging.LoggerFactoryExtensions.CreateLogger<SlownessPageViewModel>(loggers))),
             new NavItem("Nav_QueryPacks", () => new QueryPacksPageViewModel(live, queryPacks)),
             new NavItem("Nav_Reports", () => diagnosis),
-            new NavItem("Nav_History", () => new PlaceholderViewModel("Nav_History", 5)),
+            new NavItem("Nav_History", () => new HistoryPageViewModel(sites, history, baselines, status)),
             new NavItem("Nav_Sites", () => sites),
             new NavItem("Nav_Settings", () => settings),
         ];

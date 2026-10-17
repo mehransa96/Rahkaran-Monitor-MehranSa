@@ -47,6 +47,18 @@
         <views:LiveChart Live="{Binding Live}" Spec="{Binding MemoryChart}" />
       </UniformGrid>
 
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Live_Anomalies], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <StackPanel>
+          <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Text="{Binding Live.AnomalyState}" />
+          <ItemsControl ItemsSource="{Binding Live.Anomalies}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate><TextBlock Foreground="{DynamicResource Brush.Warning}" TextWrapping="Wrap" Text="{Binding}" /></DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
       <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Live_Findings], Source={x:Static loc:Loc.Instance}}" />
       <Border Style="{StaticResource Card}">
         <views:FindingsGrid DataContext="{Binding Live.Findings}" MaxHeight="420" />

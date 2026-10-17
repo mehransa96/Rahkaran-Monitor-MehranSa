@@ -30,6 +30,8 @@
     <DataTemplate DataType="{x:Type vm:DotNetPageViewModel}"><views:DotNetView /></DataTemplate>
     <DataTemplate DataType="{x:Type vm:TopologyPageViewModel}"><views:TopologyView /></DataTemplate>
     <DataTemplate DataType="{x:Type vm:QueryPacksPageViewModel}"><views:QueryPacksView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:SlownessPageViewModel}"><views:SlownessView /></DataTemplate>
+    <DataTemplate DataType="{x:Type vm:HistoryPageViewModel}"><views:HistoryView /></DataTemplate>
   </Window.Resources>
   <DockPanel>
     <!-- Status bar -->

@@ -10,6 +10,11 @@ namespace RSM.Hosting;
 /// <summary>Loads the embedded <c>rules/slowness</c> definitions (validated; a failure is a build defect caught by tests).</summary>
 public static class SlownessDefinitionSource
 {
+    private static readonly Lazy<SlownessDefinitions> Lazy = new(LoadEmbedded);
+
+    /// <summary>The embedded definitions, parsed once.</summary>
+    public static SlownessDefinitions Cached => Lazy.Value;
+
     public static SlownessDefinitions LoadEmbedded()
     {
         var assembly = typeof(SlownessDefinitionSource).Assembly;
@@ -33,9 +38,7 @@ public static class SlownessDefinitionSource
 public sealed class SlownessInvestigationService(LiveMonitorService live, InvestigationStore store, ILogger<SlownessInvestigationService> logger, TimeProvider? time = null)
 {
     private readonly TimeProvider _time = time ?? TimeProvider.System;
-    private readonly Lazy<SlownessDefinitions> _definitions = new(SlownessDefinitionSource.LoadEmbedded);
-
-    public SlownessDefinitions Definitions => _definitions.Value;
+    public SlownessDefinitions Definitions => SlownessDefinitionSource.Cached;
 
     /// <summary>Captures and analyses; requires the live view to be running for the site. Progress reports 0..1.</summary>
     public async Task<SavedInvestigation> RunAsync(TimeSpan duration, IProgress<double>? progress, CancellationToken cancellationToken)

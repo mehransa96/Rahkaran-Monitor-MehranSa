@@ -610,4 +610,79 @@
   <data name="Sites_DotNetEnable" xml:space="preserve"><value>روشن کردن…</value></data>
   <data name="Sites_DotNetDisable" xml:space="preserve"><value>خاموش کردن</value></data>
   <data name="Sites_DotNetWarning" xml:space="preserve"><value>RSM یک نشست تشخیصی (EventPipe، فقط شمارنده‌ها) به پردازش‌های w3wp/dotnet راهکاران روی همین سرور وصل می‌کند. dump نمی‌گیرد و پردازش را تغییر نمی‌دهد، ولی سربار کمی به پردازش عملیاتی اضافه می‌کند. روشن شود؟</value></data>
+  <data name="Slow_Intro" xml:space="preserve"><value>یک ضبط، همهٔ گره‌های سایت را برای مدتی کوتاه با سرعت بیشتر ثبت می‌کند (فقط همان پرس‌وجوهای فقط‌خواندنی) و سپس علت‌های محتمل را با شواهدشان رتبه‌بندی می‌کند. ابتدا نمای زنده را وصل کنید.</value></data>
+  <data name="Slow_Duration" xml:space="preserve"><value>مدت ضبط</value></data>
+  <data name="Slow_Investigate" xml:space="preserve"><value>بررسی علت کندی</value></data>
+  <data name="Slow_Export" xml:space="preserve"><value>ذخیره به‌صورت HTML</value></data>
+  <data name="Slow_NeedsLive" xml:space="preserve"><value>ابتدا نمای زنده را به سایت وصل کنید و هنگامی که کاربران کندی گزارش می‌دهند ضبط را آغاز کنید.</value></data>
+  <data name="Slow_Ready" xml:space="preserve"><value>آماده است. ضبط را هنگام وقوع کندی آغاز کنید.</value></data>
+  <data name="Slow_Capturing" xml:space="preserve"><value>در حال ضبط به مدت {0} ثانیه…</value></data>
+  <data name="Slow_Done" xml:space="preserve"><value>بررسی تمام شد: {0} علت محتمل.</value></data>
+  <data name="Slow_Failed" xml:space="preserve"><value>بررسی ناموفق بود: {0}</value></data>
+  <data name="Slow_NoCause" xml:space="preserve"><value>در طول ضبط علت محتملی یافت نشد. اگر کاربران همچنان کندی می‌بینند، هنگام وقوع آن دوباره ضبط کنید.</value></data>
+  <data name="Slow_NoCauseShort" xml:space="preserve"><value>بدون علت</value></data>
+  <data name="Slow_Result" xml:space="preserve"><value>ضبط {0} از {1}: {2} علت محتمل، محتمل‌ترین در ابتدا.</value></data>
+  <data name="Slow_Causes" xml:space="preserve"><value>علت‌های محتمل</value></data>
+  <data name="Slow_Evidence" xml:space="preserve"><value>شواهد</value></data>
+  <data name="Slow_NextSteps" xml:space="preserve"><value>گام‌های بعدی</value></data>
+  <data name="Slow_TextOnly" xml:space="preserve"><value>این گام‌ها راهنمایی برای انسان است. RSM هرگز آن‌ها را انجام نمی‌دهد.</value></data>
+  <data name="Slow_Timeline" xml:space="preserve"><value>خط زمانی مشترک شواهد</value></data>
+  <data name="Slow_Past" xml:space="preserve"><value>بررسی‌های قبلی</value></data>
+  <data name="Duration_Seconds" xml:space="preserve"><value>{0} ثانیه</value></data>
+  <data name="Col_Evidence" xml:space="preserve"><value>شاهد</value></data>
+  <data name="Col_Instance" xml:space="preserve"><value>نمونه</value></data>
+  <data name="Col_Value" xml:space="preserve"><value>مقدار</value></data>
+  <data name="Col_Strength" xml:space="preserve"><value>قوت</value></data>
+  <data name="Col_TopCause" xml:space="preserve"><value>محتمل‌ترین علت</value></data>
+  <data name="Col_Metric" xml:space="preserve"><value>سنجه</value></data>
+  <data name="Col_Peak" xml:space="preserve"><value>اوج</value></data>
+  <data name="Col_Limit" xml:space="preserve"><value>حد</value></data>
+  <data name="Col_Samples" xml:space="preserve"><value>نمونه‌ها</value></data>
+  <data name="Col_AvgBefore" xml:space="preserve"><value>میانگین (اول)</value></data>
+  <data name="Col_AvgAfter" xml:space="preserve"><value>میانگین (دوم)</value></data>
+  <data name="Col_P95Before" xml:space="preserve"><value>p95 (اول)</value></data>
+  <data name="Col_P95After" xml:space="preserve"><value>p95 (دوم)</value></data>
+  <data name="Col_Change" xml:space="preserve"><value>تغییر</value></data>
+  <data name="Hist_Intro" xml:space="preserve"><value>تاریخچهٔ محلی که هنگام اجرای نمای زنده ثبت می‌شود (خام ۲۴ ساعت، یک‌دقیقه‌ای ۷ روز، ۱۵ دقیقه‌ای ۹۰ روز)، خط مبنای ساعت-هفته و مقایسهٔ بازه‌ها. هیچ بخشی از این صفحه به سرور متصل نمی‌شود.</value></data>
+  <data name="Hist_Node" xml:space="preserve"><value>گره</value></data>
+  <data name="Hist_Series" xml:space="preserve"><value>سنجه</value></data>
+  <data name="Hist_Range" xml:space="preserve"><value>بازه</value></data>
+  <data name="Hist_Load" xml:space="preserve"><value>نمایش</value></data>
+  <data name="Hist_ComputeBaseline" xml:space="preserve"><value>محاسبهٔ خط مبنا</value></data>
+  <data name="Hist_BaselineInfo" xml:space="preserve"><value>خط مبنا از {0} هفته، محاسبه‌شده در {1} ({2} سنجه).</value></data>
+  <data name="Hist_NoBaseline" xml:space="preserve"><value>هنوز خط مبنا وجود ندارد: حدود دو هفته تاریخچه لازم است و هنگام اجرای نمای زنده روزانه محاسبه می‌شود.</value></data>
+  <data name="Hist_BaselineComputed" xml:space="preserve"><value>خط مبنا برای {0} سنجه محاسبه شد.</value></data>
+  <data name="Hist_Empty" xml:space="preserve"><value>هنوز تاریخچه‌ای برای این گره وجود ندارد. تاریخچه هنگام اتصال نمای زنده ثبت می‌شود.</value></data>
+  <data name="Hist_NoPoints" xml:space="preserve"><value>در این بازه داده‌ای نیست.</value></data>
+  <data name="Hist_Loaded" xml:space="preserve"><value>{0} نقطه ({1}).</value></data>
+  <data name="Hist_AnomalyRule" xml:space="preserve"><value>ناهنجاری = بیش از p95 خط مبنا × ۱٫۵ در دست‌کم ۳ نقطهٔ پیاپی (راهنمای عمومی — با ستاد فنی تأیید کنید).</value></data>
+  <data name="Hist_Anomalies" xml:space="preserve"><value>ناهنجاری‌های این بازه</value></data>
+  <data name="Hist_Compare" xml:space="preserve"><value>مقایسهٔ بازه‌ها</value></data>
+  <data name="Hist_CompareWeek" xml:space="preserve"><value>هفتهٔ گذشته در برابر این هفته</value></data>
+  <data name="Hist_CompareSplit" xml:space="preserve"><value>هفتهٔ پیش در برابر هفتهٔ پس از</value></data>
+  <data name="Hist_DoCompare" xml:space="preserve"><value>مقایسه</value></data>
+  <data name="Hist_Compared" xml:space="preserve"><value>{0} سنجه مقایسه شد.</value></data>
+  <data name="Range_Hours" xml:space="preserve"><value>{0} ساعت</value></data>
+  <data name="Range_Days" xml:space="preserve"><value>{0} روز</value></data>
+  <data name="Tier_Raw" xml:space="preserve"><value>نمونه‌های خام</value></data>
+  <data name="Tier_OneMinute" xml:space="preserve"><value>میانگین‌های یک‌دقیقه‌ای</value></data>
+  <data name="Tier_FifteenMinutes" xml:space="preserve"><value>میانگین‌های ۱۵ دقیقه‌ای</value></data>
+  <data name="Series_Avg" xml:space="preserve"><value>میانگین</value></data>
+  <data name="Series_Max" xml:space="preserve"><value>بیشینه</value></data>
+  <data name="Series_BaselineP95" xml:space="preserve"><value>p95 خط مبنا</value></data>
+  <data name="Series_AnomalyLimit" xml:space="preserve"><value>حد ناهنجاری (p95 × {0})</value></data>
+  <data name="Chart_History" xml:space="preserve"><value>{0} — {1}</value></data>
+  <data name="Chart_AnomalyBand" xml:space="preserve"><value>ناهنجاری</value></data>
+  <data name="Live_Anomalies" xml:space="preserve"><value>ناهنجاری‌ها نسبت به خط مبنا</value></data>
+  <data name="Live_NoBaseline" xml:space="preserve"><value>هنوز خط مبنایی برای این سایت نیست (حدود دو هفته تاریخچه لازم است).</value></data>
+  <data name="Live_BaselineTracked" xml:space="preserve"><value>مقایسه با خط مبنا: {0} سنجه. اکنون ناهنجاری‌ای نیست.</value></data>
+  <data name="Live_AnomalyRow" xml:space="preserve"><value>{0}: {1} = {2}، بیش از {3} از {4}</value></data>
+  <data name="Diag_Import" xml:space="preserve"><value>وارد کردن بسته‌ها</value></data>
+  <data name="Diag_ImportExplain" xml:space="preserve"><value>بسته‌های JSON ذخیره‌شده توسط RSM روی ماشین‌های دیگر همین سایت را وارد کنید (مثلاً یکی برای هر سرور App). آن‌ها در یک تصویر و گزارش سایت ادغام می‌شوند و کمبود قابلیت باقی‌مانده هر گره نشان داده می‌شود.</value></data>
+  <data name="Diag_ImportButton" xml:space="preserve"><value>انتخاب بسته‌ها…</value></data>
+  <data name="Diag_Imported" xml:space="preserve"><value>{0} بسته در یک تصویر سایت با {1} گره وارد شد.</value></data>
+  <data name="Diag_ImportNode" xml:space="preserve"><value>{0}: از {1}؛ کمبود قابلیت: {2}</value></data>
+  <data name="Diag_ImportNoGaps" xml:space="preserve"><value>ندارد</value></data>
+  <data name="Diag_ImportFailed" xml:space="preserve"><value>وارد کردن ناموفق بود: {0}</value></data>
+  <data name="Dialog_BundleFilter" xml:space="preserve"><value>بسته‌های RSM</value></data>
 </root>

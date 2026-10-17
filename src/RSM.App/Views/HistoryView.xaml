@@ -1,0 +1,72 @@
+<UserControl x:Class="RSM.App.Views.HistoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:RSM.App.Localization"
+             xmlns:views="clr-namespace:RSM.App.Views">
+  <!-- DataContext: HistoryPageViewModel. Local history only (recorded while the live view runs); nothing here reaches a server. -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel>
+      <TextBlock Style="{StaticResource Text.Title}" Text="{Binding Title}" />
+      <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Margin="0,0,0,8" Text="{Binding [Hist_Intro], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <StackPanel>
+          <WrapPanel>
+            <TextBlock Style="{StaticResource Text.Label}" VerticalAlignment="Center" Margin="0,0,6,0" Text="{Binding [Diag_Site], Source={x:Static loc:Loc.Instance}}" />
+            <ComboBox MinWidth="160" ItemsSource="{Binding Sites.Sites}" SelectedItem="{Binding SelectedSite}" DisplayMemberPath="Name" />
+            <TextBlock Style="{StaticResource Text.Label}" VerticalAlignment="Center" Margin="12,0,6,0" Text="{Binding [Hist_Node], Source={x:Static loc:Loc.Instance}}" />
+            <ComboBox MinWidth="120" ItemsSource="{Binding Nodes}" SelectedItem="{Binding SelectedNode}" DisplayMemberPath="Name" />
+            <TextBlock Style="{StaticResource Text.Label}" VerticalAlignment="Center" Margin="12,0,6,0" Text="{Binding [Hist_Series], Source={x:Static loc:Loc.Instance}}" />
+            <ComboBox MinWidth="260" ItemsSource="{Binding Series}" SelectedItem="{Binding SelectedSeries}" DisplayMemberPath="Label" FlowDirection="LeftToRight" />
+            <TextBlock Style="{StaticResource Text.Label}" VerticalAlignment="Center" Margin="12,0,6,0" Text="{Binding [Hist_Range], Source={x:Static loc:Loc.Instance}}" />
+            <ComboBox MinWidth="100" ItemsSource="{Binding RangeOptions}" SelectedItem="{Binding SelectedRange}" DisplayMemberPath="Label" />
+          </WrapPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+            <Button Style="{StaticResource Button.Primary}" Margin="0,0,6,0" Command="{Binding LoadCommand}" Content="{Binding [Hist_Load], Source={x:Static loc:Loc.Instance}}" />
+            <Button Command="{Binding ComputeBaselineCommand}" Content="{Binding [Hist_ComputeBaseline], Source={x:Static loc:Loc.Instance}}" />
+          </StackPanel>
+          <TextBlock Margin="0,6,0,0" Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Text="{Binding BaselineInfo}" />
+          <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Text="{Binding Message}" />
+          <TextBlock FontSize="11" Foreground="{DynamicResource Brush.Warning}" TextWrapping="Wrap" Text="{Binding [Hist_AnomalyRule], Source={x:Static loc:Loc.Instance}}" />
+        </StackPanel>
+      </Border>
+      <views:StaticChart Data="{Binding Chart}" ChartHeight="240" />
+
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Hist_Anomalies], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <DataGrid ItemsSource="{Binding Anomalies}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="200">
+          <DataGrid.Columns>
+            <DataGridTextColumn Width="150" Binding="{Binding From}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_From]}" />
+            <DataGridTextColumn Width="150" Binding="{Binding To}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_To]}" />
+            <DataGridTextColumn Width="*" Binding="{Binding Metric}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Metric]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Peak}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Peak]}" />
+            <DataGridTextColumn Width="90" Binding="{Binding Limit}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Limit]}" />
+            <DataGridTextColumn Width="80" Binding="{Binding Samples}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Samples]}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Border>
+
+      <TextBlock Style="{StaticResource Text.Section}" Margin="0,8,0,4" Text="{Binding [Hist_Compare], Source={x:Static loc:Loc.Instance}}" />
+      <Border Style="{StaticResource Card}">
+        <StackPanel>
+          <WrapPanel>
+            <RadioButton GroupName="CompareMode" Margin="0,0,12,0" IsChecked="{Binding CompareWeeks}" Content="{Binding [Hist_CompareWeek], Source={x:Static loc:Loc.Instance}}" />
+            <RadioButton GroupName="CompareMode" Margin="0,0,6,0" IsChecked="{Binding CompareSplit}" Content="{Binding [Hist_CompareSplit], Source={x:Static loc:Loc.Instance}}" />
+            <DatePicker Margin="0,0,12,0" SelectedDate="{Binding SplitDate}" IsEnabled="{Binding CompareSplit}" />
+            <Button Style="{StaticResource Button.Primary}" Command="{Binding CompareCommand}" Content="{Binding [Hist_DoCompare], Source={x:Static loc:Loc.Instance}}" />
+          </WrapPanel>
+          <DataGrid Margin="0,8,0,0" ItemsSource="{Binding Comparison}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="360">
+            <DataGrid.Columns>
+              <DataGridTextColumn Width="*" Binding="{Binding Metric}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Metric]}" />
+              <DataGridTextColumn Width="90" Binding="{Binding AAvg}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_AvgBefore]}" />
+              <DataGridTextColumn Width="90" Binding="{Binding BAvg}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_AvgAfter]}" />
+              <DataGridTextColumn Width="80" Binding="{Binding AvgChange}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Change]}" />
+              <DataGridTextColumn Width="90" Binding="{Binding AP95}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_P95Before]}" />
+              <DataGridTextColumn Width="90" Binding="{Binding BP95}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_P95After]}" />
+              <DataGridTextColumn Width="80" Binding="{Binding P95Change}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Change]}" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -44,6 +44,15 @@ public sealed class ReportExporter(IDataFolder dataFolder)
         return dataFolder.Resolve(relative);
     }
 
+    /// <summary>Writes a slowness investigation as HTML (<c>reports/RSM_slowness_&lt;capture&gt;_&lt;lang&gt;.html</c>) and returns its absolute path.</summary>
+    public async Task<string> WriteInvestigationHtmlAsync(RSM.Core.Slowness.InvestigationResult result, RSM.Core.Slowness.SlownessCapture capture, string siteName, UiLanguage language,
+        IReadOnlyList<RSM.Core.Slowness.DetectorDefinition>? detectors, CancellationToken cancellationToken)
+    {
+        var relative = $"{Folder}/RSM_slowness_{capture.CaptureId}_{(language == UiLanguage.Fa ? "fa" : "en")}.html";
+        await dataFolder.WriteAllTextAsync(relative, InvestigationReport.Render(result, capture, siteName, language, detectors), cancellationToken).ConfigureAwait(false);
+        return dataFolder.Resolve(relative);
+    }
+
     /// <summary>Writes the JSON bundle (zip: manifest.json + snapshot.json) and returns its absolute path.</summary>
     public async Task<string> WriteBundleAsync(SiteSnapshot snapshot, bool mask, DateTimeOffset generatedUtc, CancellationToken cancellationToken)
     {

@@ -268,6 +268,22 @@ public sealed class SlownessTests : IDisposable
             .Causes[0].Cause.Id.Should().Be("SLOW-CPU-NONSQL");
     }
 
+    [Fact]
+    public void Investigation_html_is_self_contained_encoded_and_labelled_general_guidance()
+    {
+        var (db, app) = Healthy(10);
+        db.Set("win.cpu.total_pct", null, 97, 0.02).Set("sql.cpu.other_pct", null, 75).Fact("win.process.top_cpu", "<script>alert(1)</script> 90 %");
+        var capture = new SlownessCapture("cap-1", "site", T0, T0.AddMinutes(2), [db.Build(), app.Build()], []);
+        var result = SlownessEngine.Analyze(capture, Definitions);
+
+        foreach (var language in new[] { UiLanguage.En, UiLanguage.Fa })
+        {
+            var html = RSM.Reporting.Html.InvestigationReport.Render(result, capture, "Site <A>", language, Definitions.Detectors, TimeZoneInfo.Utc);
+            html.Should().NotContain("<script").And.Contain("&lt;script&gt;").And.Contain("Site &lt;A&gt;").And.Contain("SLOW-CPU-NONSQL").And.Contain("default-src 'none'");
+            html.Should().Contain(language == UiLanguage.Fa ? "راهنمای عمومی" : "general guidance").And.Contain(language == UiLanguage.Fa ? "CPU کل سرور اشباع است" : "Host CPU saturated");
+        }
+    }
+
     private static string RepoRoot()
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);

@@ -80,5 +80,18 @@ public partial class App : Application
             var options = Loc.Instance.FlowDirection == FlowDirection.RightToLeft ? MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : MessageBoxOptions.None;
             return MessageBox.Show(message, Loc.Instance["App_Title"], MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No, options) == MessageBoxResult.Yes;
         }
+
+        public IReadOnlyList<string> PickBundles()
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = Loc.Instance["Dialog_BundleFilter"] + " (*.zip)|*.zip",
+                Multiselect = true,
+                CheckFileExists = true,
+                ReadOnlyChecked = true,
+                Title = Loc.Instance["Diag_Import"],
+            };
+            return dialog.ShowDialog() == true ? dialog.FileNames : [];
+        }
     }
 }

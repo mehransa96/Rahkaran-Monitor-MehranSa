@@ -15,6 +15,9 @@ namespace RSM.App.ViewModels;
 public interface IUserDialogs
 {
     bool Confirm(string message);
+
+    /// <summary>Lets the user pick RSM bundle files (read-only; nothing is written); empty when cancelled.</summary>
+    IReadOnlyList<string> PickBundles();
 }
 
 /// <summary>Site list + node editor + "Test connection" (Capability Matrix).</summary>

@@ -42,5 +42,9 @@ public sealed class ReportService(RuleRepository ruleRepository, SnapshotService
         return new PdfExport(pdf, html, reason);
     }
 
+    public Task<string> ExportInvestigationAsync(RSM.Storage.Investigations.SavedInvestigation investigation, UiLanguage language, CancellationToken cancellationToken) =>
+        exporter.WriteInvestigationHtmlAsync(investigation.Result, investigation.Capture, investigation.SiteName, language,
+            SlownessDefinitionSource.Cached.Detectors, cancellationToken);
+
     private List<RuleDefinition> Rules() => ruleRepository.Load(snapshots.RuleOverrideDirectory).Rules.Select(r => r.Definition).ToList();
 }

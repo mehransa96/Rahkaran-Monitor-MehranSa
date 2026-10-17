@@ -30,13 +30,16 @@ public sealed partial class LiveViewModel : ObservableObject
     private readonly StatusBarViewModel _status;
     private readonly ILogger<LiveViewModel> _logger;
     private readonly DispatcherTimer _timer;
+    private readonly RSM.Storage.History.BaselineStore _baselines;
     private CancellationTokenSource? _cts;
     private bool _minimized;
+    private RSM.Storage.History.LiveAnomalyMonitor? _anomalyMonitor;
 
-    public LiveViewModel(SitesViewModel sites, LiveMonitorService service, StatusBarViewModel status, ILogger<LiveViewModel> logger)
+    public LiveViewModel(SitesViewModel sites, LiveMonitorService service, RSM.Storage.History.BaselineStore baselines, StatusBarViewModel status, ILogger<LiveViewModel> logger)
     {
         Sites = sites;
         _service = service;
+        _baselines = baselines;
         _status = status;
         _logger = logger;
         BuildOptions();
@@ -56,6 +59,12 @@ public sealed partial class LiveViewModel : ObservableObject
     public ObservableCollection<KpiViewModel> Kpis { get; } = [];
 
     public ObservableCollection<FindingRowViewModel> Findings { get; } = [];
+
+    /// <summary>Live anomalies against the stored hour-of-week baseline (§15), one line each.</summary>
+    public ObservableCollection<string> Anomalies { get; } = [];
+
+    [ObservableProperty]
+    private string _anomalyState = string.Empty;
 
     public ObservableCollection<ChoiceOption> WindowOptions { get; } = [];
 
@@ -134,6 +143,8 @@ public sealed partial class LiveViewModel : ObservableObject
             }
 
             SelectedNode = Nodes.FirstOrDefault();
+            _anomalyMonitor = await RSM.Storage.History.LiveAnomalyMonitor.AttachAsync(profile.Id, session, _baselines, TimeZoneInfo.Local, null, _cts.Token);
+            AnomalyState = _anomalyMonitor.TrackedSeries == 0 ? Loc.Instance["Live_NoBaseline"] : Loc.Instance.Format("Live_BaselineTracked", _anomalyMonitor.TrackedSeries);
             IsConnected = true;
             IsPaused = false;
             ApplySchedulerSettings();
@@ -163,6 +174,10 @@ public sealed partial class LiveViewModel : ObservableObject
     {
         _cts?.Cancel();
         _timer.Stop();
+        _anomalyMonitor?.Detach();
+        _anomalyMonitor = null;
+        Anomalies.Clear();
+        AnomalyState = string.Empty;
         await _service.StopAsync();
         IsConnected = false;
         Nodes.Clear();
@@ -284,6 +299,18 @@ public sealed partial class LiveViewModel : ObservableObject
             {
                 Findings.Add(new FindingRowViewModel(f.Severity, Loc.Instance["Severity_" + f.Severity], f.RuleId, node.Context.Node.Name,
                     f.Instance ?? string.Empty, f.Title.Get(language), f.Recommendation.Get(language), f.Source.Citation, f.Source.IsGeneralGuidance));
+            }
+        }
+
+        Anomalies.Clear();
+        if (_anomalyMonitor is { } monitor)
+        {
+            var names = session.Nodes.ToDictionary(n => n.Id, n => n.Context.Node.Name);
+            foreach (var a in monitor.Active())
+            {
+                Anomalies.Add(Loc.Instance.Format("Live_AnomalyRow", names.GetValueOrDefault(a.NodeId, a.NodeId),
+                    a.Anomaly.Instance is null ? a.Anomaly.Key : $"{a.Anomaly.Key} [{a.Anomaly.Instance}]",
+                    Num(a.Anomaly.Peak, "0.##"), Num(a.Anomaly.Limit, "0.##"), a.Anomaly.FromUtc.ToLocalTime().ToString("HH:mm:ss", CultureInfo.InvariantCulture)));
             }
         }
 

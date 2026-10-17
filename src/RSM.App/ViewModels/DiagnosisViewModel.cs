@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -21,11 +22,16 @@ public sealed partial class DiagnosisViewModel : ObservableObject
     private readonly ReportService _reports;
     private readonly StatusBarViewModel _status;
     private readonly ILogger<DiagnosisViewModel> _logger;
+    private readonly BundleImportService _import;
+    private readonly IUserDialogs _dialogs;
     private CancellationTokenSource? _cts;
 
-    public DiagnosisViewModel(SitesViewModel sites, SnapshotService snapshots, ReportService reports, StatusBarViewModel status, ILogger<DiagnosisViewModel> logger)
+    public DiagnosisViewModel(SitesViewModel sites, SnapshotService snapshots, ReportService reports, BundleImportService import, IUserDialogs dialogs, StatusBarViewModel status,
+        ILogger<DiagnosisViewModel> logger)
     {
         Sites = sites;
+        _import = import;
+        _dialogs = dialogs;
         _snapshots = snapshots;
         _reports = reports;
         _status = status;
@@ -37,6 +43,9 @@ public sealed partial class DiagnosisViewModel : ObservableObject
     public SitesViewModel Sites { get; }
 
     public ObservableCollection<FindingRowViewModel> Findings { get; } = [];
+
+    /// <summary>After an import: one line per merged node (source bundles, remaining capability gaps) plus warnings.</summary>
+    public ObservableCollection<string> ImportNotes { get; } = [];
 
     [ObservableProperty]
     private SiteItemViewModel? _selectedSite;
@@ -59,7 +68,7 @@ public sealed partial class DiagnosisViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsIdle))]
-    [NotifyCanExecuteChangedFor(nameof(DiagnoseCommand), nameof(ExportHtmlCommand), nameof(ExportPdfCommand), nameof(ExportBundleCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DiagnoseCommand), nameof(ExportHtmlCommand), nameof(ExportPdfCommand), nameof(ExportBundleCommand), nameof(ImportBundlesCommand))]
     private bool _isBusy;
 
     [ObservableProperty]
@@ -130,6 +139,45 @@ public sealed partial class DiagnosisViewModel : ObservableObject
 
     [RelayCommand]
     private void Cancel() => _cts?.Cancel();
+
+    /// <summary>Imports one or more JSON bundles (e.g. RSM run on each node) and merges them into one site snapshot.</summary>
+    [RelayCommand(CanExecute = nameof(IsIdle))]
+    private async Task ImportBundlesAsync()
+    {
+        var files = _dialogs.PickBundles();
+        if (files.Count == 0)
+        {
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            var result = await _import.ImportAsync(files, CancellationToken.None);
+            Latest = result.Snapshot;
+            ImportNotes.Clear();
+            foreach (var warning in result.Warnings)
+            {
+                ImportNotes.Add(warning);
+            }
+
+            foreach (var node in result.Nodes)
+            {
+                ImportNotes.Add(Loc.Instance.Format("Diag_ImportNode", node.NodeName, string.Join(", ", node.FromBundles),
+                    node.Gaps.Count == 0 ? Loc.Instance["Diag_ImportNoGaps"] : string.Join(", ", node.Gaps.Select(g => $"{g.Id} ({g.State})"))));
+            }
+
+            _status.Show(Loc.Instance.Format("Diag_Imported", files.Count, result.Snapshot.Nodes.Count));
+        }
+        catch (Exception ex) when (ex is RSM.Reporting.Bundles.BundleFormatException or IOException or UnauthorizedAccessException)
+        {
+            _status.Show(Loc.Instance.Format("Diag_ImportFailed", ex.Message));
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 
     private bool CanExport() => IsIdle && Latest is not null;
 
