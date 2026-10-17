@@ -4,7 +4,7 @@ A portable, **strictly read-only** Windows tool that support engineers run on (o
 servers to see the health of SQL Server, databases, Windows, IIS/ARR, Redis, SSRS and services, find the cause of
 slowness, and export a diagnostic report — in Persian or English.
 
-**Status: Phase 4 (live SQL Server, Windows, IIS/ARR, services, event logs, Redis, SSRS, RabbitMQ/CodeMeter, topology, .NET counters, query packs).** Define sites and servers, run *Test connection* to get the Capability
+**Status: Phase 5 (all features: live monitoring, history & baseline, slowness wizard, reports incl. PDF, bundle import, CLI).** Define sites and servers, run *Test connection* to get the Capability
 Matrix, then *Reports → Diagnose now* for a read-only health check of SQL Server, its databases and Windows against the
 ستاد فنی baseline (Persian or English HTML report, JSON bundle, optional masking). *Connect live view* on the Overview,
 SQL Server, Queries & Blocking or Windows page watches the servers in real time: CPU (SQL vs other processes), waits,
@@ -19,7 +19,15 @@ adds Redis (INFO, slow commands, latency, connections per App host), SSRS (slow 
 failures, subscriptions), RabbitMQ (GET-only management API: alarms, stuck queues) and CodeMeter (service and port),
 a topology map discovered from ARR farms, SQL sessions and Redis clients, optional .NET runtime counters of the
 Rahkaran pools (EventPipe, local, off by default) and team query packs that SqlGuard checks before they can run.
-History and the slowness wizard arrive in Phase 5 (`PLAN.md`).
+Phase 5 adds the guided **"Why is Rahkaran slow?"** capture: every node at a faster read-only cadence for 120 s,
+then ranked causes with evidence, a shared timeline and text-only next steps. It also adds:
+
+- local **history** with an hour-of-week **baseline**, anomaly flags in the live view and period comparison;
+- **PDF** reports, printed offline with WebView2;
+- **import and merge** of bundles taken on several machines of one site;
+- **`RSM.Cli`** for headless snapshot, collection, investigation, export and import.
+
+How to use every page: [`docs/user-guide/`](docs/user-guide/README.md).
 
 ## Read-only by construction
 
@@ -33,6 +41,8 @@ RSM cannot change, restart or execute anything on a server:
 - the optional .NET counters use a diagnostics session that can carry counters only — dumps, profilers and
   environment access are compile errors;
 - the UI has no kill / recycle / restart / shrink / rebuild buttons — recommendations are text only;
+- RSM's own data (history, baselines, investigations) is plain files in its data folder — no database, no SQL of its own;
+- PDF export uses WebView2 offline: only the saved report is served, every other request is refused;
 - no internet access, telemetry or auto-update.
 
 Use the least-privilege accounts in [`PERMISSIONS.md`](PERMISSIONS.md).
@@ -57,11 +67,13 @@ dotnet build RSM.sln -c Release
 dotnet test RSM.sln -c Release
 ./build/analyzer-canary.sh                     # proves Process.Start in a collector breaks the build
 dotnet publish src/RSM.App -c Release -r win-x64 -o publish   # single self-contained RSM.exe
+dotnet publish src/RSM.Cli -c Release -r win-x64 -o publish-cli   # RSM.Cli.exe (headless)
 ```
 
 ## Documentation
 
 [`docs/SPEC.md`](docs/SPEC.md) (spec) · [`ARCHITECTURE.md`](ARCHITECTURE.md) · [`SQL_CATALOG.md`](SQL_CATALOG.md) ·
-[`RULES.md`](RULES.md) · [`PLAN.md`](PLAN.md) · [`PERMISSIONS.md`](PERMISSIONS.md) · [`docs/phase-notes/`](docs/phase-notes/)
+[`RULES.md`](RULES.md) · [`PLAN.md`](PLAN.md) · [`PERMISSIONS.md`](PERMISSIONS.md) · [`docs/user-guide/`](docs/user-guide/README.md) ·
+[`docs/phase-notes/`](docs/phase-notes/) · [`tests/lab/`](tests/lab/README.md) (slowness lab scenarios, run by a human)
 
 Font: [Vazirmatn](https://github.com/rastikerdar/vazirmatn), SIL Open Font License 1.1 (`src/RSM.App/Fonts/OFL-Vazirmatn.txt`).

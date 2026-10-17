@@ -42,11 +42,13 @@ RSM.sln
 │  ├─ RSM.Collectors.Redis        net8.0          uses RSM.Safety.RespWhitelistClient
 │  ├─ RSM.Collectors.Rahkaran     net8.0          topology, version drift, SSRS, CodeMeter, RabbitMQ,
 │  │                                              EventPipe runtime counters (optional, local only)
-│  ├─ RSM.Storage                 net8.0          SQLite schema, migrations, downsampling, baselines
-│  ├─ RSM.Reporting               net8.0          Scriban HTML, PDF, JSON bundle, masking, import/merge
-│  ├─ RSM.Hosting                 net8.0-windows  DI composition root shared by App and Cli
-│  ├─ RSM.App                     net8.0-windows  WPF shell (MVVM), views, localization, charts
-│  └─ RSM.Cli                     net8.0-windows  --snapshot | --collect --duration | --export | --import
+│  ├─ RSM.Storage                 net8.0          profiles, snapshots, history segments, roll-up/retention,
+│  │                                              baselines, investigations (files via IDataFolder, no SQL — §10)
+│  ├─ RSM.Reporting               net8.0          Scriban HTML, investigation HTML, JSON bundle, masking,
+│  │                                              bundle import/merge
+│  ├─ RSM.Hosting                 net8.0          DI composition root shared by App and Cli
+│  ├─ RSM.App                     net8.0-windows  WPF shell (MVVM), views, localization, charts, WebView2 PDF printer
+│  └─ RSM.Cli                     net8.0          --snapshot | --collect --duration | --investigate | --export | --import
 ├─ rules/                         *.json rule definitions (copied next to exe; user-editable)
 ├─ kb/                            event-ID / error-number / wait-type knowledge base (fa/en JSON)
 ├─ known-builds.json              SQL Server build → CU map (shipped, editable, no internet)
@@ -61,6 +63,7 @@ RSM.sln
 
 *P0:* created `RSM.Core`, `RSM.Safety`, `RSM.Collectors.Sql`, `RSM.Collectors.Redis`, `RSM.Storage`, `RSM.Hosting`,
 `RSM.App` and the four test projects; the other projects are added in the phase that first needs them.
+*P5:* added `RSM.Cli` (net8.0 console sharing `RSM.Hosting`; it never installs a service or a scheduled task).
 *P1–P3:* added `RSM.Parsers`, `RSM.Collectors.Database`, `RSM.Reporting` (P1), `RSM.Collectors.Windows` (P2) and
 `RSM.Collectors.Iis` (P3); both collector projects target `net8.0` so their analysis is unit-tested on Linux, with the
 Windows-only calls platform-annotated.
@@ -85,7 +88,8 @@ dependency and are the most test-heavy code, so isolating them lets the bulk of 
 | Perf counters | System.Diagnostics.PerformanceCounter 8.0.1 (MIT) | local PDH (`readOnly: true`, `NextValue` only; writers banned); remote via CIM `Win32_PerfFormattedData_*`, disk latency via `Win32_PerfRawData_*` average-timer math (the formatted class truncates seconds) |
 | IIS | Microsoft.Web.Administration 11.1.0 (netstandard1.5; Microsoft .NET Library EULA — redistributable, no telemetry) | *as built (P3)*: used **locally only** for runtime state, worker processes and `WorkerProcess.GetRequests`, opened as `new ServerManager(true, applicationHost.config)`; parameterless/read-write constructors, `OpenRemote`, `SetMetadata`, `CommitChanges`, Start/Stop/Recycle and configuration methods are banned and canary-checked. Configuration (applicationHost.config, web.config) is parsed from the files with `SafeXml`, locally or through the admin share — works remotely, never needs a writable API, and is unit-tested on Linux |
 | .NET counters | Microsoft.Diagnostics.NETCore.Client | optional, local, off by default |
-| Storage | Microsoft.Data.Sqlite 8.x — **not used yet** (P1 stores snapshots as files, see §10) | WAL mode |
+| Storage | — (owner decision P5: file store, §10) | no SQLite, no SQL of RSM's own |
+| PDF | Microsoft.Web.WebView2 1.0.2849.39 (BSD-3) | *as built (P5)*: one file (`WebView2PdfPrinter`, pinned by `WebView2_is_confined_to_the_offline_pdf_printer`); report served from a virtual host on `rsm-report.invalid`, every other request answered 403, scripts off, background networking off, profile in `<data>/webview2`, PDF returned as a stream and written through `IDataFolder`; without the runtime the HTML is kept and the user prints it from a browser (Q1) |
 | Compression | System.IO.Compression (Brotli) | **instead of zstd** – zero extra dependency; see §10 |
 | Templates | Scriban 7.5.0 | one embedded template; strict variables; model is pre-masked and pre-encoded |
 | PDF | WebView2 `PrintToPdf` (decision Q1) | fallback: open HTML and print |
@@ -542,40 +546,41 @@ clears after its condition is false for N evaluations (hysteresis, default 2). H
 
 ---
 
-## 10. Storage (SQLite, `data/rsm.db`, WAL)
+## 10. Storage (file store in the data folder — no SQL)
 
-> **Status after Phase 1 — open decision for the repository owner.** CLAUDE.md requires that *all* SQL in
-> `src/` lives in embedded `Queries/**/*.sql` files executed by catalog key, and the architecture tests enforce
-> that (`No_sql_text_is_built_in_csharp`, `Sql_files_exist_only_in_query_catalog_folders`). RSM's own SQLite
-> statements (CREATE/INSERT on the local history file) cannot satisfy that rule as written, and exempting them
-> would change how a non-negotiable rule is enforced. Phase 1 therefore stores diagnosis history **without SQL**:
-> `snapshots/<id>.json.br` (Brotli JSON of the whole `SiteSnapshot`) plus `snapshots/<id>.meta.json` (for
-> listing), both written through `IDataFolder`. Phase 5 (time series, baselines) needs a real database; before
-> P5 the owner decides either (a) a §2 spec clarification that allows RSM's *local* SQLite statements as embedded
-> resources in one pinned folder (`src/RSM.Storage/LocalDb/`), executed only by `Microsoft.Data.Sqlite` against
-> the data-folder file, or (b) a non-SQL store. The schema below is the plan for option (a).
+> **Owner decision (P5): non-SQL file store.** RSM runs no SQL of its own; the only SQL in `src/` is still the
+> read-only catalog. Everything below is written only through `IDataFolder`, in compact files per node and period.
 
-```sql
-sites(id, name, created_utc, profile_json)                     -- secrets NOT here (DPAPI blobs in profile store)
-nodes(id, site_id, name, host, roles, settings_json)
-metric_keys(id, key, unit, kind)                               -- interned keys
-metric_samples_raw(ts, node_id, key_id, inst_id, value)        -- 24 h
-metric_samples_1m (ts, node_id, key_id, inst_id, avg, min, max, n)   -- 7 d
-metric_samples_15m(ts, node_id, key_id, inst_id, avg, min, max, n)   -- 90 d
-snapshots(id, ts, node_id, kind, schema_ver, payload_br)        -- Brotli JSON (waits, top queries, requests, IIS summary…)
-findings_history(id, rule_id, node_id, instance, severity, first_ts, last_ts, evidence_json, cleared_ts)
-events_cache(id, ts, node_id, layer, source, code, severity, message_hash, message, count, first_ts, last_ts)
-baselines(node_id, key_id, inst_id, how /*hour-of-week 0..167*/, median, p95, n, weeks, computed_utc)
-investigations(id, ts, site_id, duration_s, result_json)
-```
+| Path (data folder) | Content | Writer |
+|---|---|---|
+| `snapshots/<id>.json.br` + `.meta.json` | diagnoses (Brotli JSON of `SiteSnapshot`), incl. merged imports (`Sources`) | `SnapshotStore` |
+| `history/<site>_<node>/series.json` | series id ↔ (metric key, instance) | `HistoryStore` |
+| `history/<site>_<node>/raw/yyyyMMddHH.bin` | append-only `[ticks:int64][series:int32][value:double]` per UTC hour, **24 h** | `HistoryStore.AppendAsync` |
+| `history/<site>_<node>/m1/yyyyMMdd.bin` | `[ticks][series][avg][min][max][n]` 1-minute buckets per UTC day, **7 days** | roll-up |
+| `history/<site>_<node>/m15/yyyyMMdd.bin` | same layout, 15-minute buckets, **90 days** | roll-up |
+| `history/<site>_<node>/rollup.json` | last raw hour / 1-minute day already rolled up (idempotent maintenance) | roll-up |
+| `history/<site>_<node>/baseline.json` | 168 hour-of-week slots (median, p95, n) per series, weeks, zone, computed time | `BaselineStore` |
+| `investigations/<capture>.json` + `.meta.json` | slowness capture (re-scorable) + result | `InvestigationStore` |
+| `reports/`, `logs/` | exports, RSM's own log | `ReportExporter`, Serilog sink |
+| `webview2/` | PDF printer's browser profile (offline, see §13) | WebView2 runtime, inside the data folder |
 
-- Downsampling job runs every 5 min (raw→1m) and hourly (1m→15m); retention configurable.
-- Baseline job daily: median & p95 per hour-of-week over the last N weeks (default 4); anomaly =
-  value > p95 × 1.5 for ≥ 3 consecutive samples (configurable).
-- Week definition uses the **Iranian week (Saturday-first)** for display; hour-of-week math is
-  calendar-neutral (local time).
-- zstd → Brotli: the spec suggests zstd; Brotli from the BCL gives comparable ratios for JSON with no
-  native dependency inside a single-file exe. Change back if you prefer (trivial).
+- **Recorder** (`HistoryRecorder`): subscribes to the live session's samples, buffers them per node and appends every
+  30 s and when the live view stops. Every 10 min it runs maintenance:
+  - rolls finished hours into 1-minute buckets and finished days into 15-minute buckets (weighted averages, min of
+    mins, max of maxes);
+  - deletes segments older than the retention;
+  - refreshes baselines older than a day.
+- **Reads** pick the tier from the span (≤ 6 h raw, ≤ 3 days 1-minute, else 15-minute) and aggregate the part that is
+  not rolled up yet on the fly, so a chart has no gap at "now". `ReadManyAsync` reads every series in one pass over the
+  files (period compare, baselines).
+- **Baseline**: median & p95 per local hour-of-week, built from the 15-minute averages of the last N weeks
+  (default 4), at least 8 values per slot.
+  - Anomaly = value > p95 × 1.5 for ≥ 3 consecutive samples (`general`).
+  - Used for history replay (`BaselineStore.AnomaliesAsync`) and the live view (`LiveAnomalyMonitor`).
+  - Slot 0 = Saturday 00:00 (Iranian week).
+- **Compare periods**: half-open periods; one row per series with avg/p50/p95/max per side, ranked by the change of
+  the average.
+- **Brotli instead of zstd**: comparable ratios for JSON, no native dependency inside a single-file exe.
 
 Data folder: portable mode if `./data` exists next to the exe or `--portable`; else `%LOCALAPPDATA%\RSM`.
 `IDataFolder` is the only component allowed to create/write/delete files.
@@ -604,6 +609,32 @@ Data folder: portable mode if `./data` exists next to the exe or `--portable`; e
 Lab validation (P5): scripted scenarios (CPU burn, blocking pair, disk latency via DiskSpd on a lab
 volume, memory pressure, IIS queue via slow endpoint + low queue length) — the scripts live in
 `tests/lab/` and are run by a human on a lab box, **never by RSM**.
+
+*As built (P5):*
+
+- **Capture** (`SlownessInvestigationService.CaptureAsync`):
+  - runs on the running live session: interval scale ⅓ for the capture, every collector once at t0, all samples
+    recorded, the previous cadence restored afterwards;
+  - capture id `yyyyMMdd-HHmmss-xxxxxx`;
+  - the last facts and active findings of every node are added to the capture.
+- **Detectors** are data, not code (`rules/slowness/detectors.json`). Each has exactly one input:
+  - a metric, reduced by avg/p50/p95/max/min/last/drop %, optionally as a share of `_Total` wait time, with a
+    fallback to the fact of the same key;
+  - a fact (`[*]` patterns allowed);
+  - a list of active rule ids (re-using the live rules).
+
+  Strength ramps linearly from `from` to `to`.
+- **Causes** (`rules/slowness/SLOW-*.json`, 22):
+  - confidence = weighted mean of the best strength per detector across nodes;
+  - required detectors gate a cause; exclusions multiply;
+  - capped at 0.95 and listed from 0.15;
+  - fa/en text-only next steps.
+
+  Validated on load (`SlownessDefinitions.Validate`) and listed in RULES.md §12.
+- **Acceptance**: `SlownessTests` models each `tests/lab` scenario with its side effects and checks that the injected
+  cause ranks first.
+- Results are saved under `investigations/` and exported as self-contained HTML (`InvestigationReport`, CSP
+  `default-src 'none'`).
 
 ---
 
@@ -657,6 +688,18 @@ collectors, storage, hosting or live connections):
 - JSON bundle v1: zip with `manifest.json` + `snapshot.json` (`results/…`, `events.json`, samples arrive with the
   phases that produce them). Files go to `<data>/reports/RSM_<site>_<yyyyMMdd-HHmm>[_masked][_fa|_en].*` via
   `IDataFolder`; the UI shows the path to copy and never opens a shell.
+- *As built (P5)* **Bundle import/merge** (`BundleReader`, `BundleMerger`):
+  - Reading: only `manifest.json` (format `rsm-bundle` v1) and `snapshot.json` are read, each capped at 256 MB; fact
+    values come back as plain values. `CapabilityMatrix` has a JSON converter so capabilities survive the round trip.
+  - Node matching across bundles: id, host, name, or the reported machine name (`os.dns_host_name` /
+    `os.computer_name`).
+  - Per node: the best capability state wins, and the best collector result (Ok > Partial > Error > Unavailable, then
+    newest). Facts are the best-covered node snapshot overlaid with the facts of the chosen results.
+  - Site analyzers and rules are evaluated again, so cross-node findings appear.
+  - The report shows a "Merged from" table and the capability gaps that remain per node.
+  - Masked and unmasked bundles can be mixed, with a warning.
+- *As built (P5)* **PDF**: the same HTML report is printed by `WebView2PdfPrinter` (see §2.1), or the HTML path is
+  returned with the reason (CLI, or no WebView2 runtime).
 
 ---
 

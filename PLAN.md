@@ -126,13 +126,21 @@ profile; rules `RULES.md` §8–10.
 import/merge; `RSM.Cli` (`--snapshot`, `--collect --duration`, `--export`, `--import`); docs (user guide
 with screenshots); single-file publish.
 
-**Acceptance**
-- [ ] Wizard ranks the injected cause first in lab scenarios: CPU burn, blocking, disk latency, memory
-      pressure, IIS queue (scripts in `tests/lab/`, run by a human — never by RSM).
-- [ ] Baseline anomaly flags appear for a replayed metric series with a known anomaly.
-- [ ] Two bundles from two nodes import & merge into one site report with per-node capability gaps.
-- [ ] Release exe runs on a clean Windows Server 2019 and 2022 (no installer, no extra runtime).
-- [ ] Definition-of-done checklist (spec §19) all ticked.
+**Acceptance** (status after P5 — evidence in `docs/phase-notes/P5.md`)
+- [x] Wizard ranks the injected cause first — **fixture-verified** for all five scenarios (`SlownessTests`: each
+      `tests/lab` scenario modelled with its side effects; healthy site → no cause; ASYNC_NETWORK_IO with a busy vs an
+      idle app tier). The lab scripts are ready in `tests/lab/`; **the run on a real lab box is for a human**.
+- [x] Baseline anomaly flags appear for a replayed metric series with a known anomaly (`BaselineTests`: four weeks
+      replayed, the injected 30-minute anomaly is the only flag, short spikes are not; live monitor flags too).
+- [x] Two bundles from two nodes import & merge into one site report with per-node capability gaps
+      (`BundleImportTests`, CLI `--import`).
+- [~] Release exe runs on Windows Server **2022** with no installer and no extra runtime: CI run 42 started the
+      single-file `RSM.exe` on the `windows-latest` runner, toured all 20 pages in fa and en (40 screenshots), printed
+      a PDF through WebView2 (29 697 bytes) and ran `RSM.Cli.exe`. **Windows Server 2019 and a truly clean VM need a
+      human run** (GitHub no longer offers a 2019 runner).
+- [~] Definition-of-done checklist (spec §19) — see `docs/phase-notes/P5.md`; all items ticked except the two human
+      runs above and copying the CI screenshots into `docs/user-guide/images/` (artifact upload blocked by the
+      account's storage quota).
 
 ---
 

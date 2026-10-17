@@ -141,7 +141,7 @@ jobs:
         with:
           name: RSM-win-x64
           path: publish/
-          retention-days: 3
+          retention-days: 1
 
   iis:
     name: IIS live requests, logs, services, events and .NET counters (Windows, read-only proof)
