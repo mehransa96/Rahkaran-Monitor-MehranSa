@@ -143,6 +143,44 @@ jobs:
           path: publish/
           retention-days: 1
 
+  # Opt-in refresh of the user guide's screenshots: runs only when the pushed commit message contains
+  # [guide-screenshots]. It replays the windows job's UI tour and commits the PNGs to docs/user-guide/images/ on the
+  # pushed branch, so the guide does not depend on artifact storage. The only job with write access; RSM itself
+  # still connects to nothing during the tour.
+  guide-screenshots:
+    name: Refresh user-guide screenshots (opt-in)
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[guide-screenshots]')
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Publish self-contained single-file win-x64
+        run: dotnet publish src/RSM.App/RSM.App.csproj -c Release -r win-x64 -o publish
+      - name: Run the UI tour and copy the PNGs into the guide
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath publish/RSM.exe -ArgumentList '--portable','--ui-snapshots' -PassThru
+          if (-not $p.WaitForExit(240000)) { $p.Kill(); throw "RSM.exe did not finish the UI tour in 4 minutes" }
+          if ($p.ExitCode -ne 0) { throw "RSM.exe exited with $($p.ExitCode)" }
+          $shots = Get-ChildItem publish/data/ui-snapshots -Filter *.png
+          if ($shots.Count -lt 40) { throw "expected a screenshot of every page in fa and en, got $($shots.Count)" }
+          New-Item -ItemType Directory -Force docs/user-guide/images | Out-Null
+          Copy-Item publish/data/ui-snapshots/*.png docs/user-guide/images/ -Force
+      - name: Commit the screenshots to the pushed branch
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/user-guide/images
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) { Write-Host "screenshots unchanged"; exit 0 }
+          git commit -m "P5: refresh user-guide screenshots from CI run ${{ github.run_number }}"
+          git push origin "HEAD:${{ github.ref_name }}"
+
   iis:
     name: IIS live requests, logs, services, events and .NET counters (Windows, read-only proof)
     runs-on: windows-latest
