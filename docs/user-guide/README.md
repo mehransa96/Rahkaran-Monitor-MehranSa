@@ -5,8 +5,8 @@ and SQL Server. It never changes a server. It does not kill, recycle, restart, s
 recommendation it gives is text for a person to act on. Persian guide: [README.fa.md](README.fa.md).
 
 > Screenshots come from the published `RSM.exe`. The Windows CI job runs `RSM.exe --portable --ui-snapshots`, which
-> shows every page in Persian and English and saves `ui-snapshots/<lang>-<nn>-<page>.png` in the data folder. They are
-> published as the `ui-snapshots` artifact of each CI run and copied here as `images/`.
+> shows every page in Persian and English and saves `ui-snapshots/<lang>-<nn>-<page>.png` in the data folder. A push
+> whose commit message contains `[guide-screenshots]` runs the CI job that commits them here as `images/`.
 
 ## 1. Start
 
