@@ -10,6 +10,8 @@ recommendation it gives is text for a person to act on. Persian guide: [README.f
 
 ## 1. Start
 
+0. Get the latest test build from the repository's **Releases** page: pre-release `rsm-latest` holds `RSM.exe`,
+   `RSM.Cli.exe` and `SHA256SUMS.txt`. CI replaces it on every push, only after build, tests and the UI tour pass.
 1. Copy `RSM.exe` to the server or to an admin workstation. It is portable and installs nothing.
    - `RSM.exe --portable` keeps all data (profiles, history, reports, logs) in `data\` next to the exe.
    - Otherwise RSM uses `%LOCALAPPDATA%\RSM`.

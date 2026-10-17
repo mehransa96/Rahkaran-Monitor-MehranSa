@@ -90,6 +90,12 @@ jobs:
   windows:
     name: Build, test, publish single-file exe (Windows)
     runs-on: windows-latest
+    # contents: write is only for the rsm-latest pre-release below (release assets do not use artifact storage).
+    permissions:
+      contents: write
+    concurrency:
+      group: rsm-latest-release
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -128,6 +134,27 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "RSM.Cli --help failed" }
           ./publish-cli/RSM.Cli.exe --portable --list
           if ($LASTEXITCODE -ne 0) { throw "RSM.Cli --list failed" }
+      # Downloadable build for testing on a lab server: a rolling pre-release `rsm-latest` replaced on every push,
+      # holding only the two tested single-file exes and their SHA-256. Pushes only; pull_request runs skip it.
+      - name: Publish rsm-latest pre-release (RSM.exe, RSM.Cli.exe)
+        if: github.event_name == 'push'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          Copy-Item publish/RSM.exe, publish-cli/RSM.Cli.exe release/
+          Get-FileHash release/*.exe -Algorithm SHA256 |
+            ForEach-Object { "$($_.Hash.ToLower())  $(Split-Path $_.Path -Leaf)" } |
+            Set-Content release/SHA256SUMS.txt -Encoding ascii
+          $sha = $env:GITHUB_SHA.Substring(0, 7)
+          $notes = "Test build of branch $env:GITHUB_REF_NAME at $sha (CI run $env:GITHUB_RUN_NUMBER). " +
+                   "Self-contained win-x64, no .NET install needed. Read-only tool; see docs/user-guide."
+          gh release delete rsm-latest --cleanup-tag --yes 2>$null
+          $global:LASTEXITCODE = 0
+          gh release create rsm-latest release/RSM.exe release/RSM.Cli.exe release/SHA256SUMS.txt `
+            --prerelease --target $env:GITHUB_SHA --title "RSM latest test build ($sha)" --notes $notes
+          if ($LASTEXITCODE -ne 0) { throw "gh release create failed" }
       - uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
