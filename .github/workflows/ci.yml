@@ -89,7 +89,8 @@ jobs:
 
   windows:
     name: Build, test, publish single-file exe (Windows)
-    runs-on: windows-latest
+    # Pinned: every Rahkaran server runs Windows Server 2022 Standard; windows-latest may move to a newer image.
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -105,7 +106,7 @@ jobs:
           $exe = Get-Item publish/RSM.exe
           if ($exe.Length -lt 50MB) { throw "RSM.exe unexpectedly small: $($exe.Length)" }
           Write-Host "RSM.exe $([math]::Round($exe.Length / 1MB)) MB"
-      # The published exe really starts on Windows Server: it walks every page in fa and en, saves PNGs (the user
+      # The published exe really starts on Windows Server 2022: it walks every page in fa and en, saves PNGs (the user
       # guide's screenshots) and prints a test page to PDF with WebView2, then exits. No site, no connection.
       - name: Run the published exe (UI tour + PDF smoke)
         shell: pwsh
@@ -150,7 +151,8 @@ jobs:
   guide-screenshots:
     name: Refresh user-guide screenshots (opt-in)
     if: github.event_name == 'push' && contains(github.event.head_commit.message, '[guide-screenshots]')
-    runs-on: windows-latest
+    # Pinned: every Rahkaran server runs Windows Server 2022 Standard; windows-latest may move to a newer image.
+    runs-on: windows-2022
     permissions:
       contents: write
     steps:
@@ -183,7 +185,8 @@ jobs:
 
   iis:
     name: IIS live requests, logs, services, events and .NET counters (Windows, read-only proof)
-    runs-on: windows-latest
+    # Pinned: every Rahkaran server runs Windows Server 2022 Standard; windows-latest may move to a newer image.
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4

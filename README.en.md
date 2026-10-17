@@ -62,6 +62,10 @@ Passwords are stored only with Windows DPAPI for the current user, or not at all
 Requires the Microsoft-built .NET 8 SDK (8.0.1xx+). Linux can compile everything, including WPF, but the app only
 runs on Windows.
 
+**Supported OS:** Windows Server 2022 Standard (x64) — the OS of every Rahkaran server; CI runs the Windows jobs on
+the `windows-2022` image. RSM still starts on other 64-bit Windows versions; there rule OS-019 reports the
+difference as *Info*.
+
 ```bash
 dotnet build RSM.sln -c Release
 dotnet test RSM.sln -c Release

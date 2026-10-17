@@ -10,7 +10,7 @@ starts only after explicit approval.**
   and WPF projects compile with `EnableWindowsTargeting=true`; **all pure-library tests** (SqlGuard,
   catalog, parsers, rules engine, storage, reporting) run on Linux.
 - Anything that needs Windows at **run time** (WPF UI, PDH, CIM, Event Log, IIS, single-file exe smoke
-  test) is verified by a `windows-latest` GitHub Actions job (Q9) and by you on a lab server. Demo notes
+  test) is verified by a `windows-2022` GitHub Actions job (Q9; pinned because every Rahkaran server runs Windows Server 2022 Standard) and by you on a lab server. Demo notes
   will say exactly which checks were run where.
 - SQL collectors are verified against SQL Server 2019/2022 Linux containers in CI (DMVs used are the same;
   Windows-only DMV columns are flagged).
@@ -136,8 +136,8 @@ with screenshots); single-file publish.
       (`BundleImportTests`, CLI `--import`).
 - [~] Release exe runs on Windows Server **2022** with no installer and no extra runtime: CI run 42 started the
       single-file `RSM.exe` on the `windows-latest` runner, toured all 20 pages in fa and en (40 screenshots), printed
-      a PDF through WebView2 (29 697 bytes) and ran `RSM.Cli.exe`. **Windows Server 2019 and a truly clean VM need a
-      human run** (GitHub no longer offers a 2019 runner).
+      a PDF through WebView2 (29 697 bytes) and ran `RSM.Cli.exe`. **A clean Windows Server 2022 Standard VM still needs a
+      human run** (the owner confirmed 2022 Standard is the only Rahkaran server OS, so 2019 is no longer a target).
 - [~] Definition-of-done checklist (spec §19) — see `docs/phase-notes/P5.md`; all items ticked except the two human
       runs above and copying the CI screenshots into `docs/user-guide/images/` (artifact upload blocked by the
       account's storage quota).
@@ -148,7 +148,7 @@ with screenshots); single-file publish.
 
 | # | Topic | Decision |
 |---|---|---|
-| Q1 | PDF engine | **WebView2 `PrintToPdf`** of the same HTML report (P5); where the WebView2 Runtime is missing (often Server 2016/2019) RSM offers "open HTML and print". No QuestPDF (licence). |
+| Q1 | PDF engine | **WebView2 `PrintToPdf`** of the same HTML report (P5); where the WebView2 Runtime is missing (possible on any Windows Server, incl. 2022) RSM offers "open HTML and print". No QuestPDF (licence). |
 | Q2 | `Process.Start` | **Zero call sites.** No "relaunch elevated" and no "open report" shell call; the UI tells the user to start RSM with *Run as administrator* and shows a copyable report path. |
 | Q3 | Remote registry | **One audited class** `RemoteRegistryReader` (P2) using WMI `StdRegProv` *Get\*/Enum\** read methods only, with a hard-coded key whitelist. Local reads use `RegistryKey.OpenSubKey(name)` (read-only). |
 | Q4 | Thresholds not in the docs | Dedicated DB server: leave max(4 GB, 10 % RAM) to the OS (GEN). "Large" DB ≥ 200 GB data. Working hours Sat–Wed 08:00–17:00, Thu 08:00–13:00. All are site settings. |

@@ -84,11 +84,14 @@ public sealed class SlownessInvestigationService(LiveMonitorService live, Invest
         {
             session.Scheduler.IntervalScale = Math.Min(previousScale, SlownessCapture.InvestigationIntervalScale);
             await session.TickAsync(cancellationToken).ConfigureAwait(false); // every collector once, together, at t0
+            // Wait against the clock, not by counting delays: a timer may fire a tick early, and the capture must cover
+            // the whole requested duration.
             var step = TimeSpan.FromSeconds(1);
-            for (var elapsed = TimeSpan.Zero; elapsed < duration; elapsed += step)
+            var deadline = from + duration;
+            for (var remaining = deadline - time.GetUtcNow(); remaining > TimeSpan.Zero; remaining = deadline - time.GetUtcNow())
             {
-                await Task.Delay(step, time, cancellationToken).ConfigureAwait(false);
-                progress?.Report(Math.Min(1, (elapsed + step) / duration));
+                await Task.Delay(remaining < step ? remaining : step, time, cancellationToken).ConfigureAwait(false);
+                progress?.Report(Math.Min(1, (time.GetUtcNow() - from) / duration));
             }
         }
         finally

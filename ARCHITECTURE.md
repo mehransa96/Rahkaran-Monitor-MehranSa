@@ -664,8 +664,8 @@ event lists everything within ±5 minutes on every node and shows its KB entry. 
 - **HTML**: Scriban templates embedded as resources; one template set with `dir="rtl|ltr"`; inline CSS,
   inline SVG charts rendered server-side by our own small SVG chart builder (no JS needed for viewing;
   optional tiny inline JS for collapsible sections). Vazirmatn embedded as base64 `@font-face`.
-- **PDF** (decision Q1): WebView2 `PrintToPdfAsync` of the same HTML (identical look). The WebView2 Runtime is
-  often absent on Server 2016/2019 → fallback "open the HTML and print to PDF".
+- **PDF** (decision Q1): WebView2 `PrintToPdfAsync` of the same HTML (identical look). The WebView2 Runtime can
+  be missing on a Windows Server (older ones, or a 2022 Standard without it) → fallback "open the HTML and print to PDF".
 - **JSON bundle** (`RSM_<site>_<yyyyMMdd-HHmm>.zip`): `manifest.json` (RSM version, schema version, nodes,
   capability matrices, masking flag), `results/<node>/<collector>.json`, `findings.json`, `events.json`,
   optional `samples.jsonl`. Importable/mergeable.
@@ -739,7 +739,7 @@ collectors, storage, hosting or live connections):
 
 ## 16. CI / build
 
-- GitHub Actions (`.github/workflows/ci.yml`, P0): `windows-latest` job: build all, run all tests, publish single-file exe as an
+- GitHub Actions (`.github/workflows/ci.yml`, P0): `windows-2022` job (pinned to the OS of every Rahkaran server, Windows Server 2022 Standard): build all, run all tests, publish single-file exe as an
   artifact. `ubuntu-latest` job (fast): `RSM.Core`, `RSM.Safety`, `RSM.Parsers`, `RSM.Storage` tests.
   Optional integration job with a SQL Server container (Linux) for the SQL collectors + read-only proof.
 - Every PR runs the safety tests; the analyzer runs in every build.

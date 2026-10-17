@@ -1,0 +1,72 @@
+{
+  "id": "OS-019",
+  "layer": "Os",
+  "appliesTo": [],
+  "when": "exists(os.build) && (os.build != params.expected_build || (exists(os.sku) && os.sku != params.expected_sku))",
+  "severity": "Info",
+  "title": {
+    "fa": "ویندوز این سرور با استاندارد سرورهای راهکاران (Windows Server 2022 Standard) فرق دارد ({os.caption})",
+    "en": "This server's Windows differs from the Rahkaran server standard, Windows Server 2022 Standard ({os.caption})"
+  },
+  "explanation": {
+    "fa": "همهٔ سرورهای راهکاران این مجموعه Windows Server 2022 Standard هستند (build {params.expected_build}). این سرور build {os.build} و SKU {os.sku} دارد؛ آستانه‌ها و راهنمای RSM برای ویندوز سرور ۲۰۲۲ آزموده شده‌اند.",
+    "en": "All Rahkaran servers of this site run Windows Server 2022 Standard (build {params.expected_build}). This server reports build {os.build}, SKU {os.sku}; RSM's thresholds and guidance are tested on Windows Server 2022."
+  },
+  "recommendation": {
+    "fa": "اگر این سرور عمداً نسخهٔ دیگری دارد، این مورد را نادیده بگیرید؛ وگرنه ارتقا یا جایگزینی را با تیم زیرساخت هماهنگ کنید.",
+    "en": "If this server runs another version on purpose, ignore this item; otherwise plan an upgrade or replacement with the infrastructure team."
+  },
+  "source": {
+    "kind": "General",
+    "citation": "General guidance — site baseline set by the project owner: every Rahkaran server runs Windows Server 2022 Standard (build 20348, SKU 7)"
+  },
+  "verified": true,
+  "confidence": 0.85,
+  "baseline": {
+    "item": {
+      "fa": "نسخهٔ ویندوز",
+      "en": "Windows version"
+    },
+    "expected": {
+      "fa": "Windows Server 2022 Standard",
+      "en": "Windows Server 2022 Standard"
+    },
+    "actual": "os.caption"
+  },
+  "params": {
+    "expected_build": 20348,
+    "expected_sku": 7
+  },
+  "examples": [
+    {
+      "facts": {
+        "os.caption": "Microsoft Windows Server 2019 Standard",
+        "os.build": 17763,
+        "os.sku": 7
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "os.caption": "Microsoft Windows Server 2022 Datacenter",
+        "os.build": 20348,
+        "os.sku": 8
+      },
+      "expect": "Info"
+    },
+    {
+      "facts": {
+        "os.caption": "Microsoft Windows Server 2022 Standard",
+        "os.build": 20348,
+        "os.sku": 7
+      },
+      "expect": null
+    },
+    {
+      "facts": {
+        "os.caption": "Microsoft Windows Server 2022 Standard"
+      },
+      "expect": null
+    }
+  ]
+}

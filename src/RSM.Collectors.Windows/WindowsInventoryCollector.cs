@@ -43,7 +43,7 @@ public sealed class WindowsInventoryCollector : WindowsCollectorBase<NoWindowsSt
     {
         var cim = transport.Cim;
         var os = await TryQueryAsync(cim, new CimQuery("Win32_OperatingSystem",
-            ["Caption", "Version", "BuildNumber", "OSArchitecture", "ProductType", "LastBootUpTime", "TotalVisibleMemorySize", "FreePhysicalMemory", "SystemDrive"]), problems, cancellationToken).ConfigureAwait(false);
+            ["Caption", "Version", "BuildNumber", "OperatingSystemSKU", "OSArchitecture", "ProductType", "LastBootUpTime", "TotalVisibleMemorySize", "FreePhysicalMemory", "SystemDrive"]), problems, cancellationToken).ConfigureAwait(false);
         var cs = await TryQueryAsync(cim, new CimQuery("Win32_ComputerSystem",
             ["Manufacturer", "Model", "NumberOfProcessors", "NumberOfLogicalProcessors", "TotalPhysicalMemory", "HypervisorPresent", "AutomaticManagedPagefile", "Domain", "Name", "DNSHostName"]), problems, cancellationToken).ConfigureAwait(false);
         var cpus = await TryQueryAsync(cim, new CimQuery("Win32_Processor",
@@ -137,6 +137,9 @@ public sealed class WindowsInventoryCollector : WindowsCollectorBase<NoWindowsSt
         {
             output.Fact("os.caption", os.String("Caption"));
             output.Fact("os.version", os.String("Version"));
+            // Build + SKU identify the release and edition (20348 + 7 = Windows Server 2022 Standard, the site baseline, OS-019).
+            output.Fact("os.build", os.Number("BuildNumber"));
+            output.Fact("os.sku", os.Number("OperatingSystemSKU"));
             output.Fact("os.is_64bit", os.String("OSArchitecture")?.Contains("64", StringComparison.Ordinal));
             output.Fact("os.is_server", os.Number("ProductType") is { } pt ? pt != 1 : null);
             output.Fact("os.ram_mb", os.Number("TotalVisibleMemorySize") / 1024);
