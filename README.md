@@ -6,6 +6,9 @@ SQL Server, databases, Windows, IIS/ARR, Redis, SSRS, services and event logs, w
 
 ابزاری **فقط‌خواندنی** برای پایش و عیب‌یابی سرورهای راهکاران؛ هیچ تغییری روی سرور ایجاد نمی‌کند.
 
+**Target OS:** every Rahkaran server runs **Windows Server 2022 Standard**; RSM is built, tested and supported for it
+(CI runs on `windows-2022`). Other 64-bit Windows versions are not blocked; rule OS-019 notes them as *Info*.
+
 **Status: Phase 5 (history & baseline, slowness wizard, PDF, bundle import/merge, RSM.Cli, user guide) delivered — awaiting review.** → [`README.en.md`](README.en.md) · [`README.fa.md`](README.fa.md)
 
 | Document | Content |

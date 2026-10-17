@@ -89,7 +89,8 @@ You are continuing work from a previous chat. That chat is gone; this file is th
 | CI green | runs 37–45 (all P5 commits; run 45 = `07a6a54`) |
 | Scheduled check | `trig_018taM2HnWRdYnSA7LADGFwm`, fires 2026-10-17T04:10:00Z (check run 44) |
 | Tests (local) | Safety 520, RSM.Tests 1 003, Arch 142, Integration 1 passed + 13 skipped locally |
-| Rules | 194 rules + 22 slowness causes + 37 detectors |
+| Rules | 195 rules (OS-019 added 2026-10-17) + 22 slowness causes + 37 detectors |
+| Target OS | **Windows Server 2022 Standard** on every Rahkaran server (owner, 2026-10-17); build 20348, SKU 7; CI Windows jobs pinned to `windows-2022`; other versions → OS-019 *Info* |
 | History retention | raw 24 h, 1-min 7 days, 15-min 90 days |
 | Baseline | median/p95 per hour-of-week, 4 weeks of 15-min averages, ≥ 8 values per slot, Saturday = slot 0 |
 | Anomaly | > p95 × 1.5 for ≥ 3 consecutive samples (`general`) |
@@ -120,6 +121,7 @@ You are continuing work from a previous chat. That chat is gone; this file is th
 | Phase notes P5 | final | `docs/phase-notes/P5.md` | includes §19 checklist |
 | Lab scripts | ready | `tests/lab/` | to be run by a human, never by RSM |
 | CI run 45 (`07a6a54`) | green | — | — |
+| Windows Server 2022 Standard target | PR (draft) | branch `claude/target-windows-server-2022-rh6v6v` | CI pinned to `windows-2022`, OS-019, facts `os.build`/`os.sku`; notes `docs/phase-notes/WS2022.md` |
 
 ## 11. Next steps
 1. **Next action:** آخرین اجرای CI روی شاخه را بررسی کن (باید سبز باشد) و منتظر درخواست کاربر بمان.
@@ -128,7 +130,7 @@ You are continuing work from a previous chat. That chat is gone; this file is th
 
 ## 12. Open questions ⚠️
 - آیا کاربر سناریوهای `tests/lab/` را روی ماشین آزمایشگاهی اجرا کرده و علت اول درست بوده است؟
-- آیا RSM روی Windows Server 2019 یا یک VM تمیز آزموده شده است؟ (GitHub ماشین 2019 ندارد.)
+- آیا RSM روی یک VM تمیز Windows Server 2022 Standard آزموده شده است؟ (۲۰۱۹ دیگر هدف نیست؛ همهٔ سرورهای راهکاران ۲۰۲۲ استاندارد هستند.)
 - تصاویر راهنما: فضای artifact حساب GitHub پر بود («Artifact storage quota has been hit»). کاربر artifact را دانلود می‌کند یا فضای حساب را آزاد می‌کند؟
 - تأیید نقشهٔ توپولوژی روی محیط واقعی (از فاز ۴ باز مانده است).
 
