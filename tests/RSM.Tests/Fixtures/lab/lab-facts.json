@@ -318,6 +318,8 @@
  "os.caption": "Microsoft Windows Server 2022 Standard",
  "os.is_64bit": true,
  "os.is_server": true,
+ "os.build": 20348,
+ "os.sku": 7,
  "os.ram_mb": 16384.0,
  "os.manufacturer": "VMware, Inc.",
  "os.model": "VMware7,1",

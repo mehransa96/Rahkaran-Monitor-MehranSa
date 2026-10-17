@@ -45,6 +45,7 @@ Shared-box = the node has both Data and App roles (SQL and IIS on one machine).
 | OS-016 | TCP TimeWait > 50 % of dynamic port range / ephemeral-port pressure | W | GEN |
 | OS-017 | Time zone *Iran Standard Time* still has a DST rule after 2022 (outdated tz data → log times off by 1 h) | I | GEN |
 | OS-018 | Context switches/sec > 15 000 per core sustained | I | GEN |
+| OS-019 | OS is not the site baseline *Windows Server 2022 Standard* (`os.build` ≠ 20348 or `os.sku` ≠ 7; both are rule params) | I | GEN (site baseline set by the owner) |
 
 ## 2. Storage (§9.5, §7.14, TV3 Storage) — P1 (config) / P2 (live)
 

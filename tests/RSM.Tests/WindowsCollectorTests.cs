@@ -156,7 +156,7 @@ public class WindowsCollectorTests
     public void Inventory_facts_cover_power_plan_pagefile_volumes_time_zone_and_hardware()
     {
         var inventory = new WindowsInventory(
-            CimRow.Of(("Caption", "Microsoft Windows Server 2022 Standard"), ("OSArchitecture", "64-bit"), ("ProductType", 3u), ("TotalVisibleMemorySize", 64UL * 1024 * 1024),
+            CimRow.Of(("Caption", "Microsoft Windows Server 2022 Standard"), ("BuildNumber", "20348"), ("OperatingSystemSKU", 7u), ("OSArchitecture", "64-bit"), ("ProductType", 3u), ("TotalVisibleMemorySize", 64UL * 1024 * 1024),
                 ("LastBootUpTime", T0.AddDays(-3).UtcDateTime)),
             CimRow.Of(("Manufacturer", "HPE"), ("Model", "ProLiant DL380 Gen10"), ("NumberOfLogicalProcessors", 16u), ("HypervisorPresent", false), ("AutomaticManagedPagefile", false)),
             [CimRow.Of(("Name", "Intel Xeon"), ("NumberOfCores", 16u), ("MaxClockSpeed", 2900u), ("CurrentClockSpeed", 1200u), ("VirtualizationFirmwareEnabled", true))],
@@ -179,6 +179,8 @@ public class WindowsCollectorTests
 
         FactValue(output, "os.is_64bit").Should().Be(true);
         FactValue(output, "os.is_server").Should().Be(true);
+        FactValue(output, "os.build").Should().Be(20_348d);
+        FactValue(output, "os.sku").Should().Be(7d);
         FactValue(output, "os.ram_mb").Should().Be(65_536d);
         ((double)FactValue(output, "os.uptime_days")!).Should().BeApproximately(3, 0.01);
         FactValue(output, "os.is_hpe").Should().Be(true);
