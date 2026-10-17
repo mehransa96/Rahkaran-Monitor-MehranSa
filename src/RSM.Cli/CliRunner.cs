@@ -43,6 +43,7 @@ public sealed class CliRunner(IDataFolder dataFolder, TextWriter output)
                 CliCommand.Investigate => await InvestigateAsync(services, options, cancellationToken),
                 CliCommand.Export => await ExportAsync(services, options, cancellationToken),
                 CliCommand.Import => await ImportAsync(services, options, cancellationToken),
+                CliCommand.Compare => await CompareAsync(services, options, cancellationToken),
                 _ => 1,
             };
         }
@@ -198,6 +199,47 @@ public sealed class CliRunner(IDataFolder dataFolder, TextWriter output)
             default:
                 output.WriteLine($"Saved: {await reports.ExportHtmlAsync(snapshot, language, options.Mask, cancellationToken)}");
                 break;
+        }
+
+        return 0;
+    }
+
+    private async Task<int> CompareAsync(IServiceProvider services, CliOptions options, CancellationToken cancellationToken)
+    {
+        var store = services.GetRequiredService<SnapshotStore>();
+        var afterId = options.CompareWith is null or "latest" ? (await store.ListAsync(null, 1, cancellationToken)).FirstOrDefault()?.Id : options.CompareWith;
+        if (await store.LoadAsync(options.SnapshotId!, cancellationToken) is not { } before || afterId is null || await store.LoadAsync(afterId, cancellationToken) is not { } after)
+        {
+            output.WriteLine("Snapshot not found (see --list).");
+            return 3;
+        }
+
+        var result = RSM.Core.Snapshots.SnapshotCompare.Compare(before, after);
+        output.WriteLine($"{before.Id} ({before.StartedUtc.ToLocalTime():yyyy-MM-dd HH:mm}) → {after.Id} ({after.StartedUtc.ToLocalTime():yyyy-MM-dd HH:mm})");
+        output.WriteLine($"Findings: {result.Findings.Count(f => f.Kind == RSM.Core.Snapshots.FindingChangeKind.New)} new, "
+            + $"{result.Findings.Count(f => f.Kind == RSM.Core.Snapshots.FindingChangeKind.Resolved)} resolved, "
+            + $"{result.Findings.Count(f => f.Kind == RSM.Core.Snapshots.FindingChangeKind.SeverityChanged)} changed severity");
+        var fa = options.Language == "fa";
+        foreach (var f in result.Findings)
+        {
+            output.WriteLine($"  {f.Kind,-15} {f.RuleId}{(f.Instance is null ? string.Empty : $"[{f.Instance}]")} {f.Before}→{f.After}  {(fa ? f.Title.Fa : f.Title.En)} ({f.NodeName})");
+        }
+
+        output.WriteLine($"Numbers that moved ≥ {RSM.Core.Snapshots.SnapshotCompare.DefaultMinRelativeChange:P0} (largest first, top 30):");
+        foreach (var c in result.Numbers.Take(30))
+        {
+            output.WriteLine($"  {c.NodeName}  {c.Key}: {c.Before} → {c.After}{(c.Change is { } v ? $" ({v:+0%;-0%})" : string.Empty)}");
+        }
+
+        output.WriteLine("Text values that changed:");
+        foreach (var c in result.Texts.Take(30))
+        {
+            output.WriteLine($"  {c.NodeName}  {c.Key}: {c.Before} → {c.After}");
+        }
+
+        foreach (var node in result.UnmatchedNodes)
+        {
+            output.WriteLine($"  Not in both diagnoses: {node}");
         }
 
         return 0;

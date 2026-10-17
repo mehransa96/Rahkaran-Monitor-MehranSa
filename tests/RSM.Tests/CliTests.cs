@@ -42,6 +42,9 @@ public sealed class CliTests : IDisposable
             o.Command == CliCommand.Export && o.SnapshotId == "abc" && o.Format == "bundle" && o.Language == "en" && o.Mask);
         CliOptions.Parse(["--export"]).SnapshotId.Should().Be("latest");
         CliOptions.Parse(["--import", "a.zip", "b.zip"]).Files.Should().Equal("a.zip", "b.zip");
+        CliOptions.Parse(["--compare", "a1"]).Should().Match<CliOptions>(o => o.Command == CliCommand.Compare && o.SnapshotId == "a1" && o.CompareWith == "latest");
+        CliOptions.Parse(["--compare", "a1", "b2"]).CompareWith.Should().Be("b2");
+        CliOptions.Parse(["--compare"]).Error.Should().Contain("earlier diagnosis");
         CliOptions.Parse([]).Should().Match<CliOptions>(o => o.Command == CliCommand.Help && o.Error == null);
 
         CliOptions.Parse(["--collect", "--site", "HQ"]).Error.Should().Contain("--duration");
@@ -88,6 +91,12 @@ public sealed class CliTests : IDisposable
 
         var pdf = await Run("--export", "latest", "--format", "pdf");
         pdf.Text.Should().Contain("PDF not available").And.Contain("print to PDF");
+
+        var merged = (await Run("--list")).Text.Split('\n').Select(l => l.Trim()).First(l => l.StartsWith("merged-", StringComparison.Ordinal)).Split(' ')[0];
+        var compare = await Run("--compare", merged, "latest", "--lang", "en");
+        compare.Code.Should().Be(0, compare.Text);
+        compare.Text.Should().Contain("0 new, 0 resolved");
+        (await Run("--compare", "nope-123")).Code.Should().Be(3);
 
         (await Run("--export", "nope-123")).Code.Should().Be(3);
         (await Run("--import", Path.Combine(inbox, "missing.zip"))).Code.Should().Be(2);

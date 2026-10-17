@@ -24,12 +24,14 @@ public sealed partial class DiagnosisViewModel : ObservableObject
     private readonly ILogger<DiagnosisViewModel> _logger;
     private readonly BundleImportService _import;
     private readonly IUserDialogs _dialogs;
+    private readonly RSM.Storage.Snapshots.SnapshotStore _store;
     private CancellationTokenSource? _cts;
 
-    public DiagnosisViewModel(SitesViewModel sites, SnapshotService snapshots, ReportService reports, BundleImportService import, IUserDialogs dialogs, StatusBarViewModel status,
-        ILogger<DiagnosisViewModel> logger)
+    public DiagnosisViewModel(SitesViewModel sites, SnapshotService snapshots, ReportService reports, BundleImportService import, IUserDialogs dialogs,
+        RSM.Storage.Snapshots.SnapshotStore store, StatusBarViewModel status, ILogger<DiagnosisViewModel> logger)
     {
         Sites = sites;
+        _store = store;
         _import = import;
         _dialogs = dialogs;
         _snapshots = snapshots;
@@ -43,6 +45,26 @@ public sealed partial class DiagnosisViewModel : ObservableObject
     public SitesViewModel Sites { get; }
 
     public ObservableCollection<FindingRowViewModel> Findings { get; } = [];
+
+    /// <summary>Saved diagnoses (newest first) for "compare before vs after".</summary>
+    public ObservableCollection<SnapshotChoice> SavedSnapshots { get; } = [];
+
+    public ObservableCollection<CompareFindingRow> CompareFindings { get; } = [];
+
+    public ObservableCollection<CompareValueRow> CompareNumbers { get; } = [];
+
+    public ObservableCollection<CompareValueRow> CompareTexts { get; } = [];
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CompareSnapshotsCommand))]
+    private SnapshotChoice? _compareBefore;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CompareSnapshotsCommand))]
+    private SnapshotChoice? _compareAfter;
+
+    [ObservableProperty]
+    private string _compareSummary = string.Empty;
 
     /// <summary>After an import: one line per merged node (source bundles, remaining capability gaps) plus warnings.</summary>
     public ObservableCollection<string> ImportNotes { get; } = [];
@@ -115,6 +137,7 @@ public sealed partial class DiagnosisViewModel : ObservableObject
         {
             var progress = new Progress<string>(p => Progress = Loc.Instance.Format("Diag_Progress", p));
             Latest = await _snapshots.RunAsync(site.ToProfile(), new SnapshotOptions(IncludeHeavy), progress, _cts.Token);
+            await RefreshSavedAsync();
             Rebuild();
             SnapshotChanged?.Invoke(this, EventArgs.Empty);
             _status.Show(Summary);
@@ -140,6 +163,60 @@ public sealed partial class DiagnosisViewModel : ObservableObject
     [RelayCommand]
     private void Cancel() => _cts?.Cancel();
 
+    /// <summary>Reloads the list of saved diagnoses (after a diagnosis or an import, and when the page opens).</summary>
+    [RelayCommand]
+    public async Task RefreshSavedAsync()
+    {
+        var list = await _store.ListAsync(null, 100, CancellationToken.None);
+        SavedSnapshots.Clear();
+        foreach (var s in list)
+        {
+            SavedSnapshots.Add(new SnapshotChoice(s.Id, $"{s.SiteName} — {Loc.Instance.FormatTimestamp(s.StartedUtc)} (C{s.Critical} W{s.Warning} I{s.Info})"));
+        }
+
+        CompareAfter ??= SavedSnapshots.FirstOrDefault();
+        CompareBefore ??= SavedSnapshots.Skip(1).FirstOrDefault();
+    }
+
+    private bool CanCompare() => CompareBefore is not null && CompareAfter is not null && CompareBefore.Id != CompareAfter.Id;
+
+    /// <summary>Before vs after (spec §15): changed numbers, texts and findings between two saved diagnoses.</summary>
+    [RelayCommand(CanExecute = nameof(CanCompare))]
+    private async Task CompareSnapshotsAsync()
+    {
+        if (await _store.LoadAsync(CompareBefore!.Id, CancellationToken.None) is not { } before || await _store.LoadAsync(CompareAfter!.Id, CancellationToken.None) is not { } after)
+        {
+            _status.Show(Loc.Instance["Diag_CompareMissing"]);
+            return;
+        }
+
+        var result = Core.Snapshots.SnapshotCompare.Compare(before, after);
+        var language = Loc.Instance.Language;
+        CompareFindings.Clear();
+        foreach (var f in result.Findings)
+        {
+            CompareFindings.Add(new CompareFindingRow(Loc.Instance["Change_" + f.Kind], f.RuleId, f.NodeName, f.Instance ?? string.Empty, f.Title.Get(language),
+                f.Before is { } b ? Loc.Instance["Severity_" + b] : string.Empty, f.After is { } a ? Loc.Instance["Severity_" + a] : string.Empty));
+        }
+
+        CompareNumbers.Clear();
+        foreach (var c in result.Numbers.Take(200))
+        {
+            CompareNumbers.Add(new CompareValueRow(c.NodeName, c.Key, c.Before, c.After, c.Change is { } v ? v.ToString("+0%;-0%", Loc.Instance.Culture) : "—"));
+        }
+
+        CompareTexts.Clear();
+        foreach (var c in result.Texts.Take(200))
+        {
+            CompareTexts.Add(new CompareValueRow(c.NodeName, c.Key, c.Before, c.After, string.Empty));
+        }
+
+        CompareSummary = Loc.Instance.Format("Diag_CompareSummary",
+            result.Findings.Count(f => f.Kind == Core.Snapshots.FindingChangeKind.New), result.Findings.Count(f => f.Kind == Core.Snapshots.FindingChangeKind.Resolved),
+            result.Numbers.Count, result.Texts.Count)
+            + (result.UnmatchedNodes.Count == 0 ? string.Empty : " " + Loc.Instance.Format("Diag_CompareUnmatched", string.Join(", ", result.UnmatchedNodes)));
+    }
+
     /// <summary>Imports one or more JSON bundles (e.g. RSM run on each node) and merges them into one site snapshot.</summary>
     [RelayCommand(CanExecute = nameof(IsIdle))]
     private async Task ImportBundlesAsync()
@@ -155,6 +232,7 @@ public sealed partial class DiagnosisViewModel : ObservableObject
         {
             var result = await _import.ImportAsync(files, CancellationToken.None);
             Latest = result.Snapshot;
+            await RefreshSavedAsync();
             ImportNotes.Clear();
             foreach (var warning in result.Warnings)
             {
@@ -371,3 +449,9 @@ public sealed record FactRowViewModel(string Node, string Name, string Value)
         _ => Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty,
     };
 }
+
+public sealed record SnapshotChoice(string Id, string Label);
+
+public sealed record CompareFindingRow(string Change, string RuleId, string Node, string Instance, string Title, string Before, string After);
+
+public sealed record CompareValueRow(string Node, string Key, string Before, string After, string Change);

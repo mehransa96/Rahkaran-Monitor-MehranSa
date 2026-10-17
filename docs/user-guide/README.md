@@ -48,6 +48,11 @@ evaluates the rules (see [RULES.md](../../RULES.md)).
 - **Import bundles** merges bundles taken on several machines of the same site into one snapshot and report. For
   example, take one bundle on each App server for the local-only IIS data, and one against SQL Server. The report lists
   the source bundles and the capability gaps that remain per node.
+- **Compare two diagnoses (before vs after)**: pick an earlier and a later diagnosis, for example around an update.
+  RSM shows:
+  - findings that are new, resolved or changed severity;
+  - numbers that moved by at least 10 % (waits, IIS p95 per site, CPU, memory, file latency…);
+  - values that changed (versions, the top statement, top waits).
 
 ![Reports](images/en-17-reports.png)
 
@@ -130,6 +135,7 @@ RSM.Cli --collect --site "HQ" --duration 8h         live collection into local h
 RSM.Cli --investigate --site "HQ" --duration 120s   slowness capture + ranked causes
 RSM.Cli --export latest --format html|pdf|bundle --lang fa|en [--mask]
 RSM.Cli --import db01.zip app01.zip                 import and merge bundles
+RSM.Cli --compare <before-id> [<after-id>|latest]   what changed between two diagnoses
 RSM.Cli --list                                      sites and recent snapshots
 ```
 

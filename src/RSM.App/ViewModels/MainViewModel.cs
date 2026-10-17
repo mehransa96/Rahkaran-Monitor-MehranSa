@@ -44,7 +44,11 @@ public sealed partial class MainViewModel : ObservableObject
             new NavItem("Nav_Events", () => new EventsPageViewModel(live)),
             new NavItem("Nav_Slowness", () => new SlownessPageViewModel(live, slowness, investigations, reports, status, Microsoft.Extensions.Logging.LoggerFactoryExtensions.CreateLogger<SlownessPageViewModel>(loggers))),
             new NavItem("Nav_QueryPacks", () => new QueryPacksPageViewModel(live, queryPacks)),
-            new NavItem("Nav_Reports", () => diagnosis),
+            new NavItem("Nav_Reports", () =>
+            {
+                _ = diagnosis.RefreshSavedAsync();
+                return diagnosis;
+            }),
             new NavItem("Nav_History", () => new HistoryPageViewModel(sites, history, baselines, status)),
             new NavItem("Nav_Sites", () => sites),
             new NavItem("Nav_Settings", () => settings),

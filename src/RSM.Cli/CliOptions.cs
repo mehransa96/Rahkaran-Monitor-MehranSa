@@ -12,6 +12,7 @@ public enum CliCommand
     Export,
     Import,
     List,
+    Compare,
 }
 
 /// <summary>Parsed command line. <see cref="Error"/> is set (and <see cref="Command"/> = Help) when the input is invalid.</summary>
@@ -26,7 +27,8 @@ public sealed partial record CliOptions(
     bool Mask = false,
     IReadOnlyList<string>? Files = null,
     bool Portable = false,
-    string? Error = null)
+    string? Error = null,
+    string? CompareWith = null)
 {
     /// <summary>Longest headless collection accepted (it still runs only while the console stays open).</summary>
     public static readonly TimeSpan MaxDuration = TimeSpan.FromDays(7);
@@ -39,6 +41,7 @@ public sealed partial record CliOptions(
           --investigate --site <name|id> [--duration 120s] "Why is Rahkaran slow?" capture and ranked causes
           --export <snapshot-id|latest> [--format html|pdf|bundle] [--lang fa|en] [--mask]
           --import <bundle.zip> [<bundle.zip> ...]          import and merge bundles into one site snapshot
+          --compare <before-id> [<after-id>|latest]         what changed between two diagnoses (before vs after)
           --list                                           list sites and recent snapshots
           --portable                                       use the data folder next to the exe
 
@@ -74,6 +77,15 @@ public sealed partial record CliOptions(
                 case "--export":
                     commands.Add(CliCommand.Export);
                     o = o with { SnapshotId = Next() ?? "latest" };
+                    break;
+                case "--compare":
+                    commands.Add(CliCommand.Compare);
+                    o = o with { SnapshotId = Next(), CompareWith = Next() ?? "latest" };
+                    if (o.SnapshotId is null)
+                    {
+                        return Fail("--compare needs the id of the earlier diagnosis (see --list).");
+                    }
+
                     break;
                 case "--import":
                     commands.Add(CliCommand.Import);

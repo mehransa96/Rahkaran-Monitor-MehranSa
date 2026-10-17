@@ -685,4 +685,17 @@
   <data name="Diag_ImportNoGaps" xml:space="preserve"><value>none</value></data>
   <data name="Diag_ImportFailed" xml:space="preserve"><value>Import failed: {0}</value></data>
   <data name="Dialog_BundleFilter" xml:space="preserve"><value>RSM bundles</value></data>
+  <data name="Col_Rule" xml:space="preserve"><value>Rule</value></data>
+  <data name="Col_Before" xml:space="preserve"><value>Before</value></data>
+  <data name="Col_After" xml:space="preserve"><value>After</value></data>
+  <data name="Diag_Compare" xml:space="preserve"><value>Compare two diagnoses (before vs after)</value></data>
+  <data name="Diag_CompareExplain" xml:space="preserve"><value>Pick an earlier and a later diagnosis of the site (for example before and after an update) to see the findings that appeared or were resolved, the numbers that moved by at least 10 % (waits, IIS latency per site, CPU, memory, file latency…) and the values that changed (versions, top statement, top waits).</value></data>
+  <data name="Diag_CompareBefore" xml:space="preserve"><value>Before</value></data>
+  <data name="Diag_CompareAfter" xml:space="preserve"><value>After</value></data>
+  <data name="Diag_CompareMissing" xml:space="preserve"><value>One of the diagnoses could not be loaded.</value></data>
+  <data name="Diag_CompareSummary" xml:space="preserve"><value>{0} new and {1} resolved findings, {2} numbers moved, {3} values changed.</value></data>
+  <data name="Diag_CompareUnmatched" xml:space="preserve"><value>Not in both diagnoses: {0}.</value></data>
+  <data name="Change_New" xml:space="preserve"><value>new</value></data>
+  <data name="Change_Resolved" xml:space="preserve"><value>resolved</value></data>
+  <data name="Change_SeverityChanged" xml:space="preserve"><value>severity changed</value></data>
 </root>

@@ -580,6 +580,12 @@ clears after its condition is false for N evaluations (hysteresis, default 2). H
   - Slot 0 = Saturday 00:00 (Iranian week).
 - **Compare periods**: half-open periods; one row per series with avg/p50/p95/max per side, ranked by the change of
   the average.
+- **Compare diagnoses** (`SnapshotCompare`, Reports page and `RSM.Cli --compare`): the before/after view for what
+  history does not hold (top queries, IIS latency percentiles from the logs, versions).
+  - Nodes are matched by id, host or name.
+  - Numeric facts that moved ≥ 10 % are listed largest first, along with changed text facts and new / resolved /
+    re-graded findings.
+  - Clock-like facts (uptime, ages, RSM state) are skipped.
 - **Brotli instead of zstd**: comparable ratios for JSON, no native dependency inside a single-file exe.
 
 Data folder: portable mode if `./data` exists next to the exe or `--portable`; else `%LOCALAPPDATA%\RSM`.

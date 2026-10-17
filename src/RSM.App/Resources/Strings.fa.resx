@@ -685,4 +685,17 @@
   <data name="Diag_ImportNoGaps" xml:space="preserve"><value>ندارد</value></data>
   <data name="Diag_ImportFailed" xml:space="preserve"><value>وارد کردن ناموفق بود: {0}</value></data>
   <data name="Dialog_BundleFilter" xml:space="preserve"><value>بسته‌های RSM</value></data>
+  <data name="Col_Rule" xml:space="preserve"><value>قاعده</value></data>
+  <data name="Col_Before" xml:space="preserve"><value>قبل</value></data>
+  <data name="Col_After" xml:space="preserve"><value>بعد</value></data>
+  <data name="Diag_Compare" xml:space="preserve"><value>مقایسهٔ دو عیب‌یابی (قبل و بعد)</value></data>
+  <data name="Diag_CompareExplain" xml:space="preserve"><value>یک عیب‌یابی قبلی و یک عیب‌یابی بعدی از سایت را انتخاب کنید (مثلاً پیش و پس از به‌روزرسانی) تا یافته‌های جدید یا رفع‌شده، اعدادی که دست‌کم ۱۰٪ تغییر کرده‌اند (انتظارها، تأخیر IIS هر سایت، CPU، حافظه، تأخیر فایل…) و مقدارهای تغییرکرده (نسخه‌ها، پرهزینه‌ترین دستور، انتظارهای برتر) را ببینید.</value></data>
+  <data name="Diag_CompareBefore" xml:space="preserve"><value>قبل</value></data>
+  <data name="Diag_CompareAfter" xml:space="preserve"><value>بعد</value></data>
+  <data name="Diag_CompareMissing" xml:space="preserve"><value>یکی از عیب‌یابی‌ها بارگذاری نشد.</value></data>
+  <data name="Diag_CompareSummary" xml:space="preserve"><value>{0} یافتهٔ جدید و {1} یافتهٔ رفع‌شده، {2} عدد تغییرکرده، {3} مقدار تغییرکرده.</value></data>
+  <data name="Diag_CompareUnmatched" xml:space="preserve"><value>فقط در یکی از دو عیب‌یابی: {0}.</value></data>
+  <data name="Change_New" xml:space="preserve"><value>جدید</value></data>
+  <data name="Change_Resolved" xml:space="preserve"><value>رفع‌شده</value></data>
+  <data name="Change_SeverityChanged" xml:space="preserve"><value>تغییر شدت</value></data>
 </root>

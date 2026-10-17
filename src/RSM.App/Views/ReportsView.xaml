@@ -41,6 +41,50 @@
       </StackPanel>
     </Border>
 
+    <Expander DockPanel.Dock="Top" Margin="0,0,0,8" Header="{Binding [Diag_Compare], Source={x:Static loc:Loc.Instance}}">
+      <Border Style="{StaticResource Card}">
+        <StackPanel>
+          <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Text="{Binding [Diag_CompareExplain], Source={x:Static loc:Loc.Instance}}" />
+          <WrapPanel Margin="0,8,0,0">
+            <TextBlock Style="{StaticResource Text.Label}" VerticalAlignment="Center" Margin="0,0,6,0" Text="{Binding [Diag_CompareBefore], Source={x:Static loc:Loc.Instance}}" />
+            <ComboBox MinWidth="280" ItemsSource="{Binding SavedSnapshots}" SelectedItem="{Binding CompareBefore}" DisplayMemberPath="Label" />
+            <TextBlock Style="{StaticResource Text.Label}" VerticalAlignment="Center" Margin="12,0,6,0" Text="{Binding [Diag_CompareAfter], Source={x:Static loc:Loc.Instance}}" />
+            <ComboBox MinWidth="280" ItemsSource="{Binding SavedSnapshots}" SelectedItem="{Binding CompareAfter}" DisplayMemberPath="Label" />
+            <Button Margin="12,0,0,0" Style="{StaticResource Button.Primary}" Command="{Binding CompareSnapshotsCommand}" Content="{Binding [Hist_DoCompare], Source={x:Static loc:Loc.Instance}}" />
+          </WrapPanel>
+          <TextBlock Margin="0,6,0,0" Style="{StaticResource Text.Muted}" TextWrapping="Wrap" Text="{Binding CompareSummary}" />
+          <DataGrid Margin="0,6,0,0" ItemsSource="{Binding CompareFindings}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="220">
+            <DataGrid.Columns>
+              <DataGridTextColumn Width="110" Binding="{Binding Change}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Change]}" />
+              <DataGridTextColumn Width="110" Binding="{Binding RuleId}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Rule]}" />
+              <DataGridTextColumn Width="100" Binding="{Binding Node}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Node]}" />
+              <DataGridTextColumn Width="100" Binding="{Binding Instance}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Instance]}" />
+              <DataGridTextColumn Width="*" Binding="{Binding Title}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Title]}" />
+              <DataGridTextColumn Width="80" Binding="{Binding Before}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Before]}" />
+              <DataGridTextColumn Width="80" Binding="{Binding After}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_After]}" />
+            </DataGrid.Columns>
+          </DataGrid>
+          <DataGrid Margin="0,6,0,0" ItemsSource="{Binding CompareNumbers}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="260" FlowDirection="LeftToRight">
+            <DataGrid.Columns>
+              <DataGridTextColumn Width="100" Binding="{Binding Node}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Node]}" />
+              <DataGridTextColumn Width="*" Binding="{Binding Key}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Metric]}" />
+              <DataGridTextColumn Width="100" Binding="{Binding Before}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Before]}" />
+              <DataGridTextColumn Width="100" Binding="{Binding After}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_After]}" />
+              <DataGridTextColumn Width="80" Binding="{Binding Change}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Change]}" />
+            </DataGrid.Columns>
+          </DataGrid>
+          <DataGrid Margin="0,6,0,0" ItemsSource="{Binding CompareTexts}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" MaxHeight="220" FlowDirection="LeftToRight">
+            <DataGrid.Columns>
+              <DataGridTextColumn Width="100" Binding="{Binding Node}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Node]}" />
+              <DataGridTextColumn Width="200" Binding="{Binding Key}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Metric]}" />
+              <DataGridTextColumn Width="*" Binding="{Binding Before}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_Before]}" />
+              <DataGridTextColumn Width="*" Binding="{Binding After}" Header="{Binding Source={x:Static loc:Loc.Instance}, Path=[Col_After]}" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </StackPanel>
+      </Border>
+    </Expander>
+
     <Border DockPanel.Dock="Top" Style="{StaticResource Card}">
       <StackPanel>
         <TextBlock Style="{StaticResource Text.Section}" Text="{Binding [Diag_Export], Source={x:Static loc:Loc.Instance}}" />
