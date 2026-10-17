@@ -73,8 +73,13 @@ public static class UiSnapshotTour
         var bitmap = new RenderTargetBitmap((int)Math.Ceiling(content.ActualWidth * dpi.DpiScaleX), (int)Math.Ceiling(content.ActualHeight * dpi.DpiScaleY),
             dpi.PixelsPerInchX, dpi.PixelsPerInchY, PixelFormats.Pbgra32);
         bitmap.Render(content);
+        // The window applies the right-to-left mirror; rendering its content on its own leaves the Persian pages
+        // flipped horizontally, so flip them back to what the user sees.
+        BitmapSource frame = window.FlowDirection == FlowDirection.RightToLeft
+            ? new TransformedBitmap(bitmap, new ScaleTransform(-1, 1))
+            : bitmap;
         var encoder = new PngBitmapEncoder();
-        encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        encoder.Frames.Add(BitmapFrame.Create(frame));
         using var stream = new MemoryStream();
         encoder.Save(stream);
         return stream.ToArray();
