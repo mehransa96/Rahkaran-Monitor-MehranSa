@@ -105,6 +105,35 @@ jobs:
           $exe = Get-Item publish/RSM.exe
           if ($exe.Length -lt 50MB) { throw "RSM.exe unexpectedly small: $($exe.Length)" }
           Write-Host "RSM.exe $([math]::Round($exe.Length / 1MB)) MB"
+      # The published exe really starts on Windows Server: it walks every page in fa and en, saves PNGs (the user
+      # guide's screenshots) and prints a test page to PDF with WebView2, then exits. No site, no connection.
+      - name: Run the published exe (UI tour + PDF smoke)
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath publish/RSM.exe -ArgumentList '--portable','--ui-snapshots' -PassThru
+          if (-not $p.WaitForExit(240000)) { $p.Kill(); throw "RSM.exe did not finish the UI tour in 4 minutes" }
+          if ($p.ExitCode -ne 0) { throw "RSM.exe exited with $($p.ExitCode)" }
+          $shots = Get-ChildItem publish/data/ui-snapshots -Filter *.png
+          Write-Host "$($shots.Count) screenshots"
+          if ($shots.Count -lt 40) { throw "expected a screenshot of every page in fa and en" }
+          $pdf = Get-Content publish/data/ui-snapshots/pdf-smoke.txt -Raw
+          Write-Host "PDF smoke: $pdf"
+          if (-not $pdf.StartsWith('ok')) { throw "WebView2 PDF export failed: $pdf" }
+          Get-Content publish/data/logs/*.log -ErrorAction SilentlyContinue | Select-String -Pattern 'Error|Fatal' | Select-Object -First 20
+      - name: Publish and run RSM.Cli (single-file)
+        shell: pwsh
+        run: |
+          dotnet publish src/RSM.Cli/RSM.Cli.csproj -c Release -r win-x64 -o publish-cli
+          ./publish-cli/RSM.Cli.exe --help
+          if ($LASTEXITCODE -ne 0) { throw "RSM.Cli --help failed" }
+          ./publish-cli/RSM.Cli.exe --portable --list
+          if ($LASTEXITCODE -ne 0) { throw "RSM.Cli --list failed" }
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: ui-snapshots
+          path: publish/data/ui-snapshots/
+          retention-days: 14
       # Convenience download only: publish + smoke test above are the real check. The account's artifact storage
       # quota can be exhausted by earlier 150 MB uploads, which must not turn the build red.
       - uses: actions/upload-artifact@v4

@@ -55,6 +55,11 @@ public partial class App : Application
         window.Show();
         await services.GetRequiredService<SitesViewModel>().LoadAsync();
         services.GetRequiredService<ILogger<App>>().LogInformation("RSM started (data folder {DataFolder}, portable={Portable})", dataFolder.Root, dataFolder.IsPortable);
+        if (args.Any(a => string.Equals(a, "--ui-snapshots", StringComparison.OrdinalIgnoreCase)))
+        {
+            await Services.UiSnapshotTour.RunAsync(window, services.GetRequiredService<MainViewModel>(), dataFolder, services.GetRequiredService<IPdfPrinter>());
+            Shutdown(0);
+        }
     }
 
     protected override void OnExit(ExitEventArgs e)
