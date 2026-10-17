@@ -86,7 +86,7 @@ You are continuing work from a previous chat. That chat is gone; this file is th
 |---|---|
 | Repo / branch | `mehransa96/Rahkaran-Monitor-MehranSa` / `claude/new-session-z9e5f7` |
 | Last commit | `07a6a54` P5: compare two diagnoses (before vs after) and test host wiring |
-| CI green | runs 37–43 (all P5 commits); run 44 for `07a6a54` not yet checked |
+| CI green | runs 37–45 (all P5 commits; run 45 = `07a6a54`) |
 | Scheduled check | `trig_018taM2HnWRdYnSA7LADGFwm`, fires 2026-10-17T04:10:00Z (check run 44) |
 | Tests (local) | Safety 520, RSM.Tests 1 003, Arch 142, Integration 1 passed + 13 skipped locally |
 | Rules | 194 rules + 22 slowness causes + 37 detectors |
@@ -119,10 +119,10 @@ You are continuing work from a previous chat. That chat is gone; this file is th
 | User guide | final (text) | `docs/user-guide/README.md`, `README.fa.md` | images missing (`docs/user-guide/images/`) |
 | Phase notes P5 | final | `docs/phase-notes/P5.md` | includes §19 checklist |
 | Lab scripts | ready | `tests/lab/` | to be run by a human, never by RSM |
-| CI run 44 | pending | — | check at 04:10Z |
+| CI run 45 (`07a6a54`) | green | — | — |
 
 ## 11. Next steps
-1. **Next action:** بررسی CI اجرای ۴۴ برای کامیت `07a6a54`. اگر سبز بود، در `docs/phase-notes/P5.md` ثبت و پوش کن؛ اگر قرمز بود، علت را رفع و دوباره پوش کن. نتیجه را به فارسی و کوتاه به کاربر بگو.
+1. **Next action:** آخرین اجرای CI روی شاخه را بررسی کن (باید سبز باشد) و منتظر درخواست کاربر بمان.
 2. منتظر کاربر بمان. فاز دیگری در PLAN نیست؛ کار تازه فقط با درخواست صریح او.
 3. وقتی فضای artifact آزاد شد، تصاویر `ui-snapshots` را در `docs/user-guide/images/` قرار بده (نیاز به دانلود artifact توسط کاربر).
 
