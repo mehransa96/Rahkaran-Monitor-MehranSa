@@ -54,6 +54,7 @@ public sealed partial class MainViewModel : ObservableObject
             new NavItem("Nav_Settings", () => settings),
         ];
         _selectedNav = NavItems[0];
+        sites.ShowRequested += (_, _) => SelectedNav = NavItems.First(n => n.TitleKey == "Nav_Sites");
         Loc.Instance.PropertyChanged += (_, _) =>
         {
             foreach (var item in NavItems)

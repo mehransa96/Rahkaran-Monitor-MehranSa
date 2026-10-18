@@ -3,8 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:RSM.App.Localization">
   <!-- DataContext: LiveViewModel. Controls only read data or change RSM's own sampling; nothing acts on a server. -->
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+  </UserControl.Resources>
   <Border Style="{StaticResource Card}" Padding="10,8">
     <StackPanel>
+      <!-- The site/server pickers below only choose; sites and servers are defined on the "Sites & connections" page. -->
+      <Border Background="{DynamicResource Brush.Banner}" CornerRadius="4" Padding="8,6" Margin="0,0,0,8"
+              Visibility="{Binding Sites.HasNoSites, Converter={StaticResource BoolToVisibility}}">
+        <DockPanel>
+          <Button DockPanel.Dock="Right" Style="{StaticResource Button.Primary}" Margin="8,0,0,0"
+                  Command="{Binding Sites.StartSetupCommand}" Content="{Binding [Live_SetupSite], Source={x:Static loc:Loc.Instance}}" />
+          <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding [Live_NoSites], Source={x:Static loc:Loc.Instance}}" />
+        </DockPanel>
+      </Border>
       <WrapPanel>
         <TextBlock Style="{StaticResource Text.Label}" VerticalAlignment="Center" Margin="0,0,6,0" Text="{Binding [Live_Site], Source={x:Static loc:Loc.Instance}}" />
         <ComboBox MinWidth="180" Margin="0,0,12,0" ItemsSource="{Binding Sites.Sites}" SelectedItem="{Binding SelectedSite}" DisplayMemberPath="Name" IsEnabled="{Binding IsIdle}" />

@@ -39,6 +39,7 @@ public sealed partial class SitesViewModel : ObservableObject
         _dialogs = dialogs;
         _logger = logger;
         CanRememberPasswords = secrets.CanPersist;
+        Sites.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasNoSites));
         Loc.Instance.PropertyChanged += (_, _) =>
         {
             foreach (var node in Sites.SelectMany(s => s.Nodes))
@@ -59,6 +60,11 @@ public sealed partial class SitesViewModel : ObservableObject
     private SiteItemViewModel? _selectedSite;
 
     public bool HasSelectedSite => SelectedSite is not null;
+
+    public bool HasNoSites => Sites.Count == 0;
+
+    /// <summary>Raised when another page asks to show the site editor (e.g. the "define a site" banner).</summary>
+    public event EventHandler? ShowRequested;
 
     public async Task LoadAsync()
     {
@@ -99,6 +105,18 @@ public sealed partial class SitesViewModel : ObservableObject
         {
             site.DotNetRuntimeCounters = !site.DotNetRuntimeCounters;
         }
+    }
+
+    /// <summary>Opens the site editor; with no site yet, starts a new (unsaved) one so the fields are ready to type in.</summary>
+    [RelayCommand]
+    private void StartSetup()
+    {
+        if (Sites.Count == 0)
+        {
+            NewSite();
+        }
+
+        ShowRequested?.Invoke(this, EventArgs.Empty);
     }
 
     [RelayCommand]
@@ -226,6 +244,13 @@ public sealed partial class SiteItemViewModel(string id) : ObservableObject
     [ObservableProperty]
     private string _rahkaranDatabases = string.Empty;
 
+    /// <summary>Rahkaran web address in IIS (http/https); stored only, never requested by RSM.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRahkaranUrlInvalid))]
+    private string _rahkaranUrl = string.Empty;
+
+    public bool IsRahkaranUrlInvalid => !string.IsNullOrWhiteSpace(RahkaranUrl) && NormalizeUrl(RahkaranUrl) is null;
+
     /// <summary>Name patterns (regex) of ستاد فنی maintenance-tool jobs, one per line — product specific, unverified.</summary>
     [ObservableProperty]
     private string _stadFanniJobPatterns = string.Empty;
@@ -253,6 +278,7 @@ public sealed partial class SiteItemViewModel(string id) : ObservableObject
             Notes = profile.Notes,
             _settings = profile.Settings,
             RahkaranDatabases = string.Join(", ", profile.Settings.RahkaranDatabases),
+            RahkaranUrl = profile.Settings.RahkaranUrl ?? string.Empty,
             StadFanniJobPatterns = string.Join(Environment.NewLine, profile.Settings.StadFanniToolJobPatterns),
             VersionFile = profile.Settings.RahkaranVersionFile ?? string.Empty,
             DotNetRuntimeCounters = profile.Settings.DotNetRuntimeCounters,
@@ -281,6 +307,7 @@ public sealed partial class SiteItemViewModel(string id) : ObservableObject
         Settings = _settings with
         {
             RahkaranDatabases = Split(RahkaranDatabases, ','),
+            RahkaranUrl = NormalizeUrl(RahkaranUrl),
             StadFanniToolJobPatterns = Split(StadFanniJobPatterns, '\n').Where(IsValidPattern).ToList(),
             RahkaranVersionFile = string.IsNullOrWhiteSpace(VersionFile) ? null : VersionFile.Trim(),
             DotNetRuntimeCounters = DotNetRuntimeCounters,
@@ -290,6 +317,15 @@ public sealed partial class SiteItemViewModel(string id) : ObservableObject
 
     private static List<string> Split(string? text, char separator) =>
         (text ?? string.Empty).Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+
+    /// <summary>Absolute http/https address, trimmed; anything else is dropped (null).</summary>
+    public static string? NormalizeUrl(string? text)
+    {
+        var trimmed = text?.Trim();
+        return Uri.TryCreate(trimmed, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
+            ? uri.ToString()
+            : null;
+    }
 
     private static bool IsValidPattern(string pattern)
     {

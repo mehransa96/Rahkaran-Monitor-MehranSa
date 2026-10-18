@@ -604,6 +604,13 @@
   <data name="TopoEdge_Declared" xml:space="preserve"><value>Declared</value></data>
   <data name="Sites_VersionFile" xml:space="preserve"><value>Rahkaran version file (unverified)</value></data>
   <data name="Sites_VersionFileHint" xml:space="preserve"><value>Optional relative path inside the Rahkaran application folder whose fingerprint identifies the build on each App node (RK-001). Empty = compare app path segments only.</value></data>
+  <data name="Sites_RahkaranUrl" xml:space="preserve"><value>Rahkaran URL (as published in IIS)</value></data>
+  <data name="Sites_RahkaranUrlHint" xml:space="preserve"><value>Example: https://erp.company.local/Rahkaran. Stored for reports only; RSM never sends requests to this address.</value></data>
+  <data name="Sites_RahkaranUrlInvalid" xml:space="preserve"><value>Not a valid http/https address; it will not be saved.</value></data>
+  <data name="Sites_EmptyTitle" xml:space="preserve"><value>No site defined yet</value></data>
+  <data name="Sites_EmptyHint" xml:space="preserve"><value>Click "New site", enter the site name, then fill in each server: host name/IP, SQL Server instance and authentication (SQL login such as sa, or Windows), and press "Test connection".</value></data>
+  <data name="Live_NoSites" xml:space="preserve"><value>No site or server is defined yet. These lists only pick one; define sites and servers on the "Sites &amp; connections" page.</value></data>
+  <data name="Live_SetupSite" xml:space="preserve"><value>Define site and server</value></data>
   <data name="Sites_DotNet" xml:space="preserve"><value>.NET runtime counters</value></data>
   <data name="Sites_DotNetOn" xml:space="preserve"><value>On — EventPipe counters are read on the local App server</value></data>
   <data name="Sites_DotNetOff" xml:space="preserve"><value>Off (default)</value></data>

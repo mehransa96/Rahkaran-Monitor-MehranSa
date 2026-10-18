@@ -24,6 +24,12 @@ public sealed record SiteSettings
     /// <summary>Main Rahkaran database name(s); empty = auto-detect.</summary>
     public IReadOnlyList<string> RahkaranDatabases { get; init; } = [];
 
+    /// <summary>
+    /// Rahkaran web address as published in IIS (e.g. https://erp.example.local/Rahkaran). Stored for reports and
+    /// matching against IIS bindings only: RSM never sends a request to it (spec §2.1 allows HTTP only to RabbitMQ).
+    /// </summary>
+    public string? RahkaranUrl { get; init; }
+
     /// <summary>Unverified: Windows service name pattern of the attendance (تردد) module.</summary>
     public string? AttendanceServicePattern { get; init; }
 

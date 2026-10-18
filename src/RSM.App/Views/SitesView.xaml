@@ -190,6 +190,16 @@
                Background="{DynamicResource Brush.Surface}" BorderBrush="{DynamicResource Brush.Border}" Foreground="{DynamicResource Brush.Text}" />
     </DockPanel>
 
+    <!-- No site yet: say where to start instead of an empty page. -->
+    <Border Grid.Column="2" Style="{StaticResource Card}" VerticalAlignment="Top"
+            Visibility="{Binding HasNoSites, Converter={StaticResource BoolToVisibility}}">
+      <StackPanel>
+        <TextBlock Style="{StaticResource Text.Section}" Margin="0,0,0,6" Text="{Binding [Sites_EmptyTitle], Source={x:Static loc:Loc.Instance}}" />
+        <TextBlock TextWrapping="Wrap" Margin="0,0,0,10" Text="{Binding [Sites_EmptyHint], Source={x:Static loc:Loc.Instance}}" />
+        <Button Style="{StaticResource Button.Primary}" HorizontalAlignment="Left" Command="{Binding NewSiteCommand}" Content="{Binding [Sites_New], Source={x:Static loc:Loc.Instance}}" />
+      </StackPanel>
+    </Border>
+
     <!-- Selected site -->
     <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" Visibility="{Binding HasSelectedSite, Converter={StaticResource BoolToVisibility}}">
       <StackPanel DataContext="{Binding SelectedSite}">
@@ -205,6 +215,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
               </Grid.RowDefinitions>
               <StackPanel Grid.Column="0">
                 <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sites_Name], Source={x:Static loc:Loc.Instance}}" />
@@ -213,6 +224,14 @@
               <StackPanel Grid.Column="2">
                 <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sites_Notes], Source={x:Static loc:Loc.Instance}}" />
                 <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" />
+              </StackPanel>
+              <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,10,0,0">
+                <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sites_RahkaranUrl], Source={x:Static loc:Loc.Instance}}" />
+                <TextBox Style="{StaticResource TextBox.Ltr}" Text="{Binding RahkaranUrl, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Style="{StaticResource Text.Muted}" TextWrapping="Wrap" FontSize="11" Text="{Binding [Sites_RahkaranUrlHint], Source={x:Static loc:Loc.Instance}}" />
+                <TextBlock Foreground="{DynamicResource Brush.Warning}" TextWrapping="Wrap" FontSize="11"
+                           Visibility="{Binding IsRahkaranUrlInvalid, Converter={StaticResource BoolToVisibility}}"
+                           Text="{Binding [Sites_RahkaranUrlInvalid], Source={x:Static loc:Loc.Instance}}" />
               </StackPanel>
               <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
                 <TextBlock Style="{StaticResource Text.Label}" Text="{Binding [Sites_RahkaranDbs], Source={x:Static loc:Loc.Instance}}" />
