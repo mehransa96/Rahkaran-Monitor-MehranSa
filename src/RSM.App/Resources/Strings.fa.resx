@@ -604,6 +604,13 @@
   <data name="TopoEdge_Declared" xml:space="preserve"><value>اعلام‌شده</value></data>
   <data name="Sites_VersionFile" xml:space="preserve"><value>فایل نسخه راهکاران (تأییدنشده)</value></data>
   <data name="Sites_VersionFileHint" xml:space="preserve"><value>مسیر نسبی اختیاری داخل پوشه برنامه راهکاران که اثر انگشت آن نسخه هر سرور برنامه را مشخص می‌کند (RK-001). خالی = فقط مقایسه بخش مسیر برنامه.</value></data>
+  <data name="Sites_RahkaranUrl" xml:space="preserve"><value>آدرس راهکاران (همان آدرس منتشرشده در IIS)</value></data>
+  <data name="Sites_RahkaranUrlHint" xml:space="preserve"><value>مثال: https://erp.company.local/Rahkaran. فقط برای گزارش ذخیره می‌شود؛ RSM هیچ درخواستی به این آدرس نمی‌فرستد.</value></data>
+  <data name="Sites_RahkaranUrlInvalid" xml:space="preserve"><value>آدرس http/https معتبر نیست و ذخیره نمی‌شود.</value></data>
+  <data name="Sites_EmptyTitle" xml:space="preserve"><value>هنوز سایتی تعریف نشده است</value></data>
+  <data name="Sites_EmptyHint" xml:space="preserve"><value>روی «سایت جدید» بزنید، نام سایت را وارد کنید و برای هر سرور نام میزبان/IP، نمونه SQL Server و نوع احراز هویت (لاگین SQL مثل sa یا ویندوز) را پر کنید، سپس «آزمون اتصال» را بزنید.</value></data>
+  <data name="Live_NoSites" xml:space="preserve"><value>هنوز سایت یا سروری تعریف نشده است. این فهرست‌ها فقط برای انتخاب هستند؛ سایت و سرورها در صفحه «سایت‌ها و اتصال‌ها» تعریف می‌شوند.</value></data>
+  <data name="Live_SetupSite" xml:space="preserve"><value>تعریف سایت و سرور</value></data>
   <data name="Sites_DotNet" xml:space="preserve"><value>شمارنده‌های زمان اجرای .NET</value></data>
   <data name="Sites_DotNetOn" xml:space="preserve"><value>روشن — شمارنده‌های EventPipe روی سرور برنامه محلی خوانده می‌شوند</value></data>
   <data name="Sites_DotNetOff" xml:space="preserve"><value>خاموش (پیش‌فرض)</value></data>
